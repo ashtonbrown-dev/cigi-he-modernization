@@ -1,13 +1,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.11912.234 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hemu4", "hemu4\Hemu4.vcxproj", "{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hemu4", "hemu4\Hemu4.vcxproj", "{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3A11DB30-133C-5525-CE31-9112AEB65E04} = {3A11DB30-133C-5525-CE31-9112AEB65E04}
+		{71805622-BC7C-A37C-8F42-0D42661ACEF1} = {71805622-BC7C-A37C-8F42-0D42661ACEF1}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HemuDrv", "HemuRtDrv\HemuRtDrv.vcxproj", "{3A11DB30-133C-5525-CE31-9112AEB65E04}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HemuRtDrv", "HemuRtDrv\HemuRtDrv.vcxproj", "{71805622-BC7C-A37C-8F42-0D42661ACEF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +15,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Debug|Win32.Build.0 = Debug|Win32
-		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Release|Win32.ActiveCfg = Release|Win32
-		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Release|Win32.Build.0 = Release|Win32
-		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Debug|Win32.Build.0 = Debug|Win32
-		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Release|Win32.ActiveCfg = Release|Win32
-		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Release|Win32.Build.0 = Release|Win32
+		{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}.Debug|Win32.Build.0 = Debug|Win32
+		{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}.Release|Win32.ActiveCfg = Release|Win32
+		{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}.Release|Win32.Build.0 = Release|Win32
+		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Debug|Win32.Build.0 = Debug|Win32
+		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Release|Win32.ActiveCfg = Release|Win32
+		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

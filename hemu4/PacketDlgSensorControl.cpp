@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 // CPacketDlgSensorControl dialog
 
 CPacketDlgSensorControl::CPacketDlgSensorControl(CWnd *pParent /*=NULL*/)
-    : CDialog(CPacketDlgSensorControl::IDD, pParent)
+    : OldDialog(CPacketDlgSensorControl::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CPacketDlgSensorControl)
     m_AutoGain = FALSE;
@@ -122,7 +122,7 @@ void CPacketDlgSensorControl::OnOK()
 
 BOOL CPacketDlgSensorControl::OnInitDialog()
 {
-    CDialog::OnInitDialog();
+    OldDialog::OnInitDialog();
 
     m_ComboViewID.SetImageList(&g_ImgListIcons);
     PopulateViewIDCombo();

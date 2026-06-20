@@ -8,11 +8,12 @@
 //
 
 #include "resource.h"
+#include "OldDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPacketDlgSensorControl dialog
 
-class CPacketDlgSensorControl : public CDialog
+class CPacketDlgSensorControl : public OldDialog
 {
     // Construction
 public:

@@ -475,7 +475,7 @@ long ScriptDoTranspDelayAddPoint(const char *buffer, const unsigned int linenum)
     long point_id = 0;
     DOF dof = { 0.0 };
 
-    sscanf(buffer, "%s %l %lf %lf %lf %lf %lf %lf", keyword, &point_id, &dof.latitude,
+    sscanf(buffer, "%s %ld %lf %lf %lf %lf %lf %lf", keyword, &point_id, &dof.latitude,
            &dof.longitude, &dof.altitude, &dof.yaw, &dof.pitch, &dof.roll);
 
     g_DataManager.SetTranspDelayTestPoint(point_id, &dof);

@@ -2093,7 +2093,7 @@ long ScriptDoSystemComponentDatumInt64(const char *buffer, const unsigned int li
     unsigned long wordnum = -1;
     LARGE_INTEGER data = {0};
 
-    sscanf(buffer, "%s %hu %hu %lu %I64d", keyword, &component_id, &instance_id, &wordnum, &data);
+    sscanf(buffer, "%s %hu %hu %lu %I64d", keyword, &component_id, &instance_id, &wordnum, &data.QuadPart);
 
     CComponent *comp = g_DataManager.GetSystemComponent(component_id, instance_id);
     if (!comp) {
@@ -2443,7 +2443,7 @@ long ScriptDoSystemComponentDatumUint64(const char *buffer, const unsigned int l
     unsigned long wordnum = -1;
     LARGE_INTEGER data = {0};
 
-    sscanf(buffer, "%s %hu %hu %lu %I64u", keyword, &component_id, &instance_id, &wordnum, &data);
+    sscanf(buffer, "%s %hu %hu %lu %I64u", keyword, &component_id, &instance_id, &wordnum, &data.QuadPart);
 
     CComponent *comp = g_DataManager.GetSystemComponent(component_id, instance_id);
     if (!comp) {
@@ -3380,7 +3380,7 @@ long ScriptDoAtmosphereComponentEndUpdate(const char *buffer, const unsigned int
     unsigned long instance_id = -1;
     unsigned char packetbuff[CIGI_COMPONENT_CONTROL_SIZE] = {0};
 
-    sscanf(buffer, "%s %lu %lu", keyword, &component_id, instance_id);
+    sscanf(buffer, "%s %lu %lu", keyword, &component_id, &instance_id);
 
     CGlobalEnv *env = g_DataManager.GetGlobalEnv();
     if (!env) {

@@ -322,7 +322,7 @@ int Startup(void)
     // Open the comm port for the trigger.
     hCommPort = OpenCommPort(1);
     if (verbose)
-        RtPrintf("Opened COM1 (%p)\n", hCommPort);
+        RtPrintf("Opened COM1 (%p)\n", static_cast<void *>(hCommPort));
 
     return 1;
 }

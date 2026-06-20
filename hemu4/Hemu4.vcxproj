@@ -27,34 +27,35 @@
     <SccLocalPath />
     <Keyword>MFCProj</Keyword>
     <ProjectGuid>{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Realtime Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Realtime Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -129,9 +130,9 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>rem xcopy /d /i /y "$(ProjectDir)Default\*.def" "$(TargetDir)Default"
-xcopy /d /i /y "$(TargetDir)$(TargetFileName)" "$(MSBuildStartupDirectory)\app"
-xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"
+xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -174,9 +175,9 @@ xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>rem xcopy /d /i /y "$(ProjectDir)Default\*.def" "$(TargetDir)Default"
-xcopy /d /i /y "$(TargetDir)$(TargetFileName)" "$(MSBuildStartupDirectory)\app"
-xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"
+xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -219,9 +220,9 @@ xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>rem xcopy /d /i /y "$(ProjectDir)Default\*.def" "$(TargetDir)Default"
-xcopy /d /i /y "$(TargetDir)$(TargetFileName)" "$(MSBuildStartupDirectory)\app"
-xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"
+xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Realtime Debug|Win32'">
@@ -261,16 +262,16 @@ xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>rem xcopy /d /i /y "$(ProjectDir)Default\*.def" "$(TargetDir)Default"
-xcopy /d /i /y "$(TargetDir)$(TargetFileName)" "$(MSBuildStartupDirectory)\app"
-xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"
+xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
     <PostBuildEvent>
-      <Command>rem xcopy /d /i /y "$(ProjectDir)Default\*.def" "$(TargetDir)Default"
-xcopy /d /i /y "$(TargetDir)$(TargetFileName)" "$(MSBuildStartupDirectory)\app"
-xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"
+xcopy /d /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
     <ClCompile>
       <PreprocessorDefinitions>HEMU;NTDDI_VERSION=0x05010000;_WIN32_WINNT=0x501;WINVER=0x0501;_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>

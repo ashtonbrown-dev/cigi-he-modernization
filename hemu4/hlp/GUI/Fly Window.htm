@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Fly Window</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator
+      2.1</b></font></i></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="37284" -->
+
+<h2>Fly Window</h2>
+<blockquote>
+  <p ALIGN="LEFT">The Fly window is used to control the motion of an entity
+  using a joystick or a simulated joystick interface. This window can be
+  activated by clicking the <b>Fly</b> button on the <a href="Entity%20Tree%20Window.htm#Toolbar">Entity
+  Tree toolbar</a>. The Fly window is shown below.</p>
+  <p ALIGN="center"><img border="0" src="images/Windows/Fly%20Window.jpg" width="398" height="344"></p>
+  <p ALIGN="left">The top-left portion of the window is occupied by a simulated
+  joystick. Dragging the ball with the mouse will simulate the manipulation of a
+  joystick peripheral. If an actual joystick is connected and configured on the
+  PC, the ball will move in response to joystick motion. For more information on
+  using the joystick, see <a href="Using%20a%20Joystick%20Peripheral.htm">Using
+  a Joystick Peripheral</a>.</p>
+  <p ALIGN="left">Along the bottom and right sides of the simulated joystick
+  window are two sliders. These will move the ball along either the up/down or
+  left/right axis. When these sliders are released, the ball will stay
+  &quot;locked&quot; in its current position. Clicking or dragging the ball will
+  release the lock and allow the ball to snap back to center.</p>
+  <p ALIGN="left">In the bottom-left portion of the window are two drop-down
+  lists. The first of these contains all of the child entities that represent
+  missiles. The list below it is a list of possible targets for the missile. The
+  <b>Fire</b> button will launch the selected missile. For more information, see
+  <a href="Firing%20a%20Missile.htm">Firing a Missile</a>.</p>
+  <p ALIGN="left">To the left of the <b>Fire</b> button are two additional
+  buttons. The <b>Freeze/Resume</b> button toggles the freeze state for the
+  scenario and has the same effect as clicking either the <b>Freeze Exercise</b>
+  or <b>Run Exercise</b> button on the <a href="Main%20Application%20Window.htm#Toolbar">main
+  application toolbar</a>. The <b>Reset</b>
+  button has the same effect as the <b>Reset Scenario</b> button on the <a href="Main%20Application%20Window.htm#Toolbar">main
+  application toolbar</a>.</p>
+  <p ALIGN="left">On the right side of the window is a drop-down list allowing
+  the user to change between the following control modes for the entity:</p>
+  <ul>
+    <li><a name="Fly"></a><b>Fly</b></li>
+      <blockquote>This mode causes the entity to exhibit simple airplane-like
+        behavior. The joystick's Left/Right axis controls the entity's roll.
+        Pulling back on the joystick pitches the entity nose-up, while pushing
+        forward on the joystick pitches the entity nose-down.
+      </blockquote>
+    <li><b>Magic Carpet</b></li>
+      <blockquote>This mode causes the entity to move along a plane parallel to
+        the ground. The joystick's Left/Right axis moves the entity left and
+        right. The Up/Down axis moves the entity forward and backward.
+      </blockquote>
+    <li><b>Roll/Pitch</b></li>
+      <blockquote>This mode allows the Left/Right and Up/Down axes of the
+        joystick to control the entity's roll and pitch, respectively.
+      </blockquote>
+    <li><b>Yaw/Z</b></li>
+      <blockquote>This mode allows the Left/Right and Up/Down axes of the
+        joystick to control the entity's yaw and altitude, respecitvely.
+      </blockquote>
+  </ul>
+  <p>The <b>Increased Precision</b> check box changes the sensitivity of the
+  simulated joystick or joystick peripheral. Checking this box will allow the
+  user to &quot;fine tune&quot; the position and attitude of an entity.</p>
+  <p>The <b>Airspeed</b> control changes the speed of the entity when it is in
+  the Fly control mode. The range of this control
+  is from &ndash;300 to 1200 knots. A negative airspeed value causes the entity to fly
+  backward.</p>
+  <p>Note: For rotorcraft entities (specified by the ROTORCRAFT subclass in the <a href="Editing%20entities_def.htm">ENTITIES.DEF
+  file</a>), the <b>Airspeed</b> control is replaced with a <b>Collective</b>
+  control ranging from 0 to 100%. A value of 50% causes the entity to maintain a
+  constant altitude. Decreasing the value decreases the altitude; increasing the
+  value increases the altitude.</p>
+  <p>In the lower right-hand corner of the Fly window are text areas showing the
+  entity's current position and attitude.</p>
+  <h3>Related Topics:</h3>
+  <blockquote>
+    <p> <a href="Using%20a%20Joystick%20Peripheral.htm">Using
+  a Joystick Peripheral</a>; <a href="Firing%20a%20Missile.htm">Firing a Missile</a></p>
+  </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<p class="copyright">Copyright © 2004 The Boeing Company</p>
+
+<!--webbot bot="Include" endspan i-checksum="8045" -->
+
+</BODY>
+</HTML>

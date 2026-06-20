@@ -1,0 +1,5 @@
+add_entity 0 103
+entity_component_state 0 1000 1
+wait 3
+entity_component_state 0 1000 0
+wait 3

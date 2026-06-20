@@ -1,0 +1,12 @@
+//SUPPRESSIONPROJ:Hemu4
+//VERSION:5.00
+//ENABLE:Yes
+!include Mfc.sup
+ignore bad_address(20,23) in file EXE:"c:\program files\microsoft visual studio\vc98\mfc\include\afxtempl.h"
+ignore bad_address(20,23) in file EXE:"c:\program files\microsoft visual studio\vc98\mfc\include\afxtempl.h"
+ignore bad_address(20,23) in file EXE:"c:\program files\microsoft visual studio\vc98\mfc\include\afxtempl.h"
+ignore bad_address(20,23) in function EXE:"CMap<int,int,CComponent *,CComponent * &>::NewAssoc"
+ignore bad_address(20,23) in file EXE:"c:\program files\microsoft visual studio\vc98\mfc\include\afxtempl.h"
+ignore bad_address(20,18) in function EXE:"CigiProcessIncomingMsgBuffer"
+ignore failure ADVAPI32.DLL:OpenThreadToken in module SETUPAPI.DLL
+

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Creating a New Entity</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator
+      2.1</b></font></i></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="37284" -->
+
+<h2> Creating a New Entity</h2>
+
+<blockquote>
+<p> <img border="0" src="images/Buttons/Entity%20Toolbar%20-%20Add%20Entity.bmp"></p>
+
+<p> To create a new entity, click the <b>Add Entity</b> button on the <a href="Entity%20Tree%20Window.htm#Toolbar">Entity
+Tree toolbar</a>. A new entity will appear in the entity tree as shown
+below.</p>
+
+<p align="center"> <img border="0" src="images/Windows/New%20Entity.jpg" width="163" height="110"></p>
+
+<p align="center" class="caption"> New Entity</p>
+
+<p> The new entity will be named &quot;New Entity&quot; and will be assigned the
+next available entity ID. If one or more entities have been <a href="Deleting%20an%20Entity.htm">deleted</a>,
+the entity will be assigned a recycled ID <i>in the order in which the entities
+were deleted</i>. Otherwise, the next unused ID will be assigned.</p>
+
+<p> Because some IGs might not be able to allow an entity's type to
+spontaneously change without first deleting the entity, the CIGI Host Emulator
+makes no assumptions about the entity type. The type of the new entity,
+therefore, is undefined. This is indicated by the question mark icon in the
+entity tree as shown in the figure above. The user must select an entity type
+from the <b>Type</b> list as shown:</p>
+
+<p align="center"> <img border="0" src="images/Windows/Select%20Type.bmp" width="582" height="322"></p>
+
+<p align="center" class="caption"> Selecting an Entity Type</p>
+
+<p> When the user selects an entity type, the entity's name and icon in the tree
+are updated.</p>
+<p>When the Ownship is created, it is placed at the default position specified
+for the database in the <a href="Editing%20databases_def.htm">DATABASES.DEF file</a>.
+If no default position is specified, the Ownship is placed at the database
+origin specified in the file. Successive entities are placed in a
+60-meter-diameter circle around the Ownship at intervals of approximately 45
+degrees.</p>
+<h3>Related Topics:</h3>
+<blockquote>
+  <p><a href="Entity%20Tree%20Window.htm">Entity Tree Window</a>; <a href="Deleting%20an%20Entity.htm">Deleting an Entity</a>;
+  <a href="Editing%20entities_def.htm">Editing ENTITIES.DEF</a></p>
+</blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<p class="copyright">Copyright © 2004 The Boeing Company</p>
+
+<!--webbot bot="Include" endspan i-checksum="8045" -->
+
+</BODY>
+</HTML>

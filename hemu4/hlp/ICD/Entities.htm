@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Entities</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Entities</h2>
+<blockquote>
+  <p ALIGN="LEFT">An entity as defined in this document exhibits all of the
+  following characterstics:</p>
+  <ol>
+    <li>The entity has a distinct dynamic coordinate system (DCS).</li>
+    <li>The entity has a separate and unique tree in the IG scene graph. The
+      tree may or may not include geometry.</li>
+    <li>The entity’s tree can be transformed (i.e., translated, rotated, and
+      scaled) independently from the rest of the scene graph.</li>
+    <li>The entity’s tree can be moved within the scene graph’s hierarchy.
+      In other words, it can be attached to (become a branch of) and later
+      detached from another entity’s tree.</li>
+  </ol>
+  <p ALIGN="LEFT">Entities can be used to represent both static and dynamic
+  objects. Some examples of dynamic entities are vehicles such as aircraft,
+  ships, and automobiles; animations such as explosions, missile trails, and
+  smoke; and localized weather phenomena such as clouds and fronts. Static
+  objects may include stationary ground targets such as buildings and bridges,
+  and other objects such as video test patterns.</p>
+  <p>The Host can instantiate and control entities on the IG with the <b>Entity
+  Control</b> packet.</p>
+  <p ALIGN="LEFT">Although terrain, weather layers, views, and articulated parts
+  share many characteristics with entities, they are not treated as such by CIGI.</p>
+  <p ALIGN="LEFT">Terrain has its own tree and coordinate system, but CIGI does
+  not expressly allow terrain to be transformed or attached to other entities.
+  Entities may, however, be used to represent certain parts of the terrain such
+  as dynamic sea states and surface conditions. Although the preferred method of
+  implementing these features is through the <b>Maritime Surface Conditions
+  Control</b> and <b>Terrestrial Surface Conditions Control</b> packets, many
+  legacy systems use terrain databases containing holes that are filled by
+  smaller dynamic models.</p>
+  <p ALIGN="LEFT">Even though clouds and other discrete weather phenomena may be
+  implemented as entities, weather layers may not. An IG might generate
+  polygonal surfaces to represent the top and bottom of a weather layer, but
+  these surfaces do not have distinct trees or coordinate systems.</p>
+  <p ALIGN="LEFT">Views and view groups do possess distinct coordinate systems,
+  but they do not have trees <i>per se</i>. View groups are hierarchical
+  collections of views; however, no scene graph nodes exist.</p>
+  <p ALIGN="LEFT">Articulated parts cannot be detached from their respective
+  super-trees and are therefore not entities. Moving parts on a model may be
+  implemented as separate models rather than articulable submodels, however. In
+  these instances, each part would be a child entity of the object containing
+  the part.</p>
+  <p>See the following topics for information about the Ownship entity and
+  animations:</p>
+  <ul>
+    <li><a href="Ownship.htm">Ownship</a></li>
+    <li><a href="Animations.htm">Animations</a></li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

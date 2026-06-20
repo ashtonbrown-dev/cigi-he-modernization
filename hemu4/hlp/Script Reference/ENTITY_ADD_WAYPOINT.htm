@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>ENTITY_ADD_WAYPOINT</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>ENTITY_ADD_WAYPOINT</h2>
+<blockquote>
+  <p>Adds a waypoint to the specified entity's waypoint list. The entity flies
+  to waypoints in the order in which they are added to the list.</p>
+  <h3>Syntax
+
+  </h3>
+
+  <blockquote>
+    <p>ENTITY_ADD_WAYPOINT&nbsp;&nbsp;&nbsp; <i>entity_id&nbsp;&nbsp;&nbsp;
+    waypoint_id&nbsp;&nbsp;&nbsp; airspeed&nbsp;&nbsp;&nbsp; accel&nbsp;&nbsp;&nbsp;
+    turn_rate</i></p>
+  </blockquote>
+
+  <h3>Parameters
+  </h3>
+  <blockquote>
+      <p><i>entity_id</i></p>
+      <blockquote>
+      <p>An integer specifying the entity.</p>
+      </blockquote>
+      <p><i>waypoint_id</i></p>
+      <blockquote>
+        <p>An integer specifying the waypoint. This ID is assigned by the <i>ID</i>
+        parameter of either the&nbsp;<a href="WAYPOINT_ADD_ABSOLUTE.htm">WAYPOINT_ADD_ABSOLUTE</a>
+        or the <a href="WAYPOINT_ADD_RELATIVE.htm">WAYPOINT_ADD_RELATIVE</a>
+        command.</p>
+      </blockquote>
+      <p><i>airspeed</i></p>
+      <blockquote>
+        <p>The desired airspeed (knots) of the entity after it passes through
+        the waypoint.</p>
+      </blockquote>
+      <p><i>accel</i></p>
+      <blockquote>
+        <p>The acceleration (m/s<sup>2</sup>) of the entity as it reaches the
+        airspeed indicated by the <i>airspeed</i> parameter.</p>
+      </blockquote>
+      <p><i>turn_rate</i></p>
+      <blockquote>
+        <p>The turn rate (degrees per second) of the entity as it adjusts its yaw
+        to the next waypoint.</p>
+      </blockquote>
+    </blockquote>
+  <h3>Remarks</h3>
+    <blockquote>
+      <p>Waypoints can be created with either the&nbsp;<a href="WAYPOINT_ADD_ABSOLUTE.htm">WAYPOINT_ADD_ABSOLUTE</a>
+      or the <a href="WAYPOINT_ADD_RELATIVE.htm">WAYPOINT_ADD_RELATIVE</a>
+      command.</p>
+    </blockquote>
+  </blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

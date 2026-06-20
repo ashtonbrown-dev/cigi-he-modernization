@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Introducing the CIGI Host Emulator</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h1>Introducing
+the CIGI Host Emulator</h1>
+<p><img border="0" src="images/Logos/TST%20Logo.bmp" align="right" width="238" height="134"></p>
+<blockquote>
+  <p>The CIGI Host Emulator is a high-performance PC-based Image Generator (IG)
+  test utility.&nbsp; It conforms to the Common Image Generator Interface (CIGI)
+  3 protocol standard and is designed to be used for development and testing of all CIGI-compliant IGs.</p>
+  <p>The CIGI Host Emulator leverages off of the strengths of the Windows-Intel
+  platform.&nbsp; These include low system cost, a familiar, user-friendly
+  graphical interface, an abundance of compatible systems, and
+  extensive hardware support, among others.</p>
+  <p>The CIGI Host Emulator software is made up of the following components:</p>
+  <ul>
+    <li>The Graphical User Interface (GUI) module is a standard Windows
+      application.&nbsp; It runs as a Win32 process and acts as the sole point
+      of control for the user.</li>
+    <li>The driver is
+      responsible for updating the position and orientation of each entity,
+      communicating with the IG, and managing mission function data requests and
+      responses.&nbsp; The driver is invisible to the user and is loaded and
+      unloaded automatically by the GUI process.
+      The driver for the Windows version runs as a high-priority Win32 process. The driver for the real-time
+      version of the CIGI Host Emulator runs under the RTX real-time extension
+      for Windows (visit VenturCom, Inc.'s web site at <a href="http://www.vci.com">http://www.vci.com</a>
+      for more information).</li>
+    <li>Definition Files are text files that are used to configure the CIGI Host
+      Emulator and to define databases, views, entities,
+      components, etc.</li>
+  </ul>
+  <p>This document is divided into the following sections:</p>
+  <ul>
+    <li><a href="Installation.htm">Installation</a></li>
+    <li><a href="Configuration.htm">Configuration</a></li>
+    <li>Operation</li>
+    <li><a href="Script%20Reference/Script%20Reference.htm">Script Reference</a></li>
+    <li>CIGI 3 Interface Control Document</li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<Title>SYSTEM_COMPONENT_DATUM_UINT32</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="6605" endspan -->
+
+<h2>SYSTEM_COMPONENT_DATUM_UINT32</h2>
+<blockquote>
+  <p>Sets a user-defined datum of a system component as a 32-bit unsigned integer.</p>
+  <h3>Syntax
+
+  </h3>
+
+  <blockquote>
+    <p>SYSTEM_COMPONENT_DATUM_UINT32&nbsp;&nbsp;&nbsp; <i>component_id&nbsp;&nbsp;&nbsp; instance_id&nbsp;&nbsp;&nbsp; datum_id&nbsp;&nbsp;&nbsp;
+    value</i></p>
+  </blockquote>
+
+  <h3>Parameters
+  </h3>
+  <blockquote>
+      <p><i>component_id</i></p>
+      <blockquote>
+        <p>An integer that specifies the component.</p>
+      </blockquote>
+      <p><i>instance_id</i></p>
+		<blockquote>
+			<p>An integer that specifies the parent object of the component.</p>
+		</blockquote>
+      <p><i>datum_id</i></p>
+      <blockquote>
+        <p>An integer from 1 to 6 specifying the datum field that will receive
+        <i>value</i>.</p>
+      </blockquote>
+      <p><i>value</i></p>
+      <blockquote>
+        <p>A 32-bit unsigned integer.</p>
+      </blockquote>
+  </blockquote>
+  <h3>Remarks</h3>
+    <blockquote>
+      <p>The Host Emulator packages component data using Little-Endian byte 
+      order.</p>
+		<p>This command must be followed by a
+		<a href="SYSTEM_COMPONENT_END_UPDATE.htm">SYSTEM_COMPONENT_END_UPDATE</a> command.</p>
+    </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="11837" endspan -->
+
+</BODY>
+</HTML>

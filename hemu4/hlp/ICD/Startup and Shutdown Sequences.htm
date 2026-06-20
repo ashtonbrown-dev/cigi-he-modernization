@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Startup and Shutdown Sequences</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Startup and Shutdown Sequences</h2>
+<blockquote>
+  <p ALIGN="LEFT">CIGI supports four IG modes: Reset/Standby, Operate, Debug,
+  and Offline Maintenance.</p>
+  <p ALIGN="LEFT">While the IG initializes, it should disregard any CIGI
+  messages from the Host. During synchronous operation, the Host should
+  communicate with the IG only in response to a start-of-frame message. Because
+  this restriction is not enforced in asynchronous mode, the IG should disregard
+  any data received from the Host during this time.</p>
+  <p ALIGN="LEFT">During initialization, the IG may load a pre-configured
+  default database or test pattern. It may also pre-load entity models so that
+  they may be instanced quickly. The IG should allow a sufficient amount of time
+  to allow the display system and other components to come online. This time may
+  be configurable.</p>
+  <p ALIGN="LEFT">When the IG completes its initialization sequence, it should
+  go into a &quot;ready&quot; or &quot;standby&quot; state and begin sending
+  start-of-frame messages to the Host. The <i>IG Mode</i> parameter within each <b>Start
+  of Frame</b> packet (see Section 4.2.1) should be set to Reset/Standby to
+  indicate this operational mode. Upon sending its first start-of-frame message,
+  the IG should be considered mission-ready.</p>
+  <p ALIGN="LEFT">The IG will remain in Reset/Standby mode until it receives an <b>IG
+  Control</b> packet (see Section 4.1.1) from the Host in which the <i>IG&nbsp;Mode</i>
+  parameter is set to Operate. The Host should then wait for the IG to set a <b>Start
+  of Frame</b> packet’s <i>IG Mode</i> parameter set to Operate before sending
+  packets of any other type. The Host should continue to send <b>IG&nbsp;Control</b>
+  packets while the IG is in Reset/Standby mode; however, any other data sent
+  during this time will be ignored by the IG.</p>
+  <p ALIGN="LEFT">When the IG sends a <b>Start of Frame</b> packet in which the <i>IG
+  Mode</i> parameter is set to Operate, the Host can begin sending
+  initialization and/or mission data. Initialization data may include requests
+  to load a new database, modifications to the views, system component controls,
+  etc. Mission data may include entity states, non-system component controls,
+  mission function requests, etc.</p>
+  <p ALIGN="LEFT">After the operational training or gaming session terminates,
+  the Host should command the IG back to the Reset/Standby mode. The IG should
+  then revert to its initial mission-ready condition. All entity instances
+  should be removed from the scene; all in-process mission function requests
+  should be purged; and all views, non-entity components, and environmental and
+  weather conditions should be reset to their default states.</p>
+  <p>The Offline Maintenance mode can not be initiated through CIGI. This mode
+  is only supported in CIGI to the extent that the <i>IG Mode</i> parameter of
+  the <b>Start of Frame</b> packet can indicate this as being the current IG
+  state.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

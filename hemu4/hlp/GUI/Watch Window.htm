@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Watch Window</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator
+      2.1</b></font></i></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="37284" -->
+
+<h2>Watch Window</h2>
+<blockquote>
+  <p ALIGN="LEFT">The watch window pane of the Test window displays details of
+  the CIGI message exchange between the IG and Host. This window is shown below:</p>
+  <p align="center"><img border="0" src="images/Windows/Watch.jpg" width="685" height="343"></p>
+  <p>The contents of each CIGI message selected on the <a href="Filter%20Options%20Dialog.htm">Filter
+  Options</a> dialog is displayed as it is sent to or received from the IG. The
+  packets are arranged according to frame so that all IG-to-Host packets appear
+  next to the packets that appear in the corresponding Host-to-IG message.
+  Frames are differentiated by alternating background color. Packets
+  are listed in the order in which they appear in the message.</p>
+  <p>The window contains the following columns:</p>
+  <ul>
+    <li><b>dT</b></li>
+  </ul>
+  <blockquote>
+  <blockquote>
+    <p>This column displays the interval between consecutive IG Start of Frame
+    messages. This value is the time in milliseconds from the previous message.</p>
+    <p><b>Note:</b>  For the real-time version of the CIGI Host Emulator, the accuracy of this value depends upon the value of the <i>HAL
+    Timer Period</i> parameter set in the RTX Properties applet found in the
+    Windows Control Panel. Refer to the RTX 5.1 documentation for information on
+    configuring the RTX properties.</p>
+  </blockquote>
+  </blockquote>
+  <ul>
+    <li><b>Host Resp Time</b></li>
+  </ul>
+  <blockquote>
+  <blockquote>
+    <p>This column displays the number of milliseconds required by the CIGI Host
+    Emulator to respond to the IG Start of Frame message.</p>
+  </blockquote>
+  </blockquote>
+  <ul>
+    <li><b>IG-to-Host</b></li>
+  </ul>
+  <blockquote>
+  <blockquote>
+    <p>This column lists the packets contained within the IG Start of Frame
+    message for the given frame.</p>
+  </blockquote>
+  </blockquote>
+  <ul>
+    <li><b>Host-to-IG</b></li>
+  </ul>
+  <blockquote>
+  <blockquote>
+    <p>This column lists the packets contained within the host's response
+    message for the given frame.</p>
+  </blockquote>
+  </blockquote>
+  <p>The columns may be resized to display information that may extend beyond
+  the visible text.</p>
+  <p>To clear the contents of this window, click the <b>Clear</b> button on the <a href="Test%20Window.htm#Toolbar">Test
+  toolbar</a>.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<p class="copyright">Copyright © 2004 The Boeing Company</p>
+
+<!--webbot bot="Include" endspan i-checksum="8045" -->
+
+</BODY>
+</HTML>

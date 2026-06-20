@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Asynchronous Operation</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Asynchronous Operation</h2>
+<blockquote>
+  <p ALIGN="LEFT">During asynchronous operation, the Host sends data to the IG
+  at a predetermined rate. The message may occur in response to a system timer
+  or some other event within the Host. The IG may in turn send messages to the
+  Host containing IG status and mission function data; however, the interval
+  between host messages is determined by the host itself.</p>
+  <p ALIGN="LEFT">Meanwhile, the IG maintains its own frame rate, which is
+  typically bound by the vertical sync signal from the display system. During
+  each frame, the IG first checks its buffer for incoming CIGI messages. It then
+  updates the scene graph based on the contents of the CIGI message along with
+  any previously defined rates and trajectories, dynamic environmental
+  attributes, and other factors. Finally, the IG renders the scene.</p>
+  <p>Because the Host might send a message at any point during the IG’s frame,
+  positional and other state changes might not be applied until the beginning of
+  the <i>next</i> frame. This introduces a latency of up to almost one
+  additional frame, as shown in the figure below.</p>
+  <p align="center"><img border="0" src="Images/Figure3.gif" width="582" height="275"></p>
+  <p align="center"><b> Latencies Caused by Asynchronous Operation</b></p>
+  <p ALIGN="LEFT">In this example, the IG begins frame <i>n</i> at time <i>t<sub>n</sub></i>.
+  At some time during that frame, the IG receives a message from the Host.
+  Because the IG has already checked for incoming data, the message is not
+  actually read until the start of the next frame at time <i>t<sub>n</sub></i><sub>+1</sub>.
+  By this time, the data within the message is old by a margin of <i>L<sub>n</sub></i>
+  and will not be represented in the scene until at least <i>t<sub>n</sub></i><sub>+2</sub>,
+  bringing the total delay to <i>L<sub>n</sub></i> + <i>T<sub>n</sub></i><sub>+1</sub>.
+  This may cause a noticeable lag in the scene.</p>
+  <p ALIGN="LEFT">Note that latency <i>L<sub>n</sub></i><sub>+1</sub> is larger
+  than <i>L<sub>n</sub></i>. This &quot;creeping&quot; of the frame offset is a
+  common phenomenon that occurs when the Host and IG frame rates are not exactly
+  equal. Depending upon the direction of the creep, this will frequently cause
+  the IG to receive either zero or two Host-to-IG messages during a frame,
+  causing frame jitter.</p>
+  <p ALIGN="LEFT">To reduce the effects of lag and jitter, the IG may
+  extrapolate positional data each frame. The <b>IG&nbsp;Control</b> and <b>Start
+  of Frame</b> packets (see Sections 4.1.1 and 4.2.1, respectively) include a <i>Timestamp</i>
+  parameter that the IG can use when performing the extrapolation. This
+  parameter indicates the amount of time that has elapsed since some initial
+  reference time. By determining entities’ velocities and accelerations from
+  prior frames, or preferably from the <b>Rate Control</b> and <b>Trajectory
+  Definition</b> packets (see Sections 4.1.8 and 4.1.20), the IG can calculate
+  the probable positions of those entities during the current frame.</p>
+  <p>Because entities can be extremely dynamic, such extrapolations are prone to
+  error. Asynchronous operation, therefore, is recommended only in low-fidelity
+  applications or when synchronous operation is not possible.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

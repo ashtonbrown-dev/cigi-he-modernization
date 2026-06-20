@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Setting an Entity's Position</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator
+      2.1</b></font></i></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="37284" -->
+
+<h2> Setting an Entity's Position</h2>
+<blockquote>
+  <p>Every entity, whether it be a basic entity, special effect, or weather
+  phenomenon, may be positioned relative to its reference coordinate system. The
+  method for setting an entity's position depends on whether the
+  entity is attached to a parent.</p>
+  <b>Top-Level (unattached) Entities:</b>
+  <blockquote>
+    <p>For top-level entities (those entities whose <b> Parent</b>  field is
+    set to &quot;None&quot;), coordinates are specified in the <a href="CIGI%20ICD/Geodetic%20Coordinate%20System.htm">world
+    (Geodetic) coordinate system</a>. The position may be set by entering
+    the desired <b>Latitude</b>, <b>Longitude</b>, and <b>Altitude</b>
+    values.</p>
+    <p>The position may also be set by selecting an entity from the <b>Relative
+    to</b> list and specifying the <b>Bearing</b>, <b>Range</b>, and <b>Altitude</b>.
+    The <b>Latitude</b> and <b>Longitude</b> values will be automatically calculated.</p>
+    <p align="center"><img border="0" src="images/Windows/Entity%20Relative%20Position.jpg" width="583" height="190"></p>
+    <p align="center" class="caption">Setting the Position of a Top-Level
+    Entity</p>
+    <p align="left">Note that the <b>Bearing</b> field represents the angle <i>from</i>
+    the reference entity. In the example above, the entity would be 0.24 degrees
+    starboard to an observer sitting in the Ownship.</p>
+  </blockquote>
+  <b>Child Entites:</b>
+  <blockquote>
+    <p>For child entities, coordinates are specified in the parent's <a href="CIGI%20ICD/Entity%20Coordinate%20System.htm">body
+    coordinate system</a>. The position may be set by entering an offset
+    from the parent entity along the its X, Y, and Z axes. These correspond
+    to the <b>X Offset</b>, <b>Y Offset</b>, and <b>Z Offset</b> fields,
+    respectively.</p>
+    <p>If the parent entity is configured with <a href="Editing%20entities_def.htm#ATTACH_POINT">attach
+    points</a> in the <a href="Editing%20entities_def.htm">ENTITIES.DEF file</a>,
+    the attach points will be listed in the <b>Attach to</b> list. Selecting
+    an attach point will cause the <b>X Offset</b>, <b>Y Offset</b>, <b>Z
+    Offset</b>, <b>Heading</b>, <b>Pitch</b>, and <b>Roll</b> fields to be filled in automatically. Selecting
+    &quot;Arbitrary&quot; from the list will dissociate the entity from its
+    assigned attach point.</p>
+    <p>In the hypothetical example below, Entity 6 is attached to Entity 1's
+    centerline pylon. This point has been configured to be 1.5 meters directly
+    below the F-15C model's reference point.</p>
+    <p align="center"><img border="0" src="images/Windows/Child%20Attach%20to%20Centerline.jpg" width="583" height="190"></p>
+    <p align="center" class="caption">Setting the Position of a Child Entity</p>
+    <p align="left">Notice in the figure above that the attach point name is
+    followed by &quot;&lt;&lt; 6.&quot; This indicates that Entity 6 is attached
+    to this point. This is useful in determining what attach points are
+    available when attaching a child entity. Continuing the example, the figure
+    below shows that Entity 7 is attached to Entity 1's port wing (Entity 6 is
+    still attached to the port wing). The starboard wing pylon is unoccupied.</p>
+    <p align="center"><img border="0" src="images/Windows/Child%20Attach%20to%20Drop%20Down%20List.jpg" width="387" height="188"></p>
+    <p align="center" class="caption">Selecting a Free Attach Point</p>
+  </blockquote>
+  <h3>Related Topics:</h3>
+  <blockquote>
+    <p><a href="Entity%20Properties%20View.htm">Entity Properties View</a>; <a href="Special%20Effect%20Properties%20View.htm">Special Effect Properties View</a>;
+    <a href="Weather%20Properties%20View.htm">Weather Properties View</a>; <a href="Editing%20entities_def.htm">Editing ENTITIES.DEF</a></p>
+  </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<p class="copyright">Copyright © 2004 The Boeing Company</p>
+
+<!--webbot bot="Include" endspan i-checksum="8045" -->
+
+</BODY>
+</HTML>

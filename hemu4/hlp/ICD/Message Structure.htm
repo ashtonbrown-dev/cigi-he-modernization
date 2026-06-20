@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Message Structure</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Message Structure</h2>
+<blockquote>
+  <p ALIGN="LEFT">CIGI messages are comprised of one or more data packets.
+  During synchronous operation, there is exactly one IG-to-Host (SOF) message
+  and one Host-to-IG response message per frame.</p>
+  <p ALIGN="LEFT">The first two bytes of each packet are the packet header. The
+  first byte of this header contains an opcode that uniquely identifies the
+  packet type; the second byte contains the size in bytes of the packet. The
+  remainder of each packet contains data that pertain to that particular packet.
+  Note that all packet data that are used to uniquely identify an object on the
+  IG or Host (e.g., a moving model or a view) are contained within the first
+  eight bytes of each packet.</p>
+  <p ALIGN="LEFT">All 16-bit data begin on half-word (16-bit) boundaries. All
+  32-bit and 64-bit data begin on word (32-bit) and double-word (64-bit)
+  boundaries, respectively.</p>
+  <p ALIGN="LEFT">All packets must begin and end on 64-bit boundaries. Packets
+  will be padded as necessary so that the packet size will be an even multiple
+  of eight (8) bytes.</p>
+  <p ALIGN="LEFT">The first data packet in each message from the IG to the Host
+  must be a <b>Start of Frame</b> packet (see Section 4.2.1). The message may
+  also contain other IG-to-Host packets as listed in Table 1.</p>
+  <p ALIGN="LEFT">The first packet in each response message from the Host to the
+  IG must be an <b>IG Control</b> packet (see Section 4.1.1). Zero or more
+  Host-to-IG packets (see Table 1) may follow within the message.</p>
+  <p ALIGN="LEFT">Entities, regions, and other objects must be created before
+  they can be otherwise referenced. For example, if a <b>Component Control</b>
+  packet references an entity, that packet must follow the <b>Entity Control</b>
+  data packet<font SIZE="2" COLOR="#0000ff"> </font>in which the entity is
+  instantiated. If both packets occur in the same message, the <b>Entity Control</b>
+  packet must precede the <b>Component Control</b> packet.</p>
+  <p ALIGN="LEFT">Other than the requirements described above, no restrictions
+  are imposed on packet ordering.</p>
+  <p>To reduce the risk of overloading the IG computational frame, an attempt
+  should be made to minimize the amount of data contained in each message.
+  Therefore, unless a packet is mandatory (see Table 1), only those packets
+  containing new data should be contained within each message. For example, if
+  an entity’s position, orientation, or other attributes have not changed
+  since the previous frame, the Host should not send an <b>Entity Control</b>
+  packet.</p>
+  <p align="center">Table 1 – Data Packet Summary</p>
+  <table BORDER="1" CELLSPACING="1" BORDERCOLOR="#000080" CELLPADDING="3" WIDTH="90%">
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="2" COLOR="#ffffff">
+        <p ALIGN="CENTER">Opcode</font></b></td>
+      <td WIDTH="44%" VALIGN="TOP" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="2" COLOR="#ffffff">
+        <p ALIGN="LEFT">Data Packet Name</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="2" COLOR="#ffffff">
+        <p ALIGN="CENTER">Mandatory Each Frame</font></b></td>
+    </tr>
+    <tr>
+      <td VALIGN="TOP" COLSPAN="3"><b><font FACE="Arial" SIZE="3">
+        <p ALIGN="CENTER">Host to IG</font></b></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">1</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">IG Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">Yes</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">2</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Entity Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">3</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Conformal Clamped Entity Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">4</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Component Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">5</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Short Component Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">6</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Articulated Part Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">7</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Short Articulated Part Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">8</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Rate Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">9</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Celestial Sphere Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">10</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Atmosphere Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">11</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Environmental Region Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">12</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Weather Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">13</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Maritime Surface Conditions Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">14</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Wave Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">15</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Terrestrial Surface Conditions Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">16</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">View Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">17</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Sensor Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">18</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Motion Tracker Control</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">19</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Earth Reference Model Definition</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">20</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Trajectory Definition</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">21</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">View Definition</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">22</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Collision Detection Segment Definition</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">23</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Collision Detection Volume Definition</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">24</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">HAT/HOT Request</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">25</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Line of Sight Segment Request</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">26</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Line of Sight Vector Request</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">27</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Position Request</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">28</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Environmental Conditions Request</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td VALIGN="TOP" COLSPAN="3"><b><font FACE="Arial" SIZE="3">
+        <p ALIGN="CENTER">IG to Host</font></b></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">101</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Start of Frame</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">Yes</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">102</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">HAT/HOT Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">103</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">HAT/HOT Extended Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">104</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Line of Sight Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">105</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Line of Sight Extended Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">106</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Sensor Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">See Packet Description</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">107</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Sensor Extended Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">See Packet Description</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">108</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Position Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">109</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Weather Conditions Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">110</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Aerosol Concentration Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">111</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Maritime Surface Conditions Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">112</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Terrestrial Surface Conditions Response</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">113</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Collision Detection Segment Notification</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">114</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Collision Detection Volume Notification</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">115</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Animation Stop Notification</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">116</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Event Notification</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">117</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">Image Generator Message</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">No</font></td>
+    </tr>
+    <tr>
+      <td VALIGN="TOP" COLSPAN="3"><b><font FACE="Arial" SIZE="3">
+        <p ALIGN="CENTER">User-Defined Data Packets</font></b></td>
+    </tr>
+    <tr>
+      <td WIDTH="14%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="CENTER">201 – 255</font></td>
+      <td WIDTH="44%" VALIGN="TOP"><b><font FACE="Arial" SIZE="2">
+        <p ALIGN="LEFT">User-Defined Data Packets</font></b></td>
+      <td WIDTH="24%" VALIGN="TOP"><font FACE="Arial" SIZE="2">
+        <p ALIGN="JUSTIFY">Application-Dependent</font></td>
+    </tr>
+  </table>
+  <p align="left">&nbsp;</p>
+  <p align="left">Only a subset of these data packets are typically required in
+  any given message to describe data changes to the IG. Figure 9 shows a
+  hypothetical sequence of Host-to-IG messages. Note that each message begins
+  with an <b>IG&nbsp;Control</b> packet.</p>
+  <p align="center"><img border="0" src="Images/Figure9.gif" width="673" height="609"></p>
+  <p align="center">Figure 9 – Example of Message Exchange in Synchronous Mode</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

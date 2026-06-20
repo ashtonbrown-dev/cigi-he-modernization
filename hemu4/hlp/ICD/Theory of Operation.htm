@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Theory of Operation</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Theory of Operation</h2>
+<blockquote>
+  <p>The Common Image Generator Interface (CIGI) is a standardized interface
+  between a real-time simulator host and an image generator. CIGI is an open
+  interface offered to promote commonality in the visual simulation industry.</p>
+  <p>CIGI is a data packaging protocol and thus does not depend upon a specific
+  physical communications medium or transport protocol. Any suitable physical
+  medium may be used, including Ethernet, Token Ring, optical fiber, shared
+  memory, etc. The transport protocol(s) used should depend upon performance and
+  what is appropriate to the communications hardware. This document assumes the
+  use of the User Datagram Protocol (UDP) over Ethernet for ease of discussion.</p>
+  <p>The connection between the host computer, henceforth referred to as
+  &quot;Host,&quot; and the IG should be a dedicated bi-directional Ethernet
+  connection, as illustrated in the diagrams below. The connection may be
+  made using an Ethernet hub or switch, or using a single crossover cable (i.e.
+  a patch cable with the transmit and receive signals crossed).</p>
+  <p align="center"><img border="0" src="Images/Figure1.gif" width="582" height="133"></p>
+  <p align="center"> <font FACE="Arial"><b> Connection Using Ethernet
+  Hub/Switch</b></font></p>
+  <p align="center"><img border="0" src="Images/Figure2.gif" width="582" height="133"></p>
+  <p align="center"> <font FACE="Arial"><b> Connection Using Crossover
+  Cable</b></font></p>
+  <p>This section contains the following topics:</p>
+  <ul>
+    <li><a href="Message%20Protocol.htm">Message Protocol</a></li>
+    <li><a href="Data%20Packaging.htm">Data Packaging</a></li>
+    <li><a href="Startup%20and%20Shutdown%20Sequences.htm">Startup and Shutdown Sequences</a></li>
+    <li><a href="Control%20Abstraction.htm">Control Abstraction</a></li>
+    <li><a href="Interface%20Extensions.htm">Interface Extensions</a></li>
+    <li><a href="Version%20Compatibility.htm">Version Compatibility</a></li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

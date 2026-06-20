@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Perspective</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Perspective</h2>
+<blockquote>
+  <p>The viewing volume for a perspective projection is the frustum defined by
+  the near and far clipping planes and the sides of the viewport. The viewport
+  is an area on the view plane onto which objects within the view frustum are
+  projected. The viewport generally corresponds to the display or a window. CIGI
+  therefore assumes its size to be fixed. The following figure illustrates the
+  concept of perspective projection of a three-dimensional viewing volume onto a
+  two-dimensional viewport.</p>
+  <p align="center"><img border="0" src="Images/Figure11.gif" width="557" height="399"></p>
+  <p align="center"><b>Perspective Projections onto a Viewport</b></p>
+  <p ALIGN="LEFT">Because the size of the display (and thus the viewport) is
+  fixed, the dimensions of the view frustum are directly related to the position
+  of the eyepoint. By designing the view eyepoint to correspond to the observer’s
+  eye, a projection with an apparent one-to-one scale can be achieved.</p>
+  <p>The following diagram illustrates how a view is defined. Angle <i>&#945;</i>
+  is the left half-angle and angle <i>&#946;</i> is the right half-angle. Angles
+  <i>&#947;</i> and <i>&#948;</i> represent the top and bottom half-angles,
+  respectively. The viewing vector corresponds to the observer’s line of sight
+  and is perpendicular to the view plane.</p>
+  <p align="center"><img border="0" src="Images/Figure12.gif" width="605" height="289"></p>
+  <p align="center"><b>View Definition Half-Angles</b></p>
+  <p>A view may be defined so that the sizes of angles <i>&#945;</i> and <i>&#946;</i>,
+  and of angles <i>&#947;</i> and <i>&#948;</i>, are not equal. This produces an
+  oblique view such as the one shown below:</p>
+  <p align="center"><img border="0" src="Images/Figure13.gif" width="496" height="380"></p>
+  <p align="center"><b>Example of an Oblique Perspective View</b></p>
+  <p>The size of the view frustum can be set via the <b>View Definition</b>
+  packet.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

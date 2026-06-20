@@ -1,0 +1,477 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>IG Control</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>IG Control</h2>
+<blockquote>
+  <p ALIGN="LEFT">The <b>IG Control</b> packet is used to control the IG’s
+  operational mode, database loading, and timing correction. This must be the <i>first</i>
+  packet in each Host-to-IG message, and every Host-to-IG message must contain <i>exactly
+  one</i><b> IG Control</b> packet. If more than one is encountered during a
+  given frame, the resulting IG behavior is undefined.</p>
+  <p>If the IG uses regional terrain databases, the <b>IG Control</b> packet
+  allows the Host to control the loading of terrain. Each database is associated
+  with a number from 1 to 127. The Host will set the <i>Database Number</i>
+  parameter to the appropriate value to direct the IG to begin reading the
+  corresponding database into memory. An example is shown below:</p>
+  <p align="center"><img border="0" src="Images/Figure23.gif" width="512" height="432"></p>
+  <p align="center"><b>Database Loading Sequence in Synchronous Mode</b></p>
+  <p ALIGN="LEFT">The IG will indicate that the database is being loaded by
+  negating the value and placing it in the <i>Database Number</i> parameter of
+  the <b>Start of Frame</b> packet. The Host will then acknowledge this change
+  by setting the <i>Database Number</i> parameter of the <b>IG Control</b>
+  packet to zero (0). Because the IG’s resources may be devoted to disk I/O
+  and other functions, the Host should ideally send only <b>IG Control</b>
+  packets at this time.</p>
+  <p ALIGN="LEFT">After the IG receives the acknowledgement, it will signal the
+  completion of the database load by setting the <i>Database Number</i>
+  parameter of the <b>Start of Frame</b> packet to the positive database number.
+  The IG is now considered mission-ready and can receive mission data from the
+  Host.</p>
+  <p ALIGN="LEFT">Note that the IG will ignore the <i>Database Number</i>
+  parameter while in Reset/Standby mode.</p>
+  <p ALIGN="LEFT">When using a global database, the IG will set the <i>Database
+  Number</i> of the <b>Start of Frame</b> packet to zero (0). When the Host
+  detects a zero in this parameter, it should in turn set the <i>Database Number</i>
+  parameter of the <b>IG Control</b> packet to zero (0).</p>
+  <p>The contents of the <b>IG Control</b> packet are as follows:</p>
+  <p align="center"><img border="0" src="Images/Figure24.gif" width="608" height="107"></p>
+  <p align="center"><b>IG Control Packet Structure</b></p>
+  <p>The following table defines each parameter’s data type, units, and usage.
+  If a default value and/or reference datum are applicable for a parameter, or
+  if the domain differs from the range of values listed in <a href="Integral%20Types.htm">Integral Types</a>,
+  those values are also listed.</p>
+  <p align="center"><b>IG Control Parameter Definitions</b></p>
+  <div align="center">
+    <center>
+    <table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid navy 1.0pt;mso-padding-alt:0in 5.4pt 0in 5.4pt">
+      <thead>
+        <tr style="height:14.75pt">
+          <td width="343" style="width:257.4pt;border:solid navy 1.0pt;border-right:
+   solid white 1.0pt;background:navy;padding:0in 5.4pt 0in 5.4pt;height:14.75pt">
+            <p class="MsoNormal" style="page-break-after:avoid"><font color="#FFFFFF"><b>Parameter<o:p>
+            </o:p>
+            </b></font></p>
+          </td>
+          <td width="343" style="width:257.4pt;border:solid navy 1.0pt;border-left:none;
+   mso-border-left-alt:solid white 1.0pt;background:navy;padding:0in 5.4pt 0in 5.4pt;
+   height:14.75pt">
+            <p class="NormalBold" style="margin-bottom:0in;margin-bottom:.0001pt;
+   page-break-after:avoid;tab-stops:.5in"><span style="mso-bidi-font-weight:
+   bold"><font color="#FFFFFF"><b>Description<o:p>
+            </o:p>
+            </b></font></span></p>
+          </td>
+        </tr>
+      </thead>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Packet ID</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int8<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Value:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>1<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter identifies this data packet as
+          the <b>IG&nbsp;Control</b> packet. The value of this parameter must be
+          1.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Packet
+          Size</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int8<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Bytes<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Value:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>16<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter indicates the number of bytes in
+          this data packet. The value of this parameter must be 16.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>CIGI
+          Version</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int8<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Value:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>3<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter indicates the version of the
+          CIGI interface that is currently being used by the Host. The IG can
+          use this number to determine concurrency. The value of this parameter
+          must be 3.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Database
+          Number</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>int8<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="margin-bottom:0in;margin-bottom:.0001pt;
+  tab-stops:45.0pt 1.25in">Values:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>0<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>No load requested<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><span style="mso-tab-count:
+  1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>1 – 127<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp; </span>Identifies
+          desired database<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Default:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>0<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter is used to initiate a database
+          load on the IG. Setting this parameter to a non-zero value will cause
+          the IG to begin loading the database that corresponds to that value.
+          If the number corresponds to the current database, the database will
+          be reloaded.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">The IG will indicate that the database is being
+          loaded by negating the value and placing it in the <i>Database Number</i>
+          parameter of the <b>Start of Frame</b> packet. When the Host receives
+          this notification, it should set the <i>Database Number</i> parameter
+          of the <b>IG Control</b> packet to zero (0) to prevent continuous
+          reloading of the database on the IG.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">The IG will ignore this parameter while in
+          Reset/Standby mode.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">Refer to the <b>Start of Frame</b> topic for
+          more information.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>IG Mode</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned 2-bit field<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="margin-bottom:0in;margin-bottom:.0001pt;
+  tab-stops:45.0pt 1.25in">Values:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>0<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Reset/Standby<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="margin-bottom:0in;margin-bottom:.0001pt;
+  tab-stops:45.0pt 1.25in"><span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>1<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Operate<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><span style="mso-tab-count:
+  1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>2<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Debug<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Default:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>0<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter dictates the IG’s operational
+          mode.<span style="mso-spacerun: yes">&nbsp; </span>The Host can
+          initiate a mode change by setting this parameter to the desired mode.
+          When the IG completes the mode change, it will set the <i>IG Mode</i>
+          parameter in the <b>Start of Frame</b> packet accordingly. <o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">For information on each of the IG modes, refer
+          to the description of the <i>IG Mode</i> parameter of the <b>Start of
+          Frame</b> packet.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Timestamp
+          Valid</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>1-bit field<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="margin-bottom:0in;margin-bottom:.0001pt;
+  tab-stops:45.0pt 1.25in">Values:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>0<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Invalid<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><span style="mso-tab-count:
+  1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>1<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Valid<b><i><o:p>
+          </o:p>
+          </i></b></p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter indicates whether the <i>Timestamp</i>
+          parameter contains a valid value.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">Because the <i>Timestamp</i> parameter is
+          required for asynchronous operation, <i>Timestamp Valid</i> must be
+          set to Valid (1) in this mode.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Byte Swap</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int16<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="margin-bottom:0in;margin-bottom:.0001pt;
+  tab-stops:45.0pt 1.25in">Values:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;
+          </span>8000h<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>No byte swap (see note at right)<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><span style="mso-tab-count:
+  1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>80h<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>Byte swap<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter is used by the IG to determine
+          whether it needs to byte-swap incoming data. Refer to <!--[if supportFields]><span
+  style='mso-element:field-end'></span><![endif]-->
+          <a href="Byte%20Order.htm">Byte Order</a> for details on this
+          mechanism.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">Note: The Host <i>must</i> set this value to
+          8000h, or 32768.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Frame
+          Counter</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int32<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>N/A<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter contains a number that
+          identifying the frame. This number correlates the Host-to-IG message
+          to the preceding IG-to-Host message.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">During synchronous operation, when the Host
+          receives a start of frame message from the IG it should (after
+          byte-swapping, if necessary) extract the <i>Frame Counter</i> value
+          from the <b>Start of Frame</b> packet and place it into this parameter
+          before sending the response message. Refer to <a href="Synchronous%20Operation.htm">Synchronous Operation</a>
+          for details on message synchronization in this mode.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">During asynchronous operation, the Host should
+          increment this value each time it sends a message to the IG.<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in"><b><i>Timestamp</i><o:p>
+          </o:p>
+          </b></p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Type:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>unsigned int32<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText" style="tab-stops:45.0pt 1.25in">Units:<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>10 microseconds (<span style="mso-bidi-font-family:Arial">&#956;</span>s)<o:p>
+          </o:p>
+          </p>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p class="MsoBodyText">This parameter indicates the number of 10<span style="mso-bidi-font-family:Arial">&#956;</span>s
+          “ticks” since some initial reference time. This will enable the IG
+          to correct for latencies as described in the <!--[if supportFields]><span style='mso-element:field-begin'></span><span
+  style="mso-spacerun: yes"> </span>REF _Ref34190621 \r <span style='mso-element:
+  field-separator'></span><![endif]-->
+          <a href="Asynchronous%20Operation.htm">Asynchronous Operation</a>
+          topic.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">The 10<span style="mso-bidi-font-family:Arial">&#956;</span>s
+          unit allows the simulation to run for approximately 12 hours before a
+          timestamp rollover occurs. The IG software should contain logic to
+          detect and correct for rollover.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">The use of this parameter is required for
+          asynchronous operation.<o:p>
+          </o:p>
+          </p>
+          <p class="MsoBodyText">The use of this parameter is optional for
+          synchronous operation. If this parameter does not contain a valid
+          timestamp, the <i>Timestamp Valid</i> parameter should be set to zero
+          (0).<o:p>
+          </o:p>
+          </p>
+        </td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

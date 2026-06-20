@@ -1,0 +1,595 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Defining Entity Types</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h2>Editing ENTITIES.DEF</h2>
+<blockquote>
+  <p>The ENTITIES.DEF file specifies the properties of each entity type. A
+  typical entity definition is shown below. An example definition for a weather
+  entity may be found in the <a href="Defining%20Weather%20Entity%20Types.htm"> Defining Weather Entity Types</a> topic.</p>
+    <pre>entity
+{
+   name = &quot;F15-C&quot;;
+   type = 103;
+   class = fixedwing;</pre>
+    <pre>   alpha = 255;</pre>
+    <pre>   inherit_alpha = false;</pre>
+    <pre>   clamp_mode = none;</pre>
+    <pre>   anim_direction = forward;</pre>
+    <pre>   anim_loop = false;
+&nbsp;
+   // The ARTPART definition specifies the name, ID, and
+   // default position and orientation of an articulated part
+   // contained within a model.
+   artpart
+   {
+      name = &quot;Slats&quot;;
+      id = 11;</pre>
+    <pre>      position = 0, 0, 0;			// x, y, z</pre>
+    <pre>      position_enable = false, false, false;	// x, y, z</pre>
+    <pre>      rotation = 0, 1.5, 0;			// y, p, r</pre>
+    <pre>      rotation_enable = false, true, false;	// y, p, r
+   }
+&nbsp;
+   // The COMPONENT definition specifies the name, ID, and
+   // valid states for a discrete component contained within a
+   // model.
+   component
+   {
+      name = &quot;Speed Brake&quot;;
+      id = 1002;
+      def_state = 0;             // The default state
+      def_data1 = 100, INT32;    // 1st word is 32-bit integer = 100
+      def_data2 = 100, FLOAT;    // 2nd word is 32-bit float = 100.0
+      def_data3 = 123, INT64;    // 3rd &amp; 4th words 64-bit integer
+      def_data5 = 123.0, DOUBLE; // 5th &amp; 6th words 64-bit float
+      </pre>
+    <pre>      // def_data4 and def_data6 are not used in this case because</pre>
+    <pre>      // those words are used with def_data3 and def_data5,</pre>
+    <pre>      // respectively, to make 64-bit datatypes.
+&nbsp;
+      state
+      {
+         name = &quot;Down&quot;;
+         value = 0;
+      }
+&nbsp;
+      state
+      {
+         name = &quot;Up&quot;;
+         value = 1;
+      }
+   }
+&nbsp;
+   // The COLLISION_SEGMENT definition specifies the ID and endpoints
+   // of a segment to be automatically created for each instance of
+   // the given type.
+   collision_segment
+   {</pre>
+    <pre>      name = &quot;Fore-to-Aft&quot;;
+      id = 0;
+      enabled = true;</pre>
+    <pre>      start = 5.2, 0, 0;	// x, y, z offset</pre>
+    <pre>      end = -10.3, 0, 0;	// x, y, z offset
+      material_mask = FFFF;
+   }
+&nbsp;
+   // The COLLISION_VOLUME definition specifies the ID and bounds
+   // of a volume to be automatically created for each instance of
+   // the given type.
+   collision_volume
+   {</pre>
+    <pre>      name = &quot;Fuselage&quot;;
+      id = 0;</pre>
+    <pre>      type = CUBOID;
+      enabled = true;
+      position = -8, 0, 0;	// x, y, z offset</pre>
+    <pre>      rotation = 0, 0, 0;	// yaw, pitch, roll
+      width = 10.0;
+      height = 5.0;
+      depth = 15.5;
+   }
+&nbsp;
+   // The ATTACH_POINT definition is used by the Host Emulator
+   // to specify attach points for child entities such as missiles.
+   attach_point
+   {
+      id = 0;
+      name = &quot;Left Wing Pylon&quot;;</pre>
+    <pre>      position = 5, 0, 2;</pre>
+    <pre>      rotation = 0, 0, 0;</pre>
+    <pre>   }
+}</pre>
+  <p><b>ENTITY</b> definitions specify the following parameters:</p>
+  <ul>
+    <li><a name="NAME"><i>NAME</i></a>
+      <blockquote>
+        A descriptive, user-recognizable name for the entity type. This name is
+        used to populate lists and combo boxes in the CIGI Host Emulator's
+        graphical user interface. The name must be enclosed within double
+        quotation marks (&quot;…&quot;).
+      </blockquote>
+    <li><a name="TYPE"><i>TYPE</i></a>
+      <blockquote>
+        An integer that uniquely identifies the entity type. This value must
+        correspond to the entity model type value specified in the IG configuration.
+      </blockquote>
+    <li><a name="CLASS"><i>CLASS</i></a>
+      <blockquote>
+        <p style="margin-top: 0; margin-bottom: 0">A general class designation
+        for the entity type. This parameter indicates
+        to the CIGI Host Emulator which physics model, icon, and units of measure
+        to use for each entity. Supported subtypes are specified by
+        the following keywords:
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;
+        <table border="1" width="698">
+          <tbody>
+            <tr>
+              <td width="126" bgColor="#0038a8"><b><font color="#ffffff">Keyword</font></b></td>
+              <td bgColor="#0038a8" align="center"><b><font color="#ffffff">Icon</font></b></td>
+              <td width="499" bgColor="#0038a8"><b><font color="#ffffff">Description</font></b></td>
+            </tr>
+            <tr>
+              <td width="126">FIXEDWING</td>
+              <td align="center"><img border="0" src="images/Icons/FixedWing.bmp" width="16" height="16"></td>
+              <td width="499">Fast-jet and other airplanes</td>
+            </tr>
+            <tr>
+              <td width="126">ROTORCRAFT</td>
+              <td align="center"><img border="0" src="images/Icons/Rotorcraft.bmp" width="16" height="16"></td>
+              <td width="499">Helicopters</td>
+            </tr>
+            <tr>
+              <td width="126">WATERCRAFT</td>
+              <td align="center"><img border="0" src="images/Icons/Ship.bmp" width="16" height="16"></td>
+              <td width="499">Ships and boats</td>
+            </tr>
+            <tr>
+              <td width="126">GROUNDMIL</td>
+              <td align="center"><img border="0" src="images/Icons/GroundMil.bmp" width="16" height="16"></td>
+              <td width="499">Tanks, transports, and other military ground
+                vehicles</td>
+            </tr>
+            <tr>
+              <td width="126">GROUNDCIV</td>
+              <td align="center"><img border="0" src="images/Icons/GroundCiv.bmp" width="16" height="16"></td>
+              <td width="499">Automobiles and other civilian vehicles</td>
+            </tr>
+            <tr>
+              <td width="126">MISSILE</td>
+              <td align="center"><img border="0" src="images/Icons/Missile.bmp" width="16" height="16"></td>
+              <td width="499">Missiles</td>
+            </tr>
+            <tr>
+              <td width="126">BOMB</td>
+              <td align="center"><img border="0" src="images/Icons/Bomb.bmp" width="16" height="16"></td>
+              <td width="499">Bombs</td>
+            </tr>
+            <tr>
+              <td width="126">CULTURE</td>
+              <td align="center"><img border="0" src="images/Icons/Culture.bmp" width="16" height="16"></td>
+              <td width="499">Buildings, bridges, and other cultural models</td>
+            </tr>
+            <tr>
+              <td width="126">WEATHER</td>
+              <td align="center"><img border="0" src="images/Icons/Cloud.bmp" width="16" height="16"></td>
+              <td width="499">Entity-based weather phenomena</td>
+            </tr>
+            <tr>
+              <td width="126">ANIMATION</td>
+              <td align="center"><img border="0" src="images/Icons/Animation.bmp" width="16" height="16"></td>
+              <td width="499">Animation entities</td>
+            </tr>
+            <tr>
+              <td width="126">TESTPATTERN</td>
+              <td align="center"><img border="0" src="images/Icons/TestPattern.bmp" width="16" height="16"></td>
+              <td width="499">Video test pattern models</td>
+            </tr>
+            <tr>
+              <td width="126">GENERIC</td>
+              <td align="center"><img border="0" src="images/Icons/GenericEntity.bmp" width="16" height="16"></td>
+              <td width="499">All other entities</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>These keywords must <i>not</i> be enclosed within quotes.</p>
+      </blockquote>
+    <li><a name="ALPHA"><i>ALPHA</i></a>
+      <blockquote>
+          An integer from 0 through 255 specifying the default alpha value for
+          the entity type.
+      </blockquote>
+    <li><a name="INHERIT_ALPHA"><i>INHERIT_ALPHA</i></a>
+      <blockquote>
+        A Boolean value that specifies whether entities of this type inherit the
+        alpha values of their parents by
+            default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+      </blockquote>
+    <li><a name="CLAMP_MODE"><i>CLAMP_MODE</i></a>
+      <blockquote>
+        The default clamp mode for the entity type. The mode may be represented
+        by one of the following keywords:
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;
+        <table border="1">
+          <tbody>
+            <tr>
+              <td width="30%" bgColor="#0038a8"><b><font color="#ffffff">Keyword</font></b></td>
+              <td width="70%" bgColor="#0038a8"><b><font color="#ffffff">Description</font></b></td>
+            </tr>
+            <tr>
+              <td width="30%">NONE</td>
+              <td width="70%">The entity is not clamped</td>
+            </tr>
+            <tr>
+              <td width="30%">CONFORMAL</td>
+              <td width="70%">The entity is clamped and its pitch and roll
+                conform to the terrain</td>
+            </tr>
+            <tr>
+              <td width="30%">NONCONFORMAL</td>
+              <td width="70%">The entity is clamped and its pitch and roll are
+                independent of the terrain</td>
+            </tr>
+          </tbody>
+        </table>
+      </blockquote>
+    <li><a name="ANIMATION_DIRECTION"><i>ANIMATION_DIRECTION</i></a>
+      <blockquote>
+        A value that specifies the default direction of an animation.&nbsp; Acceptable values are
+        FORWARD or BACKWARD. This parameter is used only when <i><a href="#CLASS">CLASS</a></i><a href="#CLASS">
+        </a>is set to ANIMATION.
+      </blockquote>
+    <li><a name="ANIMATION_LOOP"><i>ANIMATION_LOOP</i></a>
+      <blockquote>
+        A&nbsp; Boolean value that specifies whether entities of this type
+        inherit the alpha values of their parents by
+            default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0. This parameter is used only when <i><a href="#CLASS">CLASS</a></i><a href="#CLASS">
+        </a>is set to ANIMATION.
+      </blockquote>
+    <li><i><a name="ARTICULATED_PART">ARTPART</a></i>
+      <blockquote>
+        Defines an articulated part for entities of the given type.&nbsp; An
+        articulated part is a part of a model, such as an aircraft's landing
+        gear, that can be moved and/or rotated relative to the rest of the
+        model.&nbsp; Articulated part definitions may contain the following
+        parameters:
+        <ul>
+          <li><i>NAME</i>
+            <blockquote>
+              A descriptive, user-recognizable name for the part. The name must
+              be enclosed within double quotation marks (&quot;…&quot;).
+            </blockquote>
+          <li><i>ID</i>
+            <blockquote>
+              An integer that uniquely identifies the part for a given entity.
+              This number must match the IG's configuration so that it can
+              associate this ID with a named transformation node within the
+              entity's model.
+            </blockquote>
+          <li><i>OFFSET</i>
+            <blockquote>
+              A set of three floating-point numbers, separated by commas, that
+              specify the default X, Y, and Z positions of the part,
+              respectively.&nbsp; These positions are specified in meters from
+              the entity's reference point.
+            </blockquote>
+          <li><i>ROTATION</i>
+            <blockquote>
+              A set of three floating-point numbers, separated by commas, that
+              specify the default yaw, pitch, and roll of the part,
+              respectively.&nbsp; The orientation is specified in degrees
+              relative to the entity's body coordinate system.
+            </blockquote>
+          </li>
+        </ul>
+      </blockquote>
+    <li><i><a name="DISCRETE_COMPONENT">COMPONENT</a></i>
+      <blockquote>
+        Defines a component for entities of the given type.&nbsp; Discrete component definitions specify the following
+        parameters:
+      </blockquote>
+      <ul>
+        <li><i>NAME</i>
+          <blockquote>
+            A descriptive, user-recognizable name for the component. The name
+            must be enclosed within double quotation marks (&quot;…&quot;).
+          </blockquote>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the component for entities of a given
+            type.
+          </blockquote>
+        <li><i>DEF_STATE</i>
+          <blockquote>
+            An integer that specifies the default discrete state for the component.
+          </blockquote>
+        <li><i>DEF_DATA1</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type for the 1st user-defined datum of the component. The
+            value may be an integer or floating-point value. The datum type is
+            specified by one of the following keywords:
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;
+        <table border="1">
+          <tbody>
+            <tr>
+              <td width="30%" bgColor="#0038a8"><b><font color="#ffffff">Keyword</font></b></td>
+              <td width="70%" bgColor="#0038a8"><b><font color="#ffffff">Description</font></b></td>
+            </tr>
+            <tr>
+              <td width="30%">INT32</td>
+              <td width="70%">32-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT32</td>
+              <td width="70%">32-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">INT64</td>
+              <td width="70%">64-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT64</td>
+              <td width="70%">64-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">FLOAT</td>
+              <td width="70%">32-bit single-precision floating-point number</td>
+            </tr>
+            <tr>
+              <td width="30%">DOUBLE</td>
+              <td width="70%">64-bit double-precision floating-point number</td>
+            </tr>
+          </tbody>
+        </table>
+          </blockquote>
+          <blockquote>
+            The value must precede the datum type and the two must be separated
+            by a comma.
+          </blockquote>
+        <li><i>DEF_DATA2</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 2nd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA3</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 3rd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA2</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA4</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 4th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA3</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA5</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 5th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA4</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA6</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 6th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>; however, the datum type must
+            be a 32-bit type. This parameter pair is not used if <i>DEF_DATA5</i>
+            specifies a 64-bit data type.
+          </blockquote>
+        <li><i>STATE</i>
+          <blockquote>
+            Defines a discrete state for the component. Each <i>STATE</i> block
+            must include the following parameters:
+            <ul>
+              <li><i>NAME</i>
+                <blockquote>
+                  A descriptive, user-recognizable name for the component state.
+                  The name must be enclosed within double quotation marks
+                  (&quot;…&quot;).
+                </blockquote>
+              <li><i>VALUE</i>
+                <blockquote>
+                  An integer that specifies the value associated with the state.
+                </blockquote>
+              </li>
+            </ul>
+            <p>The parameters of the <i>STATE</i> block must be contained within
+            a single set of brackets ({...}).</p>
+          </blockquote>
+        </li>
+      </ul>
+      <p>Note:&nbsp;&nbsp;&nbsp; Articulated parts are independent of discrete
+      components.&nbsp; In other words, an entity of a given type may have an
+      articulated part and a discrete component with the same ID.&nbsp; Further,
+      an entity of a different type may also have an articulated part and/or a
+      discrete component with that ID.</p>
+    <li><i><a name="COLLISION_SEGMENT">COLLISION_SEGMENT</a></i>
+      <blockquote>
+        Defines a collision detection segment for entities of the given type.
+        A collision detection segment is used by the IG to determine when a
+        collision occurs with another entity or a part of the environment. Collision detection segment
+        definitions may contain the following parameters:
+      </blockquote>
+      <ul>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the collision detection segment
+            for a given entity.
+          </blockquote>
+        <li><i>ENABLED</i>
+          <blockquote>
+            A Boolean value that specifies whether the segment is enabled by
+            default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+          </blockquote>
+        <li><i>START</i>
+          <blockquote>
+            A set of three floating-point numbers, separated by commas, that
+            specify the relative X, Y, and Z positions of the origination
+            endpoint, respectively. These positions are specified in meters from
+            the entity's reference point.
+          </blockquote>
+        <li><i>END</i>
+          <blockquote>
+            A set of three floating-point numbers, separated by commas, that
+            specify the relative X, Y, and Z positions of the destination
+            endpoint, respectively. These positions are specified in meters from
+            the entity's reference point.
+          </blockquote>
+        <li><i>MATERIAL_MASK</i>
+          <blockquote>
+            A 32-bit hexadecimal value that is used to exclude certain types of
+            surfaces from the intersection calculations. Refer to the <i>CIGI
+            Interface Control Document</i> or the <a href="CIGI%203.1.pdf">CIGI 3 Interface Control Document</a>
+            for more information.
+          </blockquote>
+        </li>
+      </ul>
+    <li><i><a name="COLLISION_VOLUME">COLLISION_VOLUME</a></i>
+      <blockquote>
+        Defines a collision detection volume for entities of the given
+        type. A collision detection volume is used by the IG to determine when a
+        collision occurs with another collision volume. Collision detection volume
+        definitions specify the following parameters:
+      </blockquote>
+      <ul>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the collision detection swept
+            volume for a given entity.
+          </blockquote>
+        <li><i>TYPE</i>
+          <blockquote>
+            <p>The shape of the volume. Valid keywords are SPHERE and CUBOID.</p>
+          </blockquote>
+        </li>
+        <li><i>ENABLED</i>
+          <blockquote>
+            A Boolean value that specifies whether the volume is enabled by
+            default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+          </blockquote>
+        <li><i>CENTER</i>
+          <blockquote>
+            A set of three floating-point numbers, separated by commas, that
+            specify the relative X, Y, and Z positions of the center of the
+            volume, respectively. These positions are specified in meters from
+            the entity's reference point.
+          </blockquote>
+        <li><i>DEPTH</i>
+          <blockquote>
+            A floating-point number that specifies the size of the volume, in
+            meters, along the entity's X axis. This parameter used only when <i>TYPE</i>
+            is set to CUBOID.
+          </blockquote>
+        <li><i>WIDTH</i>
+          <blockquote>
+            A floating-point number that specifies the size of the volume, in
+            meters, along the entity's Y axis. This parameter used only when <i>TYPE</i>
+            is set to CUBOID.
+          </blockquote>
+        <li><i>HEIGHT</i>
+          <blockquote>
+            A floating-point number that specifies the size of the volume, in
+            meters, along the entity's Z axis. This parameter used only when <i>TYPE</i>
+            is set to CUBOID.
+          </blockquote>
+        </li>
+        <li><i>RADIUS</i>
+          <blockquote>
+            <p>A floating-point number that specifies the radius of the volume
+            in meters. This parameter is used only when <i>TYPE</i> is set to
+            SPHERE.</p>
+          </blockquote>
+        </li>
+      </ul>
+      <p>Note:&nbsp;&nbsp;&nbsp; Collision detection segments are independent of
+      collision detection volumes.&nbsp; In other words, an entity of a given
+      type may have a segment and a volume with the same ID.&nbsp; Further, an
+      entity of a different type may also have an segment and/or a volume with
+      that ID.</p>
+    <li><a name="ATTACH_POINT"><i>ATTACH_POINT</i></a>
+      <blockquote>
+        Defines an attach point for entities of the given type. An attach
+        point defines a &quot;slot,&quot; or relative position and orientation,
+        at which child entities may be easily attached. Attach point definitions
+        specify the following parameters:
+      </blockquote>
+      <ul>
+        <li><i>NAME</i>
+          <blockquote>
+            A descriptive, user-recognizable name for the point. The name must
+            be enclosed within double quotation marks (&quot;…&quot;).
+          </blockquote>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the attach point for a given
+            entity.
+          </blockquote>
+        <li><i>OFFSET</i>
+          <blockquote>
+            A set of three floating-point numbers, separated by commas, that
+            specify the relative X, Y, and Z positions of the attached child,
+            respectively. These positions are specified in meters from the
+            parent entity's reference point.
+          </blockquote>
+        <li><i>ROTATION</i>
+          <blockquote>
+            A set of three floating-point numbers, separated by commas, that
+            specify the relative yaw, pitch, and roll of the attached child,
+            respectively. The orientation is specified in degrees relative to
+            the parent entity's body coordinate system.
+          </blockquote>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

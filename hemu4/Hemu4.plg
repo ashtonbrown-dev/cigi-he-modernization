@@ -1,0 +1,1189 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Hemu4 - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP49.bat" with contents
+[
+@echo off
+copy "hlp\Hemu4.cnt" .\Release
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP49.bat"
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4A.bat" with contents
+[
+@echo off
+echo. >"hlp\Hemu4.hm"
+echo // Commands (ID_* and IDM_*) >>"hlp\Hemu4.hm"
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 resource.h >>"hlp\Hemu4.hm"
+echo. >>"hlp\Hemu4.hm"
+echo // Prompts (IDP_*) >>"hlp\Hemu4.hm"
+makehm IDP_,HIDP_,0x30000 resource.h >>"hlp\Hemu4.hm"
+echo. >>"hlp\Hemu4.hm"
+echo // Resources (IDR_*) >>"hlp\Hemu4.hm"
+makehm IDR_,HIDR_,0x20000 resource.h >>"hlp\Hemu4.hm"
+echo. >>"hlp\Hemu4.hm"
+echo // Dialogs (IDD_*) >>"hlp\Hemu4.hm"
+makehm IDD_,HIDD_,0x20000 resource.h >>"hlp\Hemu4.hm"
+echo. >>"hlp\Hemu4.hm"
+echo // Frame Controls (IDW_*) >>"hlp\Hemu4.hm"
+makehm IDW_,HIDW_,0x50000 resource.h >>"hlp\Hemu4.hm"
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4A.bat"
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4B.bat" with contents
+[
+@echo off
+start /wait hcw /C /E /M "hlp\Hemu4.hpj"
+if errorlevel 1 goto :Error
+if not exist "hlp\Hemu4.hlp" goto :Error
+copy "hlp\Hemu4.hlp" .\Release
+goto :done
+:Error
+echo hlp\Hemu4.hpj(1) : error:
+type "hlp\Hemu4.log"
+:done
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4B.bat"
+Creating command line "rc.exe /l 0x409 /fo"Release/Hemu4.res" /d "NDEBUG" /d "_AFXDLL" "C:\Lance\cigi.3\Hemu4\Hemu4.rc"" 
+Copying contents file...
+        1 file(s) copied.
+Making help include file...
+Making help file...
+        1 file(s) copied.
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4C.tmp" with contents
+[
+/nologo /MD /W3 /GX /Zi /O2 /I ".." /I "..\coordcnv" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "CIGI_LITTLE_ENDIAN" /D "NO_RTX" /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Lance\cigi.3\Hemu4\AddEntityDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ArtPart.cpp"
+"C:\Lance\cigi.3\Hemu4\AtmosphericCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\AttachPoint.cpp"
+"C:\Lance\cigi.3\Hemu4\BaseCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\BaseStateView.cpp"
+"C:\Lance\cigi.3\cas.cpp"
+"C:\Lance\cigi.3\Hemu4\CelSphereCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\CheckList.cpp"
+"C:\Lance\cigi.3\cigi3.cpp"
+"C:\Lance\cigi.3\Hemu4\CigiEvent.cpp"
+"C:\Lance\cigi.3\Hemu4\CigiView.cpp"
+"C:\Lance\cigi.3\Hemu4\CollisionSeg.cpp"
+"C:\Lance\cigi.3\Hemu4\CollisionVol.cpp"
+"C:\Lance\cigi.3\ComboBoxVariant.cpp"
+"C:\Lance\cigi.3\common.cpp"
+"C:\Lance\cigi.3\Hemu4\Component.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTempl.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplArtPart.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplAttachPoint.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplCollisionSeg.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplCollisionVol.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplComponent.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplDatabase.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplEntity.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplGlobalEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplInternal.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplView.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplViewGroup.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplWeather.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigWnd.cpp"
+"C:\Lance\cigi.3\coordcnv\coordcnv.c"
+"C:\Lance\cigi.3\Hemu4\DataManager.cpp"
+"C:\Lance\cigi.3\Hemu4\DBDialogBar.cpp"
+"C:\Lance\cigi.3\Hemu4\DebugTrace.cpp"
+"C:\Lance\cigi.3\DirDialog.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigBase.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigEntities.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigTerrain.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigViews.cpp"
+"C:\Lance\cigi.3\Hemu4\EditKbd.cpp"
+"C:\Lance\cigi.3\Hemu4\Entity.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityArtPartPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityCollDetPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityHATPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityLOSPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityMissilePropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityWeatherPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EnvTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterIncomingDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterOutgoingDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterPacketsDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FlyDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\GlobalEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\globals.cpp"
+"C:\Lance\cigi.3\Hemu4\GroundStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\Hat.cpp"
+"C:\Lance\cigi.3\Hemu4\Hemu4.cpp"
+"C:\Lance\cigi.3\Hemu4\HemuDoc.cpp"
+"C:\Lance\cigi.3\hemumsg.cpp"
+"C:\Lance\cigi.3\Hemu4\HemuView.cpp"
+"C:\Lance\cigi.3\Hemu4\HistoryGraph.cpp"
+"C:\Lance\cigi.3\Hemu4\IDManager.cpp"
+"C:\Lance\cigi.3\Hemu4\JoyWnd.cpp"
+"C:\Lance\cigi.3\Hemu4\ListCtrlCustDraw.cpp"
+"C:\Lance\cigi.3\Hemu4\Los.cpp"
+"C:\Lance\cigi.3\Hemu4\MainFrm.cpp"
+"C:\Lance\cigi.3\Hemu4\MessageView.cpp"
+"C:\Lance\cigi.3\Hemu4\NoMWComboBox.cpp"
+"C:\Lance\cigi.3\Hemu4\NoMWComboBoxEx.cpp"
+"C:\Lance\cigi.3\Hemu4\ObjectStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ObjectTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\OutputView.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgArtpartControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgAtmosphereControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCCEntityControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCdSegmentDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCdVolumeDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCelestialSphereControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgComponentControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEntityControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEnvConditionsReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEnvRegionControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgERMDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgHatHotReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgIGControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgLosSegmentReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgLosVectorReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgMaritimeCondControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgMotionTrackerControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgPositionReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgRateControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgSensorControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgShortArtpartControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgShortComponentControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgTerrestrialCondControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgTrajectoryDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgViewControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgViewDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgWaveControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgWeatherControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketHandlers.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketViewListCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketWatchView.cpp"
+"C:\Lance\cigi.3\Hemu4\RadioList.cpp"
+"C:\Lance\cigi.3\Hemu4\RecPlaybackDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\RegionStateView.cpp"
+"C:\Lance\cigi.3\regutils.cpp"
+"C:\Lance\cigi.3\RTXCompatibility.cpp"
+"C:\Lance\cigi.3\RTXSharedBufferQ.cpp"
+"C:\Lance\cigi.3\Hemu4\Script.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptHandlers.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptHandlersComponents.cpp"
+"C:\Lance\cigi.3\Hemu4\SeaStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\SetupDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\SheetTabCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\SituationDispCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\SituationView.cpp"
+"C:\Lance\cigi.3\Hemu4\SkyStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainCondition.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainDB.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\TimingHistoryDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\TranspStatic.cpp"
+"C:\Lance\cigi.3\Hemu4\TreeCtrlPassMsgs.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewFrustumPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroup.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroupCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroupStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\Wave.cpp"
+"C:\Lance\cigi.3\Hemu4\Waypoint.cpp"
+"C:\Lance\cigi.3\Hemu4\Weather.cpp"
+"C:\Lance\cigi.3\Hemu4\WeatherCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\WeatherStateView.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4C.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4D.tmp" with contents
+[
+/nologo /MD /W3 /GX /Zi /O2 /I ".." /I "..\coordcnv" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "CIGI_LITTLE_ENDIAN" /D "NO_RTX" /Fp"Release/Hemu4.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Lance\cigi.3\Hemu4\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4D.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4E.tmp" with contents
+[
+dinput8.lib dxguid.lib htmlhelp.lib winmm.lib dbghelp.lib /nologo /subsystem:windows /incremental:no /pdb:"Release/Hemu4.pdb" /debug /machine:I386 /out:"Release/Hemu4.exe" /libpath:"c:\apis\ccu" 
+.\Release\AddEntityDlg.obj
+.\Release\ArtPart.obj
+.\Release\AtmosphericCompPropPage.obj
+.\Release\AttachPoint.obj
+.\Release\BaseCompPropPage.obj
+.\Release\BaseStateView.obj
+.\Release\cas.obj
+.\Release\CelSphereCompPropPage.obj
+.\Release\CheckList.obj
+.\Release\cigi3.obj
+.\Release\CigiEvent.obj
+.\Release\CigiView.obj
+.\Release\CollisionSeg.obj
+.\Release\CollisionVol.obj
+.\Release\ComboBoxVariant.obj
+.\Release\common.obj
+.\Release\Component.obj
+.\Release\ConfigDlg.obj
+.\Release\ConfigTempl.obj
+.\Release\ConfigTemplArtPart.obj
+.\Release\ConfigTemplAttachPoint.obj
+.\Release\ConfigTemplCollisionSeg.obj
+.\Release\ConfigTemplCollisionVol.obj
+.\Release\ConfigTemplComponent.obj
+.\Release\ConfigTemplDatabase.obj
+.\Release\ConfigTemplEntity.obj
+.\Release\ConfigTemplGlobalEnv.obj
+.\Release\ConfigTemplInternal.obj
+.\Release\ConfigTemplView.obj
+.\Release\ConfigTemplViewGroup.obj
+.\Release\ConfigTemplWeather.obj
+.\Release\ConfigWnd.obj
+.\Release\coordcnv.obj
+.\Release\DataManager.obj
+.\Release\DBDialogBar.obj
+.\Release\DebugTrace.obj
+.\Release\DirDialog.obj
+.\Release\DlgConfigBase.obj
+.\Release\DlgConfigEntities.obj
+.\Release\DlgConfigEnv.obj
+.\Release\DlgConfigTerrain.obj
+.\Release\DlgConfigViews.obj
+.\Release\EditKbd.obj
+.\Release\Entity.obj
+.\Release\EntityArtPartPropPage.obj
+.\Release\EntityCollDetPropPage.obj
+.\Release\EntityCompPropPage.obj
+.\Release\EntityHATPropPage.obj
+.\Release\EntityLOSPropPage.obj
+.\Release\EntityMissilePropPage.obj
+.\Release\EntityStateView.obj
+.\Release\EntityTreeView.obj
+.\Release\EntityWeatherPropPage.obj
+.\Release\EnvTreeView.obj
+.\Release\FilterIncomingDlg.obj
+.\Release\FilterOutgoingDlg.obj
+.\Release\FilterPacketsDlg.obj
+.\Release\FlyDlg.obj
+.\Release\GlobalEnv.obj
+.\Release\globals.obj
+.\Release\GroundStateView.obj
+.\Release\Hat.obj
+.\Release\Hemu4.obj
+.\Release\HemuDoc.obj
+.\Release\hemumsg.obj
+.\Release\HemuView.obj
+.\Release\HistoryGraph.obj
+.\Release\IDManager.obj
+.\Release\JoyWnd.obj
+.\Release\ListCtrlCustDraw.obj
+.\Release\Los.obj
+.\Release\MainFrm.obj
+.\Release\MessageView.obj
+.\Release\NoMWComboBox.obj
+.\Release\NoMWComboBoxEx.obj
+.\Release\ObjectStateView.obj
+.\Release\ObjectTreeView.obj
+.\Release\OutputView.obj
+.\Release\PacketDlgArtpartControl.obj
+.\Release\PacketDlgAtmosphereControl.obj
+.\Release\PacketDlgCCEntityControl.obj
+.\Release\PacketDlgCdSegmentDef.obj
+.\Release\PacketDlgCdVolumeDef.obj
+.\Release\PacketDlgCelestialSphereControl.obj
+.\Release\PacketDlgComponentControl.obj
+.\Release\PacketDlgEntityControl.obj
+.\Release\PacketDlgEnvConditionsReq.obj
+.\Release\PacketDlgEnvRegionControl.obj
+.\Release\PacketDlgERMDef.obj
+.\Release\PacketDlgHatHotReq.obj
+.\Release\PacketDlgIGControl.obj
+.\Release\PacketDlgLosSegmentReq.obj
+.\Release\PacketDlgLosVectorReq.obj
+.\Release\PacketDlgMaritimeCondControl.obj
+.\Release\PacketDlgMotionTrackerControl.obj
+.\Release\PacketDlgPositionReq.obj
+.\Release\PacketDlgRateControl.obj
+.\Release\PacketDlgSensorControl.obj
+.\Release\PacketDlgShortArtpartControl.obj
+.\Release\PacketDlgShortComponentControl.obj
+.\Release\PacketDlgTerrestrialCondControl.obj
+.\Release\PacketDlgTrajectoryDef.obj
+.\Release\PacketDlgViewControl.obj
+.\Release\PacketDlgViewDef.obj
+.\Release\PacketDlgWaveControl.obj
+.\Release\PacketDlgWeatherControl.obj
+.\Release\PacketHandlers.obj
+.\Release\PacketViewListCtrl.obj
+.\Release\PacketWatchView.obj
+.\Release\RadioList.obj
+.\Release\RecPlaybackDlg.obj
+.\Release\RegionStateView.obj
+.\Release\regutils.obj
+.\Release\RTXCompatibility.obj
+.\Release\RTXSharedBufferQ.obj
+.\Release\Script.obj
+.\Release\ScriptDlg.obj
+.\Release\ScriptHandlers.obj
+.\Release\ScriptHandlersComponents.obj
+.\Release\SeaStateView.obj
+.\Release\SetupDlg.obj
+.\Release\SheetTabCtrl.obj
+.\Release\SituationDispCtrl.obj
+.\Release\SituationView.obj
+.\Release\SkyStateView.obj
+.\Release\StdAfx.obj
+.\Release\TerrainCompPropPage.obj
+.\Release\TerrainCondition.obj
+.\Release\TerrainDB.obj
+.\Release\TerrainStateView.obj
+.\Release\TimingHistoryDlg.obj
+.\Release\TranspStatic.obj
+.\Release\TreeCtrlPassMsgs.obj
+.\Release\ViewCompPropPage.obj
+.\Release\ViewFrustumPropPage.obj
+.\Release\ViewGroup.obj
+.\Release\ViewGroupCompPropPage.obj
+.\Release\ViewGroupStateView.obj
+.\Release\ViewStateView.obj
+.\Release\ViewTreeView.obj
+.\Release\Wave.obj
+.\Release\Waypoint.obj
+.\Release\Weather.obj
+.\Release\WeatherCompPropPage.obj
+.\Release\WeatherStateView.obj
+.\Release\Hemu4.res
+]
+Creating command line "link.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP4E.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+AddEntityDlg.cpp
+ArtPart.cpp
+AtmosphericCompPropPage.cpp
+AttachPoint.cpp
+BaseCompPropPage.cpp
+BaseStateView.cpp
+cas.cpp
+CelSphereCompPropPage.cpp
+CheckList.cpp
+cigi3.cpp
+C:\Lance\cigi.3\cigi3.cpp(4014) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+C:\Lance\cigi.3\cigi3.cpp(4093) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+CigiEvent.cpp
+CigiView.cpp
+CollisionSeg.cpp
+CollisionVol.cpp
+ComboBoxVariant.cpp
+common.cpp
+Component.cpp
+ConfigDlg.cpp
+ConfigTempl.cpp
+ConfigTemplArtPart.cpp
+Generating Code...
+Compiling...
+ConfigTemplAttachPoint.cpp
+ConfigTemplCollisionSeg.cpp
+ConfigTemplCollisionVol.cpp
+ConfigTemplComponent.cpp
+ConfigTemplDatabase.cpp
+ConfigTemplEntity.cpp
+ConfigTemplGlobalEnv.cpp
+ConfigTemplInternal.cpp
+ConfigTemplView.cpp
+ConfigTemplViewGroup.cpp
+ConfigTemplWeather.cpp
+ConfigWnd.cpp
+Generating Code...
+Compiling...
+coordcnv.c
+Generating Code...
+Compiling...
+DataManager.cpp
+DBDialogBar.cpp
+DebugTrace.cpp
+DirDialog.cpp
+DlgConfigBase.cpp
+DlgConfigEntities.cpp
+DlgConfigEnv.cpp
+DlgConfigTerrain.cpp
+DlgConfigViews.cpp
+EditKbd.cpp
+Entity.cpp
+EntityArtPartPropPage.cpp
+EntityCollDetPropPage.cpp
+EntityCompPropPage.cpp
+EntityHATPropPage.cpp
+EntityLOSPropPage.cpp
+EntityMissilePropPage.cpp
+EntityStateView.cpp
+EntityTreeView.cpp
+EntityWeatherPropPage.cpp
+Generating Code...
+Compiling...
+EnvTreeView.cpp
+FilterIncomingDlg.cpp
+FilterOutgoingDlg.cpp
+FilterPacketsDlg.cpp
+FlyDlg.cpp
+GlobalEnv.cpp
+globals.cpp
+GroundStateView.cpp
+Hat.cpp
+Hemu4.cpp
+HemuDoc.cpp
+hemumsg.cpp
+HemuView.cpp
+HistoryGraph.cpp
+IDManager.cpp
+JoyWnd.cpp
+ListCtrlCustDraw.cpp
+Los.cpp
+MainFrm.cpp
+MessageView.cpp
+Generating Code...
+Compiling...
+NoMWComboBox.cpp
+NoMWComboBoxEx.cpp
+ObjectStateView.cpp
+ObjectTreeView.cpp
+OutputView.cpp
+PacketDlgArtpartControl.cpp
+PacketDlgAtmosphereControl.cpp
+PacketDlgCCEntityControl.cpp
+PacketDlgCdSegmentDef.cpp
+PacketDlgCdVolumeDef.cpp
+PacketDlgCelestialSphereControl.cpp
+PacketDlgComponentControl.cpp
+PacketDlgEntityControl.cpp
+PacketDlgEnvConditionsReq.cpp
+PacketDlgEnvRegionControl.cpp
+PacketDlgERMDef.cpp
+PacketDlgHatHotReq.cpp
+PacketDlgIGControl.cpp
+PacketDlgLosSegmentReq.cpp
+PacketDlgLosVectorReq.cpp
+Generating Code...
+Compiling...
+PacketDlgMaritimeCondControl.cpp
+PacketDlgMotionTrackerControl.cpp
+PacketDlgPositionReq.cpp
+PacketDlgRateControl.cpp
+PacketDlgSensorControl.cpp
+PacketDlgShortArtpartControl.cpp
+PacketDlgShortComponentControl.cpp
+PacketDlgTerrestrialCondControl.cpp
+PacketDlgTrajectoryDef.cpp
+PacketDlgViewControl.cpp
+PacketDlgViewDef.cpp
+PacketDlgWaveControl.cpp
+PacketDlgWeatherControl.cpp
+PacketHandlers.cpp
+PacketViewListCtrl.cpp
+PacketWatchView.cpp
+RadioList.cpp
+RecPlaybackDlg.cpp
+RegionStateView.cpp
+regutils.cpp
+Generating Code...
+Compiling...
+RTXCompatibility.cpp
+RTXSharedBufferQ.cpp
+Script.cpp
+ScriptDlg.cpp
+ScriptHandlers.cpp
+ScriptHandlersComponents.cpp
+SeaStateView.cpp
+SetupDlg.cpp
+SheetTabCtrl.cpp
+SituationDispCtrl.cpp
+SituationView.cpp
+SkyStateView.cpp
+TerrainCompPropPage.cpp
+TerrainCondition.cpp
+TerrainDB.cpp
+TerrainStateView.cpp
+TimingHistoryDlg.cpp
+TranspStatic.cpp
+TreeCtrlPassMsgs.cpp
+ViewCompPropPage.cpp
+Generating Code...
+Compiling...
+ViewFrustumPropPage.cpp
+ViewGroup.cpp
+ViewGroupCompPropPage.cpp
+ViewGroupStateView.cpp
+ViewStateView.cpp
+ViewTreeView.cpp
+Wave.cpp
+Waypoint.cpp
+Weather.cpp
+WeatherCompPropPage.cpp
+WeatherStateView.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+Hemu4.exe - 0 error(s), 2 warning(s)
+<h3>
+--------------------Configuration: Hemu4 - Win32 Realtime Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP50.bat" with contents
+[
+@echo off
+copy "hlp\Hemu4.cnt" .\Realtime_Release
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP50.bat"
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP51.bat" with contents
+[
+@echo off
+echo. >"hlp\Hemu4RT.hm"
+echo // Commands (ID_* and IDM_*) >>"hlp\Hemu4RT.hm"
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 resource.h >>"hlp\Hemu4RT.hm"
+echo. >>"hlp\Hemu4RT.hm"
+echo // Prompts (IDP_*) >>"hlp\Hemu4RT.hm"
+makehm IDP_,HIDP_,0x30000 resource.h >>"hlp\Hemu4RT.hm"
+echo. >>"hlp\Hemu4RT.hm"
+echo // Resources (IDR_*) >>"hlp\Hemu4RT.hm"
+makehm IDR_,HIDR_,0x20000 resource.h >>"hlp\Hemu4RT.hm"
+echo. >>"hlp\Hemu4RT.hm"
+echo // Dialogs (IDD_*) >>"hlp\Hemu4RT.hm"
+makehm IDD_,HIDD_,0x20000 resource.h >>"hlp\Hemu4RT.hm"
+echo. >>"hlp\Hemu4RT.hm"
+echo // Frame Controls (IDW_*) >>"hlp\Hemu4RT.hm"
+makehm IDW_,HIDW_,0x50000 resource.h >>"hlp\Hemu4RT.hm"
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP51.bat"
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP52.bat" with contents
+[
+@echo off
+start /wait hcw /C /E /M "hlp\Hemu4.hpj"
+if errorlevel 1 goto :Error
+if not exist "hlp\Hemu4.hlp" goto :Error
+copy "hlp\Hemu4.hlp" .\Realtime_Release
+goto :done
+:Error
+echo hlp\Hemu4.hpj(1) : error:
+type "hlp\Hemu4.log"
+:done
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP52.bat"
+Creating command line "rc.exe /l 0x409 /fo"Realtime_Release/Hemu4.res" /d "NDEBUG" /d "_AFXDLL" "C:\Lance\cigi.3\Hemu4\Hemu4.rc"" 
+Copying contents file...
+        1 file(s) copied.
+Making help include file...
+Making help file...
+        1 file(s) copied.
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP53.tmp" with contents
+[
+/nologo /MD /W3 /GX /Zi /O2 /I ".." /I "..\coordcnv" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "CIGI_LITTLE_ENDIAN" /Fo"Realtime_Release/" /Fd"Realtime_Release/" /FD /c 
+"C:\Lance\cigi.3\Hemu4\AddEntityDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ArtPart.cpp"
+"C:\Lance\cigi.3\Hemu4\AtmosphericCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\AttachPoint.cpp"
+"C:\Lance\cigi.3\Hemu4\BaseCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\BaseStateView.cpp"
+"C:\Lance\cigi.3\cas.cpp"
+"C:\Lance\cigi.3\Hemu4\CelSphereCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\CheckList.cpp"
+"C:\Lance\cigi.3\cigi3.cpp"
+"C:\Lance\cigi.3\Hemu4\CigiEvent.cpp"
+"C:\Lance\cigi.3\Hemu4\CigiView.cpp"
+"C:\Lance\cigi.3\Hemu4\CollisionSeg.cpp"
+"C:\Lance\cigi.3\Hemu4\CollisionVol.cpp"
+"C:\Lance\cigi.3\ComboBoxVariant.cpp"
+"C:\Lance\cigi.3\common.cpp"
+"C:\Lance\cigi.3\Hemu4\Component.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTempl.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplArtPart.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplAttachPoint.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplCollisionSeg.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplCollisionVol.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplComponent.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplDatabase.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplEntity.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplGlobalEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplInternal.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplView.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplViewGroup.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigTemplWeather.cpp"
+"C:\Lance\cigi.3\Hemu4\ConfigWnd.cpp"
+"C:\Lance\cigi.3\coordcnv\coordcnv.c"
+"C:\Lance\cigi.3\Hemu4\DataManager.cpp"
+"C:\Lance\cigi.3\Hemu4\DBDialogBar.cpp"
+"C:\Lance\cigi.3\Hemu4\DebugTrace.cpp"
+"C:\Lance\cigi.3\DirDialog.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigBase.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigEntities.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigTerrain.cpp"
+"C:\Lance\cigi.3\Hemu4\DlgConfigViews.cpp"
+"C:\Lance\cigi.3\Hemu4\EditKbd.cpp"
+"C:\Lance\cigi.3\Hemu4\Entity.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityArtPartPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityCollDetPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityHATPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityLOSPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityMissilePropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\EntityWeatherPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\EnvTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterIncomingDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterOutgoingDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FilterPacketsDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\FlyDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\GlobalEnv.cpp"
+"C:\Lance\cigi.3\Hemu4\globals.cpp"
+"C:\Lance\cigi.3\Hemu4\GroundStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\Hat.cpp"
+"C:\Lance\cigi.3\Hemu4\Hemu4.cpp"
+"C:\Lance\cigi.3\Hemu4\HemuDoc.cpp"
+"C:\Lance\cigi.3\hemumsg.cpp"
+"C:\Lance\cigi.3\Hemu4\HemuView.cpp"
+"C:\Lance\cigi.3\Hemu4\HistoryGraph.cpp"
+"C:\Lance\cigi.3\Hemu4\IDManager.cpp"
+"C:\Lance\cigi.3\Hemu4\JoyWnd.cpp"
+"C:\Lance\cigi.3\Hemu4\ListCtrlCustDraw.cpp"
+"C:\Lance\cigi.3\Hemu4\Los.cpp"
+"C:\Lance\cigi.3\Hemu4\MainFrm.cpp"
+"C:\Lance\cigi.3\Hemu4\MessageView.cpp"
+"C:\Lance\cigi.3\Hemu4\NoMWComboBox.cpp"
+"C:\Lance\cigi.3\Hemu4\NoMWComboBoxEx.cpp"
+"C:\Lance\cigi.3\Hemu4\ObjectStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ObjectTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\OutputView.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgArtpartControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgAtmosphereControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCCEntityControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCdSegmentDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCdVolumeDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgCelestialSphereControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgComponentControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEntityControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEnvConditionsReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgEnvRegionControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgERMDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgHatHotReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgIGControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgLosSegmentReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgLosVectorReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgMaritimeCondControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgMotionTrackerControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgPositionReq.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgRateControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgSensorControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgShortArtpartControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgShortComponentControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgTerrestrialCondControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgTrajectoryDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgViewControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgViewDef.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgWaveControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketDlgWeatherControl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketHandlers.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketViewListCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\PacketWatchView.cpp"
+"C:\Lance\cigi.3\Hemu4\RadioList.cpp"
+"C:\Lance\cigi.3\Hemu4\RecPlaybackDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\RegionStateView.cpp"
+"C:\Lance\cigi.3\regutils.cpp"
+"C:\Lance\cigi.3\RTXCompatibility.cpp"
+"C:\Lance\cigi.3\RTXSharedBufferQ.cpp"
+"C:\Lance\cigi.3\Hemu4\Script.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptHandlers.cpp"
+"C:\Lance\cigi.3\Hemu4\ScriptHandlersComponents.cpp"
+"C:\Lance\cigi.3\Hemu4\SeaStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\SetupDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\SheetTabCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\SituationDispCtrl.cpp"
+"C:\Lance\cigi.3\Hemu4\SituationView.cpp"
+"C:\Lance\cigi.3\Hemu4\SkyStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainCondition.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainDB.cpp"
+"C:\Lance\cigi.3\Hemu4\TerrainStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\TimingHistoryDlg.cpp"
+"C:\Lance\cigi.3\Hemu4\TranspStatic.cpp"
+"C:\Lance\cigi.3\Hemu4\TreeCtrlPassMsgs.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewFrustumPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroup.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroupCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewGroupStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewStateView.cpp"
+"C:\Lance\cigi.3\Hemu4\ViewTreeView.cpp"
+"C:\Lance\cigi.3\Hemu4\Wave.cpp"
+"C:\Lance\cigi.3\Hemu4\Waypoint.cpp"
+"C:\Lance\cigi.3\Hemu4\Weather.cpp"
+"C:\Lance\cigi.3\Hemu4\WeatherCompPropPage.cpp"
+"C:\Lance\cigi.3\Hemu4\WeatherStateView.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP53.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP54.tmp" with contents
+[
+/nologo /MD /W3 /GX /Zi /O2 /I ".." /I "..\coordcnv" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "CIGI_LITTLE_ENDIAN" /Fp"Realtime_Release/Hemu4.pch" /Yc"stdafx.h" /Fo"Realtime_Release/" /Fd"Realtime_Release/" /FD /c 
+"C:\Lance\cigi.3\Hemu4\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP54.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP55.tmp" with contents
+[
+rtapi_w32.lib dbghelp.lib dinput8.lib dxguid.lib htmlhelp.lib winmm.lib /nologo /subsystem:windows /incremental:no /pdb:"Realtime_Release/Hemu4RT.pdb" /map:"Realtime_Release/Hemu4RT.map" /debug /machine:I386 /out:"Realtime_Release/Hemu4RT.exe" /libpath:"c:\apis\ccu" 
+.\Realtime_Release\AddEntityDlg.obj
+.\Realtime_Release\ArtPart.obj
+.\Realtime_Release\AtmosphericCompPropPage.obj
+.\Realtime_Release\AttachPoint.obj
+.\Realtime_Release\BaseCompPropPage.obj
+.\Realtime_Release\BaseStateView.obj
+.\Realtime_Release\cas.obj
+.\Realtime_Release\CelSphereCompPropPage.obj
+.\Realtime_Release\CheckList.obj
+.\Realtime_Release\cigi3.obj
+.\Realtime_Release\CigiEvent.obj
+.\Realtime_Release\CigiView.obj
+.\Realtime_Release\CollisionSeg.obj
+.\Realtime_Release\CollisionVol.obj
+.\Realtime_Release\ComboBoxVariant.obj
+.\Realtime_Release\common.obj
+.\Realtime_Release\Component.obj
+.\Realtime_Release\ConfigDlg.obj
+.\Realtime_Release\ConfigTempl.obj
+.\Realtime_Release\ConfigTemplArtPart.obj
+.\Realtime_Release\ConfigTemplAttachPoint.obj
+.\Realtime_Release\ConfigTemplCollisionSeg.obj
+.\Realtime_Release\ConfigTemplCollisionVol.obj
+.\Realtime_Release\ConfigTemplComponent.obj
+.\Realtime_Release\ConfigTemplDatabase.obj
+.\Realtime_Release\ConfigTemplEntity.obj
+.\Realtime_Release\ConfigTemplGlobalEnv.obj
+.\Realtime_Release\ConfigTemplInternal.obj
+.\Realtime_Release\ConfigTemplView.obj
+.\Realtime_Release\ConfigTemplViewGroup.obj
+.\Realtime_Release\ConfigTemplWeather.obj
+.\Realtime_Release\ConfigWnd.obj
+.\Realtime_Release\coordcnv.obj
+.\Realtime_Release\DataManager.obj
+.\Realtime_Release\DBDialogBar.obj
+.\Realtime_Release\DebugTrace.obj
+.\Realtime_Release\DirDialog.obj
+.\Realtime_Release\DlgConfigBase.obj
+.\Realtime_Release\DlgConfigEntities.obj
+.\Realtime_Release\DlgConfigEnv.obj
+.\Realtime_Release\DlgConfigTerrain.obj
+.\Realtime_Release\DlgConfigViews.obj
+.\Realtime_Release\EditKbd.obj
+.\Realtime_Release\Entity.obj
+.\Realtime_Release\EntityArtPartPropPage.obj
+.\Realtime_Release\EntityCollDetPropPage.obj
+.\Realtime_Release\EntityCompPropPage.obj
+.\Realtime_Release\EntityHATPropPage.obj
+.\Realtime_Release\EntityLOSPropPage.obj
+.\Realtime_Release\EntityMissilePropPage.obj
+.\Realtime_Release\EntityStateView.obj
+.\Realtime_Release\EntityTreeView.obj
+.\Realtime_Release\EntityWeatherPropPage.obj
+.\Realtime_Release\EnvTreeView.obj
+.\Realtime_Release\FilterIncomingDlg.obj
+.\Realtime_Release\FilterOutgoingDlg.obj
+.\Realtime_Release\FilterPacketsDlg.obj
+.\Realtime_Release\FlyDlg.obj
+.\Realtime_Release\GlobalEnv.obj
+.\Realtime_Release\globals.obj
+.\Realtime_Release\GroundStateView.obj
+.\Realtime_Release\Hat.obj
+.\Realtime_Release\Hemu4.obj
+.\Realtime_Release\HemuDoc.obj
+.\Realtime_Release\hemumsg.obj
+.\Realtime_Release\HemuView.obj
+.\Realtime_Release\HistoryGraph.obj
+.\Realtime_Release\IDManager.obj
+.\Realtime_Release\JoyWnd.obj
+.\Realtime_Release\ListCtrlCustDraw.obj
+.\Realtime_Release\Los.obj
+.\Realtime_Release\MainFrm.obj
+.\Realtime_Release\MessageView.obj
+.\Realtime_Release\NoMWComboBox.obj
+.\Realtime_Release\NoMWComboBoxEx.obj
+.\Realtime_Release\ObjectStateView.obj
+.\Realtime_Release\ObjectTreeView.obj
+.\Realtime_Release\OutputView.obj
+.\Realtime_Release\PacketDlgArtpartControl.obj
+.\Realtime_Release\PacketDlgAtmosphereControl.obj
+.\Realtime_Release\PacketDlgCCEntityControl.obj
+.\Realtime_Release\PacketDlgCdSegmentDef.obj
+.\Realtime_Release\PacketDlgCdVolumeDef.obj
+.\Realtime_Release\PacketDlgCelestialSphereControl.obj
+.\Realtime_Release\PacketDlgComponentControl.obj
+.\Realtime_Release\PacketDlgEntityControl.obj
+.\Realtime_Release\PacketDlgEnvConditionsReq.obj
+.\Realtime_Release\PacketDlgEnvRegionControl.obj
+.\Realtime_Release\PacketDlgERMDef.obj
+.\Realtime_Release\PacketDlgHatHotReq.obj
+.\Realtime_Release\PacketDlgIGControl.obj
+.\Realtime_Release\PacketDlgLosSegmentReq.obj
+.\Realtime_Release\PacketDlgLosVectorReq.obj
+.\Realtime_Release\PacketDlgMaritimeCondControl.obj
+.\Realtime_Release\PacketDlgMotionTrackerControl.obj
+.\Realtime_Release\PacketDlgPositionReq.obj
+.\Realtime_Release\PacketDlgRateControl.obj
+.\Realtime_Release\PacketDlgSensorControl.obj
+.\Realtime_Release\PacketDlgShortArtpartControl.obj
+.\Realtime_Release\PacketDlgShortComponentControl.obj
+.\Realtime_Release\PacketDlgTerrestrialCondControl.obj
+.\Realtime_Release\PacketDlgTrajectoryDef.obj
+.\Realtime_Release\PacketDlgViewControl.obj
+.\Realtime_Release\PacketDlgViewDef.obj
+.\Realtime_Release\PacketDlgWaveControl.obj
+.\Realtime_Release\PacketDlgWeatherControl.obj
+.\Realtime_Release\PacketHandlers.obj
+.\Realtime_Release\PacketViewListCtrl.obj
+.\Realtime_Release\PacketWatchView.obj
+.\Realtime_Release\RadioList.obj
+.\Realtime_Release\RecPlaybackDlg.obj
+.\Realtime_Release\RegionStateView.obj
+.\Realtime_Release\regutils.obj
+.\Realtime_Release\RTXCompatibility.obj
+.\Realtime_Release\RTXSharedBufferQ.obj
+.\Realtime_Release\Script.obj
+.\Realtime_Release\ScriptDlg.obj
+.\Realtime_Release\ScriptHandlers.obj
+.\Realtime_Release\ScriptHandlersComponents.obj
+.\Realtime_Release\SeaStateView.obj
+.\Realtime_Release\SetupDlg.obj
+.\Realtime_Release\SheetTabCtrl.obj
+.\Realtime_Release\SituationDispCtrl.obj
+.\Realtime_Release\SituationView.obj
+.\Realtime_Release\SkyStateView.obj
+.\Realtime_Release\StdAfx.obj
+.\Realtime_Release\TerrainCompPropPage.obj
+.\Realtime_Release\TerrainCondition.obj
+.\Realtime_Release\TerrainDB.obj
+.\Realtime_Release\TerrainStateView.obj
+.\Realtime_Release\TimingHistoryDlg.obj
+.\Realtime_Release\TranspStatic.obj
+.\Realtime_Release\TreeCtrlPassMsgs.obj
+.\Realtime_Release\ViewCompPropPage.obj
+.\Realtime_Release\ViewFrustumPropPage.obj
+.\Realtime_Release\ViewGroup.obj
+.\Realtime_Release\ViewGroupCompPropPage.obj
+.\Realtime_Release\ViewGroupStateView.obj
+.\Realtime_Release\ViewStateView.obj
+.\Realtime_Release\ViewTreeView.obj
+.\Realtime_Release\Wave.obj
+.\Realtime_Release\Waypoint.obj
+.\Realtime_Release\Weather.obj
+.\Realtime_Release\WeatherCompPropPage.obj
+.\Realtime_Release\WeatherStateView.obj
+.\Realtime_Release\Hemu4.res
+]
+Creating command line "link.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP55.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+AddEntityDlg.cpp
+ArtPart.cpp
+AtmosphericCompPropPage.cpp
+AttachPoint.cpp
+BaseCompPropPage.cpp
+BaseStateView.cpp
+cas.cpp
+CelSphereCompPropPage.cpp
+CheckList.cpp
+cigi3.cpp
+C:\Lance\cigi.3\cigi3.cpp(4014) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+C:\Lance\cigi.3\cigi3.cpp(4093) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+CigiEvent.cpp
+CigiView.cpp
+CollisionSeg.cpp
+CollisionVol.cpp
+ComboBoxVariant.cpp
+common.cpp
+Component.cpp
+ConfigDlg.cpp
+ConfigTempl.cpp
+ConfigTemplArtPart.cpp
+Generating Code...
+Compiling...
+ConfigTemplAttachPoint.cpp
+ConfigTemplCollisionSeg.cpp
+ConfigTemplCollisionVol.cpp
+ConfigTemplComponent.cpp
+ConfigTemplDatabase.cpp
+ConfigTemplEntity.cpp
+ConfigTemplGlobalEnv.cpp
+ConfigTemplInternal.cpp
+ConfigTemplView.cpp
+ConfigTemplViewGroup.cpp
+ConfigTemplWeather.cpp
+ConfigWnd.cpp
+Generating Code...
+Compiling...
+coordcnv.c
+Generating Code...
+Compiling...
+DataManager.cpp
+DBDialogBar.cpp
+DebugTrace.cpp
+DirDialog.cpp
+DlgConfigBase.cpp
+DlgConfigEntities.cpp
+DlgConfigEnv.cpp
+DlgConfigTerrain.cpp
+DlgConfigViews.cpp
+EditKbd.cpp
+Entity.cpp
+EntityArtPartPropPage.cpp
+EntityCollDetPropPage.cpp
+EntityCompPropPage.cpp
+EntityHATPropPage.cpp
+EntityLOSPropPage.cpp
+EntityMissilePropPage.cpp
+EntityStateView.cpp
+EntityTreeView.cpp
+EntityWeatherPropPage.cpp
+Generating Code...
+Compiling...
+EnvTreeView.cpp
+FilterIncomingDlg.cpp
+FilterOutgoingDlg.cpp
+FilterPacketsDlg.cpp
+FlyDlg.cpp
+GlobalEnv.cpp
+globals.cpp
+GroundStateView.cpp
+Hat.cpp
+Hemu4.cpp
+HemuDoc.cpp
+hemumsg.cpp
+HemuView.cpp
+HistoryGraph.cpp
+IDManager.cpp
+JoyWnd.cpp
+ListCtrlCustDraw.cpp
+Los.cpp
+MainFrm.cpp
+MessageView.cpp
+Generating Code...
+Compiling...
+NoMWComboBox.cpp
+NoMWComboBoxEx.cpp
+ObjectStateView.cpp
+ObjectTreeView.cpp
+OutputView.cpp
+PacketDlgArtpartControl.cpp
+PacketDlgAtmosphereControl.cpp
+PacketDlgCCEntityControl.cpp
+PacketDlgCdSegmentDef.cpp
+PacketDlgCdVolumeDef.cpp
+PacketDlgCelestialSphereControl.cpp
+PacketDlgComponentControl.cpp
+PacketDlgEntityControl.cpp
+PacketDlgEnvConditionsReq.cpp
+PacketDlgEnvRegionControl.cpp
+PacketDlgERMDef.cpp
+PacketDlgHatHotReq.cpp
+PacketDlgIGControl.cpp
+PacketDlgLosSegmentReq.cpp
+PacketDlgLosVectorReq.cpp
+Generating Code...
+Compiling...
+PacketDlgMaritimeCondControl.cpp
+PacketDlgMotionTrackerControl.cpp
+PacketDlgPositionReq.cpp
+PacketDlgRateControl.cpp
+PacketDlgSensorControl.cpp
+PacketDlgShortArtpartControl.cpp
+PacketDlgShortComponentControl.cpp
+PacketDlgTerrestrialCondControl.cpp
+PacketDlgTrajectoryDef.cpp
+PacketDlgViewControl.cpp
+PacketDlgViewDef.cpp
+PacketDlgWaveControl.cpp
+PacketDlgWeatherControl.cpp
+PacketHandlers.cpp
+PacketViewListCtrl.cpp
+PacketWatchView.cpp
+RadioList.cpp
+RecPlaybackDlg.cpp
+RegionStateView.cpp
+regutils.cpp
+Generating Code...
+Compiling...
+RTXCompatibility.cpp
+RTXSharedBufferQ.cpp
+Script.cpp
+ScriptDlg.cpp
+ScriptHandlers.cpp
+ScriptHandlersComponents.cpp
+SeaStateView.cpp
+SetupDlg.cpp
+SheetTabCtrl.cpp
+SituationDispCtrl.cpp
+SituationView.cpp
+SkyStateView.cpp
+TerrainCompPropPage.cpp
+TerrainCondition.cpp
+TerrainDB.cpp
+TerrainStateView.cpp
+TimingHistoryDlg.cpp
+TranspStatic.cpp
+TreeCtrlPassMsgs.cpp
+ViewCompPropPage.cpp
+Generating Code...
+Compiling...
+ViewFrustumPropPage.cpp
+ViewGroup.cpp
+ViewGroupCompPropPage.cpp
+ViewGroupStateView.cpp
+ViewStateView.cpp
+ViewTreeView.cpp
+Wave.cpp
+Waypoint.cpp
+Weather.cpp
+WeatherCompPropPage.cpp
+WeatherStateView.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+Hemu4RT.exe - 0 error(s), 2 warning(s)
+<h3>
+--------------------Configuration: HemuRtDrv - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP57.tmp" with contents
+[
+/nologo /ML /W3 /GX /Ox /I "..\coordcnv" /I ".." /D "WIN32" /D "NDEBUG" /D "RELEASE" /D "NO_RTX" /Fp"Release/HemuRtDrv.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Lance\cigi.3\cas.cpp"
+"C:\Lance\cigi.3\cigi3.cpp"
+"C:\Lance\cigi.3\common.cpp"
+"C:\Lance\cigi.3\coordcnv\coordcnv.c"
+"C:\Lance\cigi.3\HemuRtDrv\Fly.cpp"
+"C:\Lance\cigi.3\hemumsg.cpp"
+"C:\Lance\cigi.3\HemuRtDrv\HemuRtDrv.cpp"
+"C:\Lance\cigi.3\RTXCompatibility.cpp"
+"C:\Lance\cigi.3\RTXSharedBufferQ.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP57.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP58.tmp" with contents
+[
+libc.lib oldnames.lib kernel32.lib ws2_32.lib mswsock.lib advapi32.lib user32.lib /nologo /pdb:none /machine:I386 /nodefaultlib /out:"Release/HemuDrv.exe" /libpath:"c:\apis\ccu" /libpath:"C:\Program Files\Venturcom\RTX SDK\lib" /subsystem:console,4.00 
+.\Release\cas.obj
+.\Release\cigi3.obj
+.\Release\common.obj
+.\Release\coordcnv.obj
+.\Release\Fly.obj
+.\Release\hemumsg.obj
+.\Release\HemuRtDrv.obj
+.\Release\RTXCompatibility.obj
+.\Release\RTXSharedBufferQ.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP58.tmp"
+<h3>Output Window</h3>
+Compiling...
+cas.cpp
+cigi3.cpp
+C:\Lance\cigi.3\cigi3.cpp(4014) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+C:\Lance\cigi.3\cigi3.cpp(4093) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+common.cpp
+coordcnv.c
+Fly.cpp
+hemumsg.cpp
+HemuRtDrv.cpp
+RTXCompatibility.cpp
+RTXSharedBufferQ.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5A.bat" with contents
+[
+@echo off
+copy .\Release\hemudrv.exe c:\stealthviewer
+copy .\Release\hemudrv.exe ..\hemu4
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5A.bat"
+
+        1 file(s) copied.
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+HemuDrv.exe - 0 error(s), 2 warning(s)
+<h3>
+--------------------Configuration: HemuRtDrv - Win32 RTSS Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5B.tmp" with contents
+[
+/nologo /ML /W3 /GX /Ox /I "C:\Program Files\Venturcom\RTX SDK\include" /I "..\coordcnv" /I ".." /D "WIN32" /D "UNDER_RTSS" /D "NDEBUG" /D "RELEASE" /FR"HemuRtDrv___Win32_RTSS_Release/" /Fp"HemuRtDrv___Win32_RTSS_Release/HemuRtDrv.pch" /YX /Fo"HemuRtDrv___Win32_RTSS_Release/" /Fd"HemuRtDrv___Win32_RTSS_Release/" /FD /c 
+"C:\Lance\cigi.3\cas.cpp"
+"C:\Lance\cigi.3\cigi3.cpp"
+"C:\Lance\cigi.3\common.cpp"
+"C:\Lance\cigi.3\coordcnv\coordcnv.c"
+"C:\Lance\cigi.3\HemuRtDrv\Fly.cpp"
+"C:\Lance\cigi.3\hemumsg.cpp"
+"C:\Lance\cigi.3\HemuRtDrv\HemuRtDrv.cpp"
+"C:\Lance\cigi.3\RTXCompatibility.cpp"
+"C:\Lance\cigi.3\RTXSharedBufferQ.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5B.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5C.tmp" with contents
+[
+startupCRT.obj rtxlibc.lib oldnames.lib rtapi_rtss.lib rtx_rtss.lib rtxtcpip.lib /nologo /entry:"_RtapiProcessEntryCRT@8" /pdb:none /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /nodefaultlib:"libcmt" /nodefaultlib:"libcmtd" /nodefaultlib /out:"HemuRtDrv___Win32_RTSS_Release\HemuRtDrv.rtss" /libpath:"C:\Program Files\Venturcom\RTX SDK\lib" /libpath:"c:\apis\ccu" /driver /subsystem:native,4.00 /align:0x20 
+.\HemuRtDrv___Win32_RTSS_Release\cas.obj
+.\HemuRtDrv___Win32_RTSS_Release\cigi3.obj
+.\HemuRtDrv___Win32_RTSS_Release\common.obj
+.\HemuRtDrv___Win32_RTSS_Release\coordcnv.obj
+.\HemuRtDrv___Win32_RTSS_Release\Fly.obj
+.\HemuRtDrv___Win32_RTSS_Release\hemumsg.obj
+.\HemuRtDrv___Win32_RTSS_Release\HemuRtDrv.obj
+.\HemuRtDrv___Win32_RTSS_Release\RTXCompatibility.obj
+.\HemuRtDrv___Win32_RTSS_Release\RTXSharedBufferQ.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5C.tmp"
+<h3>Output Window</h3>
+Compiling...
+cas.cpp
+cigi3.cpp
+C:\Lance\cigi.3\cigi3.cpp(4014) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+C:\Lance\cigi.3\cigi3.cpp(4093) : warning C4244: 'initializing' : conversion from 'const double' to 'unsigned int', possible loss of data
+common.cpp
+coordcnv.c
+Fly.cpp
+hemumsg.cpp
+HemuRtDrv.cpp
+RTXCompatibility.cpp
+RTXSharedBufferQ.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5E.bat" with contents
+[
+@echo off
+copy .\HemuRtDrv___Win32_RTSS_Release\hemurtdrv.rtss c:\stealthviewer
+copy .\HemuRtDrv___Win32_RTSS_Release\hemurtdrv.rtss ..\hemu4
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP5E.bat"
+
+        1 file(s) copied.
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+HemuRtDrv.rtss - 0 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

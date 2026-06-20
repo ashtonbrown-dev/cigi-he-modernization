@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>COMPONENT_DATUM_INT64</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>COMPONENT_DATUM_INT64</h2>
+<blockquote>
+  <p>Sets a user-defined datum of a component as a 64-bit signed integer.</p>
+  <h3>Syntax
+
+  </h3>
+
+  <blockquote>
+    <p>COMPONENT_DATUM_INT64&nbsp;&nbsp;&nbsp; <i>component_class&nbsp;&nbsp;&nbsp;
+    instance_id&nbsp;&nbsp;&nbsp; component_id&nbsp;&nbsp;&nbsp; datum_id&nbsp;&nbsp;&nbsp;
+    value</i></p>
+  </blockquote>
+
+  <h3>Parameters
+  </h3>
+  <blockquote>
+      <p><i>component_class</i></p>
+      <blockquote>
+        <p>An integer that specifies class of the component. See Section 4.1.4
+        in the <a href="file:///C:/Documents%20and%20Settings/Lance%20Durham/Desktop/Hemu4%20Help/CIGI%203.1.pdf">CIGI
+        3 Interface Control Document</a> for class values.</p>
+      </blockquote>
+      <p><i>instance_id</i></p>
+      <blockquote>
+        <p>An integer that specifies the object to which the component belongs. 
+        The type of this object is determined by the <i>component_class</i> 
+        parameter.</p>
+      </blockquote>
+      <p><i>component_id</i></p>
+      <blockquote>
+        <p>An integer that specifies the component.</p>
+      </blockquote>
+      <p><i>datum_id</i></p>
+      <blockquote>
+        <p>An integer from 1 to 5 specifying the datum field that will receive 
+        the low-order 32-bits of <i>value</i>.&nbsp; The high-order 32-bits of
+        <i>value</i> will be placed in the next consecutive datum field (i.e.,
+        <i>datum_id</i> + 1).</p>
+      </blockquote>
+      <blockquote>
+      </blockquote>
+      <p><i>value</i></p>
+      <blockquote>
+        <p>A 64-bit signed integer.</p>
+      </blockquote>
+  </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

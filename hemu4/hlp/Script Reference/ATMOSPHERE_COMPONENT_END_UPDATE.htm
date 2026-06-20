@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<Title>ATMOSPHERE_COMPONENT_END_UPDATE</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="6605" endspan -->
+
+<h2>ATMOSPHERE_COMPONENT_END_UPDATE</h2>
+<blockquote>
+  <p>This command signifies that an atmospheric component has been updated. The 
+	command should immediately follow an
+	<a href="ATMOSPHERE_COMPONENT_STATE.htm">ATMOSPHERE_COMPONENT_STATE</a> or 
+	ATMOSPHERE_COMPONENT_DATUM[...] command or a group of these commands.</p>
+  <h3>Syntax
+
+  </h3>
+
+  <blockquote>
+    <p>ATMOSPHERE_COMPONENT_END_UPDATE&nbsp;&nbsp;&nbsp; <i>component_id&nbsp;&nbsp;&nbsp; instance_id&nbsp;&nbsp;&nbsp;</i></p>
+  </blockquote>
+
+  <h3>Parameters
+  </h3>
+  <blockquote>
+      <p><i>component_id</i></p>
+      <blockquote>
+        <p>An integer that specifies the component</p>
+      </blockquote>
+      <p><i>instance_id</i></p>
+		<blockquote>
+			<p>An integer that specifies the parent object of the component.</p>
+		</blockquote>
+  </blockquote>
+	<h3>Remarks</h3>
+	<blockquote>
+		<p>This command commits changes to an atmospheric component and forces 
+		the Host Emulator to send a <b>Component Control</b> or <b>Short 
+		Component Control</b> packet to the IG. This allows a script to modify 
+		multiple component attributes in the same CIGI packet.</p>
+	</blockquote>
+	<h3>See Also</h3>
+	<blockquote>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_DOUBLE.htm">
+		ATMOSPHERE_COMPONENT_DATUM_DOUBLE</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_FLOAT.htm">
+		ATMOSPHERE_COMPONENT_DATUM_FLOAT</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_INT32.htm">
+		ATMOSPHERE_COMPONENT_DATUM_INT32</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_INT64.htm">
+		ATMOSPHERE_COMPONENT_DATUM_INT64</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_UINT32.htm">
+		ATMOSPHERE_COMPONENT_DATUM_UINT32</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_DATUM_UINT64.htm">
+		ATMOSPHERE_COMPONENT_DATUM_UINT64</a></p>
+		<p><a href="ATMOSPHERE_COMPONENT_STATE.htm">ATMOSPHERE_COMPONENT_STATE</a></p>
+	</blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="11837" endspan -->
+
+</BODY>
+</HTML>

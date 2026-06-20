@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<Title>ANGULAR_RATE</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="6605" endspan -->
+
+<h2>ANGULAR_RATE</h2>
+<blockquote>
+  <p>This command defines an angular rate for the specified entity or 
+	articulated part.</p>
+  <h3>Syntax
+
+  </h3>
+
+  <blockquote>
+    <p>ANGULAR_RATE&nbsp;&nbsp;&nbsp; <i>entity_id&nbsp;&nbsp;&nbsp; part_id&nbsp;&nbsp;&nbsp; 
+	yaw&nbsp;&nbsp;&nbsp; pitch&nbsp;&nbsp;&nbsp; roll</i></p>
+  </blockquote>
+
+  <h3>Parameters
+  </h3>
+  <blockquote>
+      <p><i>entity_id</i></p>
+      <blockquote>
+        <p>An integer that specifies the entity to which the rate is applied. If 
+		the rate is to be applied to an articulated part, then this argument 
+		specifies the entity to which the part is attached.</p>
+      </blockquote>
+  	<p><i>part_id</i></p>
+		<blockquote>
+			<p>An integer that specifies the articulated part to which the rate 
+			is applied. If the rate is to be applied to an entity, then this 
+			parameter <b>must</b> be set to -1.</p>
+		</blockquote>
+		<p><i>yaw</i></p>
+		<blockquote>
+			<p>A floating-point number that specifies the yaw component of the 
+			rate.</p>
+		</blockquote>
+		<p><i>pitch</i></p>
+		<blockquote>
+			<p>A floating-point number that specifies the pitch component of the 
+			rate.</p>
+		</blockquote>
+		<p><i>roll</i></p>
+		<blockquote>
+			<p>A floating-point number that specifies the roll component of the 
+			rate.</p>
+		</blockquote>
+  </blockquote>
+	<h3>Remarks</h3>
+	<blockquote>
+		<p>This command overrides any previously defined angular rate for the 
+		specified entity or articulated part. This command does not override 
+		previously defined linear rates. </p>
+	</blockquote>
+	<h3>See Also</h3>
+	<blockquote>
+		<p><a href="LINEAR_RATE.htm">LINEAR_RATE</a></p>
+	</blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="11837" endspan -->
+
+</BODY>
+</HTML>

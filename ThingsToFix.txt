@@ -1,0 +1,32 @@
+Fix UltimateGrid implementation
+
+PacketDlgEntityControl - fix the apply method
+
+PacketDlgAnimationControl - fix the apply method
+
+Add Ribbon
+
+Add Ballon Tips
+
+All Entiy drop down are not being init'd
+
+PacketDlgWeather.cpp - Cloud drop down does not populate
+
+PacketDLgViewControl.cpp - ApplyView iv OnOK() crashes HemuDrv
+
+PacketDLgViewDef.cpp - AppalyView iv OnOK() crashes HemuDrv
+
+PacketDlgLosSegmentReq.cpp - Destination ID and Destination ID Dropdown (eliminate one)
+
+Help
+	Table of Contents.hhc
+	Script Reference\GLAYER_TOP_SCUD_ENABLE.htm
+	Script Reference\GLAYER_BOTTOM_SCUD_ENABLE.htm
+	Script Reference\GLAYER_TOP_SCUD_FREQ.htm
+	Script Reference\GLAYER_BOTTOM_SCUD_FREQ.htm
+	Script Reference\GLAYER_TOP_SCUD_TRANSITION.htm
+	Script Reference\GLAYER_BOTTOM_SCUD_TRANSITION.htm
+
+xml Document Generator in compiler is enabled...
+
+add/remove on all symbol tables...error: must click at least twice to add data item.

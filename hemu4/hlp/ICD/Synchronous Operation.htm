@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Synchronous Operation</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Synchronous Operation</h2>
+<blockquote>
+  <p ALIGN="LEFT">During synchronous operation, the IG sends a start-of-frame (SOF)
+  message to the Host to signal the beginning of each frame. This message, which
+  is usually driven by a vertical sync signal from the display system, functions
+  as a &quot;heartbeat&quot; that dictates the timing of data transfers between
+  the IG and Host. The SOF message also contains mission function responses,
+  event notifications, and other IG data.</p>
+  <p ALIGN="LEFT">The Host immediately responds to each SOF message with its own
+  message containing entity positions and orientation, component states, and
+  other data describing changes to the scene during the previous frame. The Host
+  then begins its next computational cycle, while the IG updates and renders the
+  scene.</p>
+  <p ALIGN="LEFT">This mechanism makes the host data available at the beginning
+  of every IG frame, eliminating the additional latencies symptomatic of <a href="Asynchronous%20Operation.htm">asynchronous
+  operation</a>. Also, because the Host’s frame rate is regulated by the IG,
+  this prevents jitter caused by the creeping effect of misaligned frames.</p>
+  <p>The following figure illustrates the sequence described above:</p>
+  <p align="center"><img border="0" src="Images/Figure4.gif" width="504" height="250"></p>
+  <p align="center"><b> Synchronous Start-of-Frame/Response Cycle</b></p>
+  <p>Depending upon bandwidth limitations and the amount of Ethernet traffic
+  present on the system, the IG may not receive a response in time to finish
+  rendering the scene before the start of the next frame. To alleviate this
+  situation, a time offset can be introduced so that the IG sends each SOF
+  message slightly <i>before</i> the beginning of the next IG frame. This
+  technique allows data to arrive from the Host at such a time as to allow the
+  IG its entire frame time for computations and rendering. Because the available
+  Ethernet bandwidth may vary from frame to frame, this offset can be adjusted
+  to allow for worst-case network loads. The figure below illustrates the start-of-frame
+  offset technique:</p>
+  <p align="center"><img border="0" src="Images/Figure5.gif" width="523" height="355"></p>
+  <p align="center"><b> Synchronous Message Timing Offset</b></p>
+  <p>To enable tracking of Ethernet messages and to ensure one-to-one
+  correspondence, both the SOF and Host response messages are tagged with
+  sequence numbers. The sequence number originates within the IG and is passed
+  to the Host in the <i>Frame Counter</i> parameter of the <b>Start of Frame</b>
+  data packet. Before sending its response message, the Host should extract the
+  number from the <b>Start of Frame</b> packet and place it into the <i>Frame
+  Counter</i> parameter of the <b>IG Control</b> data packet.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

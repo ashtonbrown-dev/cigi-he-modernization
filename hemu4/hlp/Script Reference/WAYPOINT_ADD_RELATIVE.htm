@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>WAYPOINT_ADD_RELATIVE</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>WAYPOINT_ADD_RELATIVE</h2>
+<blockquote>
+  <p>Defines a waypoint as a vector from an entity. The waypoint may be added to
+  the waypoint list of one or more entities with the <a href="file://C:/Documents%20and%20Settings/Administrator/Desktop/Host%20Emulator%20Help/Script%20Reference/ENTITY_ADD_WAYPOINT.htm">ENTITY_ADD_WAYPOINT</a>
+  command.</p>
+  <h3>Syntax</h3>
+  <blockquote>
+    <p>WAYPOINT_ADD_RELATIVE&nbsp;&nbsp;&nbsp; <i>waypoint_id&nbsp;&nbsp;&nbsp;
+    bearing&nbsp;&nbsp;&nbsp; decl&nbsp;&nbsp;&nbsp; range</i></p>
+  </blockquote>
+  <h3>Parameters</h3>
+  <blockquote>
+    <p><i>waypoint_id</i></p>
+    <blockquote>
+      <p>An integer specifying the ID to be assigned to the waypoint.</p>
+    </blockquote>
+    <p><i>bearing</i></p>
+    <blockquote>
+      <p>The bearing to the new waypoint. This is specified as an angle in
+      degrees from the entity's positive X axis along its XY plane such that a
+      bearing of +90° corresponds to a point along the positive Y axis.</p>
+    </blockquote>
+    <p><i>decl</i></p>
+    <blockquote>
+      <p>The declination to the new waypoint. This is specified as an angle in
+      degrees from the entity's XY plane such that a bearing of +90°
+      corresponds to a point along the negative Z axis (i.e., above the entity).</p>
+    </blockquote>
+    <p><i>range</i></p>
+    <blockquote>
+      <p>The length in meters of the vector from the entity to the waypoint.</p>
+    </blockquote>
+  </blockquote>
+  <h3>Remarks:</h3>
+  <blockquote>
+    <p>When an entity reads a relative waypoint from its waypoint list, the
+    geodetic position of the waypoint is calculated from the entity's current
+    position.</p>
+  </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

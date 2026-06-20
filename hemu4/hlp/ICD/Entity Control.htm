@@ -1,0 +1,995 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Entity Control</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Entity Control</h2>
+<blockquote>
+  <p ALIGN="LEFT">The <b>Entity Control</b> packet is used to control position,
+  attitude, and other attributes describing an entity’s state. This packet
+  applies to all entities in the simulation, including the Ownship.</p>
+  <p ALIGN="LEFT">Each entity is identified by a unique identifier called the
+  Entity ID. When the Host sends an <b>Entity Control</b> packet to the IG, the
+  IG sets the state of the entity object corresponding to the value of the <i>Entity
+  ID</i> parameter. If the specified entity does not exist, the IG will create
+  it.</p>
+  <p ALIGN="LEFT">When the IG creates an entity, it makes a copy of the geometry
+  corresponding to the value of the <i>Entity Type</i> parameter. This copy
+  exists as a unique and independent tree within the scene graph; therefore, any
+  operations that modify an entity’s tree (e.g., part articulations) affect
+  only that entity and its children.</p>
+  <p>The figure below illustrates unique Entity IDs being assigned to multiple
+  entities of the same type. The number assignments in this example are
+  hypothetical.</p>
+  <p align="center"><img border="0" src="Images/Figure25.gif" width="495" height="348"></p>
+  <p align="center"><b>Example of Entity Definitions</b></p>
+  <p ALIGN="LEFT">Entities can be attached to one another in a hierarchical
+  relationship. In such a hierarchy, a child entity’s position is specified
+  relative to its parent’s coordinate system. The Host needs only to control
+  the top-level entity in order to move all entities in the hierarchy as a
+  group. No explicit manipulation of a child entity is necessary unless its
+  position and attitude change with respect to its parent.</p>
+  <p>In the example above, the missiles and missile trails could be maneuvered
+  in one of two ways. First, each missile and missile trail could be controlled
+  uniquely, requiring the host to provide position and attitude data for each of
+  the four entities. The simpler and typically preferred way would be to
+  establish a parent-child relationship for each missile and missile trail pair.
+  Each missile could be attached to the aircraft until launched, at which time
+  the missile would be detached from its parent and promoted to a top-level
+  entity. Each top-level missile would then possess its own independent
+  hierarchy, which would be manipulated independently from the aircraft. The
+  figure below illustrates the parent-child hierarchy before and after a missile
+  is launched:</p>
+  <p align="center"><img border="0" src="Images/Figure26.gif" width="626" height="271"></p>
+  <p align="center"><b>Example of Child Entity Detachment</b></p>
+  <p ALIGN="LEFT">The <i>Attach&nbsp;State</i> parameter of the <b>Entity
+  Control</b> packet determines whether an entity is attached to a parent. If
+  this parameter is set to Attach (1), the entity is attached to the entity
+  specified by the <i>Parent&nbsp;ID</i> parameter.</p>
+  <p ALIGN="LEFT">The <i>Entity State</i> field is used to control when an
+  entity is visible and when its geometry is loaded and unloaded. When an entity
+  is created, the <i>Entity State</i> field can be set to Active to specify that
+  the entity should be added to the scene as soon as the model geometry is
+  loaded. The entity and any children can be made invisible at any time by
+  setting <i>Entity State</i> to Inactive/Standby. When the entity is no longer
+  needed, <i>Entity State</i> can be set to Destroyed to direct the IG to unload
+  the geometry and free any memory allocated for the entity. Any children
+  attached to the entity are also destroyed.</p>
+  <p ALIGN="LEFT">Models can be preloaded to increase the speed at which they
+  can be initially displayed. For example, when an aircraft fires a missile, a
+  new entity would need to be created for that missile. Unless the missile
+  geometry is cached, the IG must load the model from its hard disk. Because of
+  its tremendous speed, the missile might fly a significant distance (and
+  possibly beyond visual range) before the disk I/O can be completed. By
+  preloading the entity, the geometry can already exist in memory and be
+  instantly activated within the scene graph when needed. To accomplish this,
+  the <i>Entity State</i> flag could be set to Inactive/Standby when the missile
+  is created. Later, when the missile is needed, an <b>Entity Control</b> packet
+  for that entity would be sent containing the proper positional data and with
+  the <i>Entity State</i> flag set to Active.</p>
+  <p ALIGN="LEFT">An entity can also be made invisible by setting the <i>Alpha</i>
+  parameter to zero (0). This parameter specifies an alpha value to be applied
+  to the entity’s geometry. The <i>Inherit Alpha</i> parameter indicates
+  whether a child entity’s alpha value is combined with that of its parent.
+  For example, a missile attached to the wing of an aircraft would typically be
+  made invisible when the aircraft is destroyed, so its <i>Inherit Alpha</i>
+  attribute would be set to Inherited (1). An explosion or similar animation
+  attached to that aircraft, however, would typically linger after the aircraft’s
+  destruction, so its <i>Inherit Alpha</i> attribute would be set to Not
+  Inherited (0).</p>
+  <p ALIGN="LEFT">Note that setting the <i>Entity State</i> parameter to
+  Inactive/Standby is not equivalent to setting the <i>Alpha</i> parameter to
+  zero (0). The <i>Entity State</i> parameter enables or disables the entity
+  geometry in the scene graph. The entity would not be included in line of sight
+  and collision testing, nor would any transformations be applied. Any children
+  would also be disabled. The <i>Alpha</i> parameter, on the other hand, merely
+  affects the opacity of the specified entity.</p>
+  <p ALIGN="LEFT">The positions of top-level entities (i.e., those entities that
+  are not children) are always specified as a geodetic latitude, longitude, and
+  altitude (see <a href="Position%20(Entity%20Coordinate%20System).htm">Position (Entity Coordinate System)</a>).
+  The positions of child entities are always specified with respect to the
+  parents’ NED body coordinate system (see <a href="Entity%20Coordinate%20System.htm">Entity Coordinate System</a>).</p>
+  <p ALIGN="LEFT">In certain instances, it is desirable for the IG to
+  &quot;clamp&quot; the entity to the surface of the terrain. This can be used
+  as an alternative to using HOT requests and responses to determine ground
+  elevation and slope below the entity. If the <i>Ground/Ocean Clamp</i>
+  parameter is set to Non-Conformal (1) or Conformal (2), the <i>Altitude</i>
+  parameter specifies an offset above the ground or sea surface height. This is
+  useful for specifying the vertical distance from an automobile’s reference
+  point to its wheels, for instance, or from a ship’s reference point to its
+  waterline. Similarly, <i>Roll</i> and <i>Pitch</i> specify rotational offsets
+  if ground or ocean clamping is enabled.</p>
+  <p ALIGN="LEFT">The <i>Animation State</i> parameter is used to control the
+  playback state of animation entities. To start the animation sequence, the
+  Host will send an <b>Entity Control</b> packet with its <i>Entity State</i>
+  set to Active and its <i>Animation State</i> parameter to either Play or
+  Resume. The Host may explicitly stop the animation at any time by setting the <i>Animation
+  State</i> to Stop. Setting the parameter to Pause freezes the animation
+  sequence at the current frame. Setting the parameter to Resume in a subsequent
+  frame will resume the animation from its paused state; setting it to Play will
+  play the animation again from its initial state. Setting <i>Animation State</i>
+  to Play during playback will restart the animation.</p>
+  <p ALIGN="LEFT">Note that setting the <i>Animation State</i> parameter to Stop
+  will have different effects on different types of animations. Frame-based
+  animations will simply stop, or begin to decay if such behavior has been
+  defined, at the current frame. Emitter-based animations (e.g, missile trails
+  and particle systems) will stop producing new particles or segments; however,
+  existing particles or segments will continue to decay normally. Stopping an
+  animation does not implicitly remove it from the scene unless the <i>Entity
+  State</i> parameter is set to Inactive/Standby or Destroyed.</p>
+  <p>The following table summarizes the animation behavior:</p>
+  <p align="center"><b>Animation State Summary</b></p>
+  <div align="center">
+    <center>
+    <table BORDER="1" CELLSPACING="1" BORDERCOLOR="#000080" CELLPADDING="7" WIDTH="686">
+      <tr>
+        <td WIDTH="19%" VALIGN="TOP" BGCOLOR="#000080"><b>
+          <p ALIGN="CENTER"><font color="#FFFFFF">Current State</font></b></td>
+        <td WIDTH="28%" VALIGN="TOP" BGCOLOR="#000080"><b>
+          <p ALIGN="CENTER"><font color="#FFFFFF">New <i>Animation State</i>
+          Value</font></b></td>
+        <td WIDTH="53%" VALIGN="TOP" BGCOLOR="#000080"><b>
+          <p ALIGN="LEFT"><font color="#FFFFFF">Effect</font></b></td>
+      </tr>
+      <tr>
+        <td WIDTH="19%" VALIGN="MIDDLE" ROWSPAN="4">
+          <p ALIGN="CENTER">Stopped</td>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Stop</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">None</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Pause</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">None</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Play</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Plays from beginning</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Continue</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Plays from beginning</td>
+      </tr>
+      <tr>
+        <td WIDTH="19%" VALIGN="MIDDLE" ROWSPAN="4">
+          <p ALIGN="CENTER">Playing</td>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Stop</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Stops at current frame; Stops emitting
+          particles/segments</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Pause</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Pauses at current frame; Freezes all particles</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Play</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Restarts from beginning</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP" HEIGHT="5">
+          <p ALIGN="CENTER">Continue</td>
+        <td WIDTH="53%" VALIGN="TOP" HEIGHT="5">
+          <p ALIGN="LEFT">No action, continues playing</td>
+      </tr>
+      <tr>
+        <td WIDTH="19%" VALIGN="MIDDLE" ROWSPAN="4">
+          <p ALIGN="CENTER">Paused</td>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Stop</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Stops</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Pause</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">None</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Play</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Plays from beginning</td>
+      </tr>
+      <tr>
+        <td WIDTH="28%" VALIGN="TOP">
+          <p ALIGN="CENTER">Continue</td>
+        <td WIDTH="53%" VALIGN="TOP">
+          <p ALIGN="LEFT">Plays from current frame</td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  <p ALIGN="LEFT">If an animation has been built with a limited duration, and if
+  the <i>Animation Loop Mode</i> parameter is set to One-Shot, the animation
+  will stop automatically upon its completion. The IG will indicate this
+  condition by sending an <b>Animation Stop Notification</b> packet to the Host.
+  If the <i>Animation Loop Mode</i> parameter is set to Loop, the animation will
+  immediately restart from the beginning and no <b>Animation Stop Notification</b>
+  packet will be sent.</p>
+  <p ALIGN="LEFT">Once an <b>Entity Control</b> packet describing an entity is
+  sent to the IG, the state of that entity will not change until another <b>Entity
+  Control</b> packet specifying that entity ID is received. For example, packets
+  describing the Ownship and a wingman may be sent every frame to indicate
+  continuous positional changes, while a packet describing an inactive SAM site
+  may be sent once during mission initialization.</p>
+  <p>The contents of the <b>Entity Control</b> packet are as follows:</p>
+  <p align="center"><img border="0" src="Images/Figure27.gif" width="608" height="320"></p>
+  <p align="center"><b>Entity Control Packet Structure</b></p>
+  <p>The following table defines each parameter’s data type, units, and usage.
+  If a default value and/or reference datum are applicable for a parameter, or
+  if the domain differs from the range of values listed in <a href="Integral%20Types.htm">Integral Types</a>,
+  those values are also listed.</p>
+  <p align="center"><b>Entity Control Parameter Definitions</b></p>
+  <div align="center">
+    <center>
+    <table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid navy 1.0pt;mso-padding-alt:0in 5.4pt 0in 5.4pt">
+      <thead>
+        <tr style="height:14.75pt">
+          <td width="343" style="width:257.4pt;border:solid navy 1.0pt;border-right:
+   solid white 1.0pt;background:navy;padding:0in 5.4pt 0in 5.4pt;height:14.75pt">
+            <p class="MsoNormal" style="page-break-after:avoid"><font color="#FFFFFF"><b>Parameter<o:p>
+            </o:p>
+            </b></font></p>
+          </td>
+          <td width="343" style="width:257.4pt;border:solid navy 1.0pt;border-left:none;
+   mso-border-left-alt:solid white 1.0pt;background:navy;padding:0in 5.4pt 0in 5.4pt;
+   height:14.75pt">
+            <p class="NormalBold" style="margin-bottom:0in;margin-bottom:.0001pt;
+   page-break-after:avoid;tab-stops:.5in"><span style="mso-bidi-font-weight:
+   bold"><font color="#FFFFFF"><b>Description<o:p>
+            </o:p>
+            </b></font></span></p>
+          </td>
+        </tr>
+      </thead>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Packet ID</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int8</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p>Value: 2</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter identifies this data packet as the <b>Entity&nbsp;Control</b>
+          packet. The value of this parameter must be 2.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Packet Size</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int8</p>
+          <p ALIGN="LEFT">Units: Bytes</p>
+          <p>Value: 48</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter indicates the number of bytes in this data packet. The value
+          of this parameter must be 48.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Entity ID</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int16</p>
+          <p>Units: N/A</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter specifies the entity to which this packet is applied. A
+          value of zero (0) corresponds to the Ownship.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Entity State</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned 2-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%">Inactive/Standby</td>
+            </tr>
+            <tr>
+              <td width="14%"></td>
+              <td width="13%">1</td>
+              <td width="70%">Active</td>
+            </tr>
+            <tr>
+              <td width="14%"></td>
+              <td width="13%">2</td>
+              <td width="70%">Destroyed</td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies whether the entity should be
+          active or destroyed. It may be set to one of the following values:</p>
+          <b>
+          <p ALIGN="LEFT">Inactive/Standby</b> – The entity is loaded, but its
+          tree is not enabled in the scene graph. The entity is invisible, and
+          no transformations are applied. Additionally, the entity is excluded
+          from line of sight and collision testing.</p>
+          <b>
+          <p ALIGN="LEFT">Active</b> – The entity’s tree is enabled in the
+          scene graph. Transformations are applied to the entity and it is
+          included in line of sight and collision testing.</p>
+          <b>
+          <p>Destroyed</b> – The entity’s tree is removed from the scene
+          graph. Any children are also destroyed. All other parameters in this
+          packet are ignored.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Attach State</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: 1-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%">Detach</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%">Attach</td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies whether the entity should be
+          attached as a child to a parent.</p>
+          <p ALIGN="LEFT">If this parameter is set to Detach (0), the entity
+          becomes or remains a top-level (non-child) entity. The <i>Parent ID</i>
+          parameter is ignored. The <i>Yaw</i>, <i>Pitch</i>, <i>Roll</i>, <i>Latitude</i>,
+          <i>Longitude</i>, and <i>Altitude</i> parameters all specify the
+          entity’s position relative to the <a href="Geodetic%20Coordinate%20System.htm">Geodetic Coordinate System</a>.</p>
+          <p ALIGN="LEFT">If this parameter is set to Attach (1), the entity
+          becomes or remains attached to the entity specified by the <i>Parent
+          ID</i> parameter. The parent must already exist, having been created
+          in a prior frame or earlier in the current frame. The <i>Yaw</i>, <i>Pitch</i>,
+          <i>Roll</i>, <i>X&nbsp;Offset</i>, <i>Y&nbsp;Offset</i>, and <i>Z&nbsp;Offset</i>
+          parameters all specify the entity’s position relative to the
+          parent’s <a href="Entity%20Coordinate%20System.htm">Entity Coordinate System</a>.</p>
+          <p>This parameter may be changed for a given entity at any time. The
+          attachment or detachment takes place immediately and remains in effect
+          until changed with another <b>Entity Control</b> packet.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Collision Detection Request</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: 1-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%">No Request</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%">Request</td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter determines whether any collision
+          detection segments and volumes associated with this entity are used as
+          the source in collision testing. If this parameter is set to Request
+          (1), each collision detection segment is tested for intersections with
+          polygons not associated with this entity and each collision detection
+          volume is tested pair-wise with every other volume that is not
+          associated with the entity.</p>
+          <p ALIGN="LEFT">If this parameter is set to No Request (0), any
+          collision detection segments defined for the entity are ignored and
+          any collision detection volumes are only tested (as the destination)
+          against volumes defined for entities whose collision detection is
+          enabled.</p>
+          <p>See Sections <b>Error! Reference source not found.</b> and <b>Error!
+          Reference source not found.</b> for details on creating collision
+          detection segments and volumes, respectively.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Inherit Alpha</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: 1-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%">Not Inherited</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%">Inherited</td>
+            </tr>
+          </table>
+          <p>&nbsp;</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter specifies whether the entity’s alpha is combined with the
+          apparent alpha of its parent. The following formula will be used to
+          combine the alpha values:
+          <p align="center"><img border="0" src="Images/AlphaEq.gif" width="80" height="44"></p>
+          <p ALIGN="LEFT">where <i>&#945;</i> is the apparent alpha of the
+          child, <i>&#945;</i><sub>0</sub> is the explicit alpha of the child,
+          and <i>&#945;<sub>p</sub></i> is the apparent alpha of the parent.</p>
+          <p ALIGN="LEFT">Note that a change in an entity’s alpha affects the
+          entities below it in the hierarchy if those entities inherit their
+          parents’ alphas.</p>
+          <p>If <i>Attach State</i> is set to Detach (0), this parameter is
+          ignored.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Ground/Ocean Clamp</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned 2-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%"> No Clamp</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%"> Non-Conformal</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">2</td>
+              <td width="70%"> Conformal</td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies whether the entity should be
+          clamped to the ground or water surface. If <i>Attach State</i> is set
+          to Attach (1), this parameter is ignored.</p>
+          <b>
+          <p ALIGN="LEFT">No Clamp</b> – The entity is not clamped. The <i>Altitude</i>
+          parameter specifies the entity’s height above Mean Sea Level. The <i>Pitch</i>
+          and <i>Roll</i> parameters specify the entity’s pitch and roll
+          relative to the <a href="Orientation%20(Geodetic%20Coordinate%20System).htm#GeodeticRefPlane">geodetic
+          reference plane</a>.</p>
+          <b>
+          <p ALIGN="LEFT">Non-Conformal</b> – The entity is clamped. The <i>Altitude
+          </i>parameter specifies an offset above the terrain or sea level. The <i>Pitch</i>
+          and <i>Roll</i> parameters specify the entity’s pitch and roll
+          relative to the <a href="Orientation%20(Geodetic%20Coordinate%20System).htm#GeodeticRefPlane">geodetic
+          reference plane</a>.</p>
+          <b>
+          <p>Conformal</b> – The entity is clamped and its attitude conforms
+          to the terrain. The <i>Altitude </i>parameter specifies an offset
+          above the terrain or sea level. The <i>Pitch</i> and <i>Roll</i>
+          parameters specify the entity’s pitch and roll relative to the slope
+          of the terrain or water.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Animation Direction</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: 1-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%"> Forward</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%"> Backward</td>
+            </tr>
+          </table>
+          <p>&nbsp;</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter specifies the direction in which an animation plays. This
+          parameter applies only when the value of the <i>Entity Type</i>
+          parameter corresponds to an animation.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Animation Loop Mode</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: 1-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%"> One-Shot</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%"> Continuous</td>
+            </tr>
+          </table>
+          <p>&nbsp;</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter specifies whether an animation should be a one-shot (i.e.,
+          should play once and stop) or should loop continuously.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Animation State</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned 2-bit field</p>
+          <p ALIGN="LEFT">Units: N/A</p>
+          <p ALIGN="LEFT">Values:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">0</td>
+              <td width="70%"> Stop</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">1</td>
+              <td width="70%"> Pause</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">2</td>
+              <td width="70%"> Play</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%">3</td>
+              <td width="70%"> Continue</td>
+            </tr>
+          </table>
+          <p>&nbsp;</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies the state of an animation.
+          This parameter applies only when the value of the <i>Entity Type</i>
+          parameter corresponds to an animation.</p>
+          <b>
+          <p ALIGN="LEFT">Stop</b> – Stops the animation sequence. Has no
+          effect if the animation is currently stopped.</p>
+          <b>
+          <p ALIGN="LEFT">Pause</b> – Pauses playback of an animation. The
+          entity’s geometry will remain visible, provided <i>Entity State</i>
+          is set to Active.</p>
+          <b>
+          <p ALIGN="LEFT">Play</b> – Begins or restarts playback from the
+          first animation frame.</p>
+          <b>
+          <p>Continue</b> – Continues a playing animation from the current
+          frame of the animation sequence. If the animation is paused, playback
+          is resumed from the current frame. If the animation is stopped,
+          playback is restarted from the first frame of the sequence.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Alpha</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int8</p>
+          <p>Units: N/A</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">This
+          parameter specifies the explicit alpha to be applied to the entity’s
+          geometry. A value of zero (0) corresponds to fully transparent; a
+          value of 255 corresponds to fully opaque.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Entity Type</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int16</p>
+          <p>Units: N/A</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies the type for the entity. A
+          value of zero (0) indicates a &quot;null&quot; type with no associated
+          geometry. Such an entity might be used to represent the Ownship or a
+          floating camera.</p>
+          <p>If the specified type is undefined, the data packet will be
+          disregarded.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Parent ID</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: unsigned int16</p>
+          <p>Units: N/A</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies the parent for the entity. If
+          the <i>Attach State</i> parameter is set to Detach (0), this parameter
+          is ignored.</p>
+          <p ALIGN="LEFT">The value of this parameter may be changed without
+          first detaching the entity from its existing parent.</p>
+          <p>If the specified parent entity is invalid, no change in the
+          attachment will be made.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Roll</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: single float</p>
+          <p ALIGN="LEFT">Units: degrees</p>
+          <p ALIGN="LEFT">Values: -180.0 – 180.0</p>
+            <p ALIGN="LEFT">Datum:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="67%" colspan="2"> If <i>Attach State</i> = 0 and <i>Ground/Ocean Clamp</i> = 0 or 1:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%"><a href="Orientation%20(Geodetic%20Coordinate%20System).htm#GeodeticRefPlane">Geodetic
+                Reference Coordinate System</a></td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">If <i>Attach State</i> = 0 and <i>Ground/Ocean Clamp</i> = 2:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%">Terrain surface polygon orientation</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">If <i>Attach State</i> = 1:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%"><a href="Orientation%20(Entity%20Coordinate%20System).htm">Entity
+                Reference Coordinate System</a></td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies the roll angle of the entity.</p>
+          <p ALIGN="LEFT">For top-level entities for which <i>Ground/Ocean Clamp</i>
+          is set to No Clamp (0) or Non-Conformal (1), this angle is measured
+          from the reference plane described in <a href="Orientation%20(Geodetic%20Coordinate%20System).htm">Orientation (Geodetic Coordinate System)</a>.</p>
+          <p ALIGN="LEFT">For top-level entities for which <i>Ground/Ocean Clamp</i>
+          is enabled, this angle specifies an angular offset from the terrain
+          surface polygon’s orientation.</p>
+          <p>For child entities, roll is measured from the parent entity’s
+          reference plane as described in <a href="Orientation%20(Entity%20Coordinate%20System).htm">Orientation (Entity Coordinate System)</a>.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Pitch</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: single float</p>
+          <p ALIGN="LEFT">Units: degrees</p>
+          <p ALIGN="LEFT">Values: -90.0 – 90.0</p>
+            <p ALIGN="LEFT">Datum:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="67%" colspan="2"> If <i>Attach State</i> = 0 and <i>Ground/Ocean Clamp</i> = 0 or 1:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%"><a href="Orientation%20(Geodetic%20Coordinate%20System).htm#GeodeticRefPlane">Geodetic
+                Reference Coordinate System</a></td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">If <i>Attach State</i> = 0 and <i>Ground/Ocean Clamp</i> = 2:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%">Terrain surface polygon orientation</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">If <i>Attach State</i> = 1:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%"><a href="Orientation%20(Entity%20Coordinate%20System).htm">Entity
+                Reference Coordinate System</a></td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">This parameter specifies the pitch angle of the
+          entity.</p>
+          <p ALIGN="LEFT">For top-level entities for which <i>Ground/Ocean Clamp</i>
+          is set to No Clamp (0) or Non-Conformal (1), this angle is measured
+          from the reference plane described in <a href="Orientation%20(Geodetic%20Coordinate%20System).htm">Orientation (Geodetic Coordinate System)</a>.</p>
+          <p ALIGN="LEFT">For top-level entities for which <i>Ground/Ocean Clamp</i>
+          is enabled, this angle specifies an angular offset from the terrain
+          surface polygon’s orientation.</p>
+          <p>For child entities, pitch is measured with respect to the
+          entity’s reference plane as described in <a href="Orientation%20(Entity%20Coordinate%20System).htm">Orientation (Entity Coordinate System)</a>.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Yaw</p>
+          </i></b>
+          <p ALIGN="LEFT">Type: single float</p>
+          <p ALIGN="LEFT">Units: degrees</p>
+          <p ALIGN="LEFT">Values: 0.0 – 360.0</p>
+            <p ALIGN="LEFT">Datum:</p>
+          <table border="0" width="100%" cellspacing="1">
+            <tr>
+              <td width="15%"></td>
+              <td width="67%" colspan="2"> If <i>Attach State</i> = 0:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%">True North</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="69%" colspan="2">If <i>Attach State</i> = 1:</td>
+            </tr>
+            <tr>
+              <td width="15%"></td>
+              <td width="15%"></td>
+              <td width="54%"> Entity Reference Plane’s +<b>X</b>
+            axis</td>
+            </tr>
+          </table>
+        </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">For top-level (non-child) entities, this parameter
+          specifies the instantaneous heading of the entity. This angle is
+          measured from a line parallel to the Prime Meridian as described in <a href="Orientation%20(Geodetic%20Coordinate%20System).htm">Orientation (Geodetic Coordinate System)</a>.</p>
+          <p>For child entities, this parameter specifies yaw relative to the
+          parent entity and is measured with respect to the +<b>X</b> axis of
+          the entity’s reference plane as described in <a href="Orientation%20(Entity%20Coordinate%20System).htm">Orientation (Entity Coordinate System)</a>.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Latitude</i></b> (Top-Level Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: degrees</p>
+          <p ALIGN="LEFT">Values: -90 – 90</p>
+          <p>Datum: Equator</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">For
+          top-level (non-child) entities, this parameter specifies the
+          entity’s geodetic latitude.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">X Offset</i></b> (Child Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: meters</p>
+          <p>Datum: Parent’s reference point</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">For
+          child entities, this parameter specifies the distance from the
+          parent’s reference point along its parent’s <b>X</b> axis.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Longitude</i></b> (Top-Level Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: degrees</p>
+          <p ALIGN="LEFT">Values: -180.0 – 180.0</p>
+          <p>Datum: Prime Meridian</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">For
+          top-level (non-child) entities, this parameter specifies the
+          entity’s geodetic longitude.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Y Offset</i></b> (Child Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: meters</p>
+          <p>Datum: Parent’s reference point</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">For
+          child entities, this parameter specifies the distance from the
+          parent’s reference point along its parent’s <b>Y</b> axis.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Altitude</i></b> (Top-Level Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: meters</p>
+            <p ALIGN="LEFT">Datum:</p>
+        <table border="0" width="100%" cellspacing="1">
+          <tr>
+            <td width="15%"></td>
+            <td width="67%" colspan="2"> If <i>Ground/Ocean Clamp</i> = 0:</td>
+          </tr>
+          <tr>
+            <td width="15%"></td>
+            <td width="15%"></td>
+            <td width="54%">Mean Sea Level</td>
+          </tr>
+          <tr>
+            <td width="15%"></td>
+            <td width="69%" colspan="2">&nbsp;&nbsp;&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="15%"></td>
+            <td width="69%" colspan="2">If <i>Ground/Ocean Clamp</i> = 1 or 2:</td>
+          </tr>
+          <tr>
+            <td width="15%"></td>
+            <td width="15%"></td>
+            <td width="54%">Ground/sea surface elevation</td>
+          </tr>
+        </table>
+    </td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+          <p ALIGN="LEFT">For top-level (non-child) entities, this parameter
+          specifies the entity’s altitude.</p>
+          <p ALIGN="LEFT">If the <i>Ground/Ocean Clamp</i> parameter is set to
+          No&nbsp;Clamp (0), this value is the height above Mean Sea Level.</p>
+          <p>If the <i>Ground/Ocean Clamp</i> parameter is set to Non-Conformal
+          (1) or Conformal (2), this value specifies an offset above the terrain
+          height or local sea level (see <b><font color="#FF00FF">Maritime
+          Surface Conditions Control</font></b>) at the entity’s latitude and longitude.</td>
+      </tr>
+      <tr>
+        <td width="343" valign="top" style="width:257.4pt;border:solid navy 1.0pt;
+  border-top:none;mso-border-top-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt"><b><i>
+          <p ALIGN="LEFT">Z Offset</i></b> (Child Entities)</p>
+          <p ALIGN="LEFT">Type: double float</p>
+          <p ALIGN="LEFT">Units: meters</p>
+          <p>Datum: Parent’s reference point</td>
+        <td width="343" valign="top" style="width:257.4pt;border-top:none;border-left:
+  none;border-bottom:solid navy 1.0pt;border-right:solid navy 1.0pt;mso-border-top-alt:
+  solid navy 1.0pt;mso-border-left-alt:solid navy 1.0pt;padding:0in 5.4pt 0in 5.4pt">For
+          child entities, this parameter specifies the distance from the
+          parent’s reference point along its parent’s <b>Z</b> axis.</td>
+      </tr>
+    </table>
+    <table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid navy 1.0pt;mso-padding-alt:0in 5.4pt 0in 5.4pt">
+      <thead>
+      </thead>
+    </table>
+    </center>
+  </div>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

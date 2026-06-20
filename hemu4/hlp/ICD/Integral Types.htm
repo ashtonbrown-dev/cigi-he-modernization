@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Integral Types</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Integral Types</h2>
+<blockquote>
+  <p ALIGN="LEFT">Real values are stored as signed single- or double-precision
+  floating-point numbers as defined in ANSI/IEEE STD 754-1985. This document
+  uses the names <b>single float</b> and <b>double float</b> to refer to single-
+  and double-precision numbers.</p>
+  <p ALIGN="LEFT">Integer values are stored as signed or unsigned 8-bit, 16-bit,
+  or 32-bit fields. This document refers to these data types as <b>int8</b>, <b>int16</b>,
+  and <b>int32</b>, respectively. Integers may also be represented by unsigned
+  bit fields as described in the <a href="Bit%20Fields.htm">Bit Fields</a> topic.</p>
+  <p ALIGN="LEFT">Alphanumeric characters are stored as signed 8-bit <b>char</b>
+  fields. These values use the ANSI (American National Standards Institute)
+  character set.</p>
+  <p>Generic values with no explicitly defined type are indicated as 32-bit <b>word</b>
+  fields. Word fields may be used as the developer sees fit; however, they will
+  be treated by the interface as unsigned int32 data. Any arithmetic operations
+  performed on word data will be carried out as if on unsigned 32-bit integers.
+  In addition, if byte swapping is necessary, word fields will be byte-swapped
+  as 32-bit integers.</p>
+  <p align="center"><b> Integral Data Type Summary</b></p>
+  <table BORDER="1" CELLSPACING="1" BORDERCOLOR="#000080" CELLPADDING="3" WIDTH="90%">
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP" BGCOLOR="#000080"><b>
+        <p ALIGN="LEFT"><font COLOR="#ffffff">Data Type Name</font></b></td>
+      <td WIDTH="8%" VALIGN="TOP" BGCOLOR="#000080"><b>
+        <p ALIGN="CENTER"><font COLOR="#ffffff">Bytes</font></b></td>
+      <td WIDTH="12%" VALIGN="TOP" BGCOLOR="#000080"><b>
+        <p ALIGN="CENTER"><font COLOR="#ffffff">Precision</font></b></td>
+      <td WIDTH="31%" VALIGN="TOP" BGCOLOR="#000080"><b>
+        <p ALIGN="CENTER"><font COLOR="#ffffff">Minimum Value</font></b></td>
+      <td WIDTH="31%" VALIGN="TOP" BGCOLOR="#000080"><b>
+        <p ALIGN="CENTER"><font COLOR="#ffffff">Maximum Value</font></b></td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">char</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">1</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">-128</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">127</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">int8</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">1</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">-128</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">127</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">unsigned int8</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">1</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">0</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">255</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">int16</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">2</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">-32,768</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">32,767</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">unsigned int16</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">2</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">0</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">65,535</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">int32</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">4</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">-2,147,483,648</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">2,147,483,647</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">unsigned int32</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">4</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">0</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">4,294,967,295</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">word</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">4</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">N/A</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">0</td>
+      <td WIDTH="31%" VALIGN="TOP">
+        <p ALIGN="CENTER">4,294,967,295</td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">single float</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">4</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">7 digits</td>
+      <td WIDTH="31%" VALIGN="TOP" class="singlespace">
+        <p ALIGN="CENTER" class="singlespace">1.4012980 × 10<sup>-45*</sup></p>
+        <p ALIGN="CENTER" class="singlespace">-3.4028235 × 10<sup>38†</sup></td>
+      <td WIDTH="31%" VALIGN="TOP" class="singlespace">
+        <p ALIGN="CENTER" class="singlespace">3.4028235 × 10<sup>38*</sup></p>
+        <p ALIGN="CENTER" class="singlespace">-1.4012980 × 10<sup>-45†</sup></td>
+    </tr>
+    <tr>
+      <td WIDTH="19%" VALIGN="TOP">
+        <p ALIGN="LEFT">double float</td>
+      <td WIDTH="8%" VALIGN="TOP">
+        <p ALIGN="CENTER">8</td>
+      <td WIDTH="12%" VALIGN="TOP">
+        <p ALIGN="CENTER">15 digits</td>
+      <td WIDTH="31%" VALIGN="TOP" class="singlespace">
+        <p ALIGN="CENTER" class="singlespace">4.940656458412465 × 10<sup>-324*</sup></p>
+        <p ALIGN="CENTER" class="singlespace">-1.797693134862315 × 10<sup>308†</sup></td>
+      <td WIDTH="31%" VALIGN="TOP" class="singlespace">
+        <p ALIGN="CENTER" class="singlespace">1.797693134862315 × 10<sup>308*</sup></p>
+        <p ALIGN="CENTER" class="singlespace">-4.940656458412465 × 10<sup>-324†</sup></td>
+    </tr>
+  </table>
+  <blockquote>
+    <p ALIGN="LEFT" class="singlespace">* indicates range for positive values</p>
+    <sup>
+    <p ALIGN="LEFT" class="singlespace">†</sup> indicates range for negative
+    values</p>
+  </blockquote>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

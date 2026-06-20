@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Defining Weather Entity Types</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h2>Defining Weather Entity Types</h2>
+<blockquote>
+  <p>Weather entity types are defined in the ENTITIES.DEF file as shown below:</p>
+  <pre>ENTITY
+{
+	NAME           = &quot;Cloud&quot;;
+	TYPE           = 1000;
+	CLASS          = WEATHER;
+
+	WEATHER_ATTRIBUTES
+	{
+		ENABLE			= TRUE;
+		SCUD_ENABLE		= FALSE;
+		RANDOM_WIND_ENABLE	= TRUE;
+		RANDOM_LIGHTNING_ENABLE	= TRUE;
+		CLOUD_TYPE		= 1;		// See ICD for assignments
+		SEVERITY		= 3;		// 1 - 5
+		SCUD_FREQUENCY		= 20;		// percent
+		COVERAGE		= 65;		// percent
+		TRANSITION_BAND		= 150;		// meters
+		BAROMETRIC_PRESSURE	= 10;
+		HUMIDITY		= 80;
+		TEMPERATURE		= 32;
+		VISIBILITY		= 50;
+		HORIZONTAL_WINDSPEED	= 50;
+		VERTICAL_WINDSPEED	= -20;
+		WIND_DIRECTION		= 45;
+		AEROSOL_CONCENTRATION	= 90;
+	}
+}</pre>
+  <p>A weather entity type is defined as any other entity type (see <a href="Defining%20Entity%20Types.htm">Defining
+  Entity Types</a>) and will additionally include a WEATHER_ATTRIBUTES block to
+  define default weather properties. Weather definitions specify the following parameters:</p>
+  <ul>
+    <li><a name="NAME"><i>ENABLE</i></a>
+      <blockquote>
+        A Boolean value specifying whether the weather phenomenon is enabled by
+        default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+      </blockquote>
+    <li><a name="TYPE"><i>SCUD_ENABLE</i></a>
+      <blockquote>
+        A Boolean value specifying whether scud effects are enabled by default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+      </blockquote>
+    <li><a name="ALPHA"><i>RANDOM_WIND_ENABLE</i></a>
+      <blockquote>
+        A Boolean value specifying whether random wind behavior is enabled by
+          default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+      </blockquote>
+    <li><a name="INHERIT_ALPHA"><i>RANDOM_LIGHTNING_ENABLE</i></a>
+      <blockquote>
+        A Boolean value specifying whether random lightning is enabled by
+        default.&nbsp; Acceptable values are TRUE or FALSE, YES or NO, and 1
+            or 0.
+      </blockquote>
+    <li><a name="CLAMP_MODE"><i>CLOUD_TYPE</i></a>
+      <blockquote>
+        An integer specifying the cloud type. Cloud types are enumerated in
+        Section 4.1.12 in the <a href="CIGI%203.1.pdf">CIGI 3 Interface Control Document</a>.
+      </blockquote>
+    <li><a name="ANIMATION_DIRECTION"><i>SEVERITY</i></a>
+      <blockquote>
+        An integer from 0 to 5 (least to most severe) specifying the intensity
+        of the weather.
+      </blockquote>
+    <li><a name="ANIMATION_LOOP"><i>SCUD_FREQUENCY</i></a>
+      <blockquote>
+        Specifies the frequency of scud as a percentage.
+      </blockquote>
+    <li><i><a name="ARTICULATED_PART">COVERAGE</a></i>
+      <blockquote>
+        Specifies the horizontal coverage as a percentage.
+      </blockquote>
+    <li><i><a name="DISCRETE_COMPONENT">TRANSITION_BAND</a></i>
+      <blockquote>
+        Specifies the vertical thickness of the upper and lower transition
+        bands.&nbsp;
+      </blockquote>
+    <li><i><a name="COLLISION_SEGMENT">BAROMETRIC_PRESSURE</a></i>
+      <blockquote>
+        Specifies the atmospheric pressure within the entity.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">HUMIDITY</a></i>
+      <blockquote>
+        Specifies the humidity as a percentage.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">TEMPERATURE</a></i>
+      <blockquote>
+        Specifies the air temperature within the entity.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">VISIBILITY</a></i>
+      <blockquote>
+        Specifies the visibility range through the entity in meters.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">HORIZONTAL_WINDSPEED</a></i>
+      <blockquote>
+        Specifies the horizontal windspeed in meters per second.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">VERTICAL_WINDSPEED</a></i>
+      <blockquote>
+        Specifies the vertical windspeed in meters per second.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">WIND_DIRECTION</a></i>
+      <blockquote>
+        Specifies the horizontal direction (in degrees) from which the wind
+        blows.
+      </blockquote>
+    </li>
+    <li><i><a name="COLLISION_SEGMENT">AEROSOL_CONCENTRATION</a></i>
+      <blockquote>
+        Specifies the concentration of water, dust, or other particles suspended
+        in the air in grams per cubic meter.
+      </blockquote>
+    </li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

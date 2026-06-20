@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Configuration</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h2>Configuration</h2>
+<blockquote>
+  <p>The CIGI Host Emulator uses ASCII text files to define entity types and
+  default view, environmental, and database properties. When the program starts,
+  it loads the configuration from the definition (*.DEF) files located in the
+  &quot;Default&quot; subfolder of the Host Emulator program folder. See <a href="Loading%20a%20New%20Configuration.htm">Loading a New Configuration</a>
+  for more information.</p>
+  <p>The general format for definition files is as follows:</p>
+  <blockquote>
+    <pre>BLOCK_NAME</pre>
+    <pre>{</pre>
+    <pre>    PARAMETER = VALUE;</pre>
+    <pre>    ...</pre>
+    <pre>    BLOCK_NAME</pre>
+    <pre>    {</pre>
+    <pre>        PARAMETER = VALUE;</pre>
+    <pre>        ...</pre>
+    <pre>        BLOCK_NAME</pre>
+    <pre>        {</pre>
+    <pre>            PARAMETER = VALUE;</pre>
+    <pre>            ...</pre>
+    <pre>        }</pre>
+    <pre>    }</pre>
+    <pre>}</pre>
+  </blockquote>
+  <p>BLOCK_NAME describes the type of definition block that follows. This should
+  be replaced by one of the definition keywords appropriate to the specific
+  definition file (see the appropriate topic in this section). In some cases,
+  definition blocks may be nested. For example, the ENTITIES.DEF file contains
+  ENTITY definitions, which may contain one or more DISCRETE_COMPONENT
+  definitions, which must contain STATE definitions.</p>
+  <p>PARAMETER can be the name of any configuration parameter that is applicable
+  to the definition block.</p>
+  <p>Keep the following rules in mind when creating or editing definition files:</p>
+  <ul>
+    <li>Keywords are not case-sensitive.
+    <li>Definition blocks must be enclosed in braces ({…}).
+    <li>An equals sign (=) must separate each parameter name from its assigned
+      value.
+    <li>A semicolon (;) must follow each value, regardless of its type.
+    <li>Character string values must be enclosed in double quotation marks
+      (&quot;…&quot;) and must be on a single line.
+    <li>Whitespaces (i.e. spaces, tabs, and carriage-returns) are ignored unless
+      contained within quotation marks.
+    <li>Comments can either be C-style (/*…*/) or C++-style (//…) comments.</li>
+  </ul>
+  <p>This section contains the following topics:</p>
+  <ul>
+    <li><a href="Defining%20Entity%20Types.htm">Defining Entity Types</a></li>
+    <li><a href="Defining%20Weather%20Entity%20Types.htm">Defining Weather Entity Types</a></li>
+    <li><a href="Defining%20Environmental%20Properties.htm">Defining Environmental Properties</a></li>
+    <li><a href="Defining%20Terrain%20Properties.htm">Defining Terrain Properties</a></li>
+    <li><a href="Defining%20Views.htm">Defining Views</a></li>
+    <li><a href="Defining%20View%20Groups.htm">Defining View Groups</a></li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

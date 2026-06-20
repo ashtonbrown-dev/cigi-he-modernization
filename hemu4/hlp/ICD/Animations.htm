@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Animations</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Animations</h2>
+<blockquote>
+  <p ALIGN="LEFT">An animation is an entity that has a specific pattern of
+  movement, growth, or other behavior. This behavior is typically representative
+  of some real-life phenomenon that, once initiated, cannot be directly
+  controlled. Examples include fire, explosions, smoke, moving water, etc. Aside
+  from an element of randomness introduced by stochastic processing within the
+  IG, animations are typically reproducible for a given environmental state.</p>
+  <p ALIGN="LEFT">Depending upon the nature of the animation, the Host may
+  modify certain characteristics by sending one or more <b>Component Control</b>
+  packets. The Host might define the expansion rate of an explosion, for
+  example, or the length of a contrail. The specific behavior of an animation,
+  however, is automated by the IG.</p>
+  <p ALIGN="LEFT">An IG may implement any of a variety of animation types. For
+  example, a dynamic texture animation is a 2-D animation applied to some
+  surface. Each texture may be one of a fixed sequence of images or may be
+  generated procedurally each frame. The IG advances the image at some frame
+  rate. The same concept can be applied to bump map and displacement map
+  animations.</p>
+  <p ALIGN="LEFT">A frame-based geometry animation is an entity with multiple
+  sets of geometry that are displayed sequentially. Each set of geometry is
+  typically attached to a switch node. To display the next set, or
+  &quot;frame,&quot; the current switch node is switched off as the next one is
+  switched on. The animation may consist of few frames with simple geometry
+  (e.g., a turning propeller might be implemented as two alternating polygons
+  with temporally aliased textures) or many frames with complex geometry (e.g. a
+  collapsing bridge might have damaged, undamaged, and many intermediate
+  states).</p>
+  <p ALIGN="LEFT">A transformation-based geometry animation, or shape animation,
+  is an entity whose geometry is changed over time. A high-fidelity tree model,
+  for example, might contain sections of geometry that are translated and
+  rotated to simulate movement from wind. A cloud of black smoke produced by
+  flak might expand and drift as its dynamic texture appears to fade. The latter
+  example illustrates a combination of animation techniques.</p>
+  <p ALIGN="LEFT">Other types of animation might include, but are not limited
+  to, motion-path animations, particle systems, and palette animations.</p>
+  <p>Note that some animated components may be implemented as submodels of an
+  entity model rather than as separate entities. Such components might include
+  flashing lights, aircraft propellers, afterburners, landing gear, tank tracks,
+  wheels, and like items. These components would be controlled with the <b>Component
+  Control</b> packet.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

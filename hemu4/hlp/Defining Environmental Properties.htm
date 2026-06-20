@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Defining Environmental Properties</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h2>Defining Environmental Properties</h2>
+<blockquote>
+  <p>The ENVIRONMENT.DEF file is used to configure default global and layered
+  environmental conditions.</p>
+  <p>The following is an example database definition:</p>
+  <blockquote>
+    <pre>GLOBAL_ENVIRONMENT
+{
+	DATE			= 04/06/2004;		/* mm/dd/yyyy */
+	TIME			= 13:30;		/* hh:mm (24-hour clock)*/
+	EPHEMERIS_ENABLE	= TRUE;
+	ATMOSPHERE_MODEL_ENABLE	= FALSE;
+	SUN_ENABLE		= TRUE;
+	MOON_ENABLE		= TRUE;
+	STARFIELD_ENABLE	= TRUE;
+	STARFIELD_INTENSITY	= 100;			// percent
+	BAROMETRIC_PRESSURE	= 20;			// millibars
+	HUMIDITY		= 50;			/* 0 to 100 % */
+	TEMPERATURE		= 40;			/* degrees Celsius */
+	VISIBILITY		= 30000.0;		/* meters */
+	HORIZONTAL_WINDSPEED	= 10.5;			// m/s
+	VERTICAL_WINDSPEED	= 0.5;			// m/s
+	WIND_DIRECTION		= 30;			// degrees from North
+
+	COMPONENT
+	{
+		NAME        = &quot;Atmosphere Component 1&quot;;
+		COMPONENT_CLASS = ATMOSPHERE;
+		ID          = 4000;
+		INSTANCE_ID = 1;
+		DEF_STATE   = 0;
+
+		STATE
+		{
+			NAME  = &quot;Off&quot;;
+			VALUE = 0;
+		}
+
+		STATE
+		{
+			NAME  = &quot;On&quot;;
+			VALUE = 1;
+		}
+	}
+
+	WEATHER_LAYER
+	{
+		ID			= 1;
+		NAME			= &quot;Cloud Layer 1&quot;;
+		ENABLE			= TRUE;
+		SCUD_ENABLE		= FALSE;
+		RANDOM_WIND_ENABLE	= TRUE;
+		RANDOM_LIGHTNING_ENABLE	= TRUE;
+		CLOUD_TYPE		= 1;		// See ICD for assignments
+		SEVERITY		= 3;		// 1 - 5
+		SCUD_FREQUENCY		= 20;		// percent
+		COVERAGE		= 65;		// percent
+		BASE_ELEVATION		= 5000;		// meters
+		THICKNESS		= 2000;		// meters
+		TRANSITION_BAND		= 150;		// meters
+		BAROMETRIC_PRESSURE	= 10;
+		HUMIDITY		= 80;
+		TEMPERATURE		= 32;
+		VISIBILITY		= 50;
+		HORIZONTAL_WINDSPEED	= 50;
+		VERTICAL_WINDSPEED	= -20;
+		WIND_DIRECTION		= 45;
+		AEROSOL_CONCENTRATION	= 90;
+	}</pre>
+    <pre>}</pre>
+  </blockquote>
+  <p><b>DATABASE</b> definitions define the following parameters:</p>
+  <ul>
+    <li><i>NAME</i>
+      <blockquote>
+        A descriptive, user-recognizable name for the database. The name must be
+        enclosed within double quotation marks (&quot;…&quot;).
+      </blockquote>
+    <li><i>ID</i>
+      <blockquote>
+        An integer from 1 through 127 that specifies the database.
+      </blockquote>
+    <li><i>ORIGIN_LATITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the geodetic latitude of the
+        origin point of the database.
+      </blockquote>
+    <li><i>ORIGIN_LONGITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the geodetic longitude of the
+        origin point of the database.
+      </blockquote>
+    <li><i>ORIGIN_ALTITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the altitude in meters of the
+        origin point of the database. The altitude is with respect to Mean Sea
+        Level.
+      </blockquote>
+    <li><i>DEFAULT_LATITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the default latitude of the
+        Ownship when it is created or when the database is changed. If this
+        parameter is not specified, <i>ORIGIN_LAT</i> is used.
+      </blockquote>
+    <li><i>DEFAULT_LONGITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the default longitude of the
+        Ownship when it is created or when the database is changed. If this
+        parameter is not specified, <i>ORIGIN_LON</i> is used.
+      </blockquote>
+    <li><i>DEFAULT_ALTITUDE</i>
+      <blockquote>
+        A floating-point number that specifies the default altitude of the
+        Ownship when it is created or when the database is changed. If this
+        parameter is not specified, <i>ORIGIN_ALT</i> is used.
+      </blockquote>
+    <li><i><a name="DISCRETE_COMPONENT">COMPONENT</a></i>
+      <blockquote>
+        Defines a component for entities of the given type.&nbsp; Discrete component definitions specify the following
+        parameters:
+      </blockquote>
+      <ul>
+        <li><i>NAME</i>
+          <blockquote>
+            A descriptive, user-recognizable name for the component. The name
+            must be enclosed within double quotation marks (&quot;…&quot;).
+          </blockquote>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the component.
+          </blockquote>
+        <li><i>INSTANCE_ID</i>
+          <blockquote>
+            <p>An application- or database-specific object instance
+            identifier.&nbsp; See the <font color="#FF00FF">CIGI 3 ICD</font>
+            for more information.</p>
+          </blockquote>
+        </li>
+        <li><i>DEF_STATE</i>
+          <blockquote>
+            An integer that specifies the default discrete state for the component.
+          </blockquote>
+        <li><i>DEF_DATA1</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type for the 1st user-defined datum of the component. The
+            value may be an integer or floating-point value. The datum type is
+            specified by one of the following keywords:
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;
+        <table border="1">
+          <tbody>
+            <tr>
+              <td width="30%" bgColor="#0038a8"><b><font color="#ffffff">Keyword</font></b></td>
+              <td width="70%" bgColor="#0038a8"><b><font color="#ffffff">Description</font></b></td>
+            </tr>
+            <tr>
+              <td width="30%">INT32</td>
+              <td width="70%">32-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT32</td>
+              <td width="70%">32-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">INT64</td>
+              <td width="70%">64-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT64</td>
+              <td width="70%">64-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">FLOAT</td>
+              <td width="70%">32-bit single-precision floating-point number</td>
+            </tr>
+            <tr>
+              <td width="30%">DOUBLE</td>
+              <td width="70%">64-bit double-precision floating-point number</td>
+            </tr>
+          </tbody>
+        </table>
+          </blockquote>
+          <blockquote>
+            The value must precede the datum type and the two must be separated
+            by a comma.
+          </blockquote>
+        <li><i>DEF_DATA2</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 2nd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA3</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 3rd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA2</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA4</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 4th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA3</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA5</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 5th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA4</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA6</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 6th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>; however, the datum type must
+            be a 32-bit type. This parameter pair is not used if <i>DEF_DATA5</i>
+            specifies a 64-bit data type.
+          </blockquote>
+        <li><i>STATE</i>
+          <blockquote>
+            Defines a discrete state for the component. Each <i>STATE</i> block
+            must include the following parameters:
+            <ul>
+              <li><i>NAME</i>
+                <blockquote>
+                  A descriptive, user-recognizable name for the component state.
+                  The name must be enclosed within double quotation marks
+                  (&quot;…&quot;).
+                </blockquote>
+              <li><i>VALUE</i>
+                <blockquote>
+                  An integer that specifies the value associated with the state.
+                </blockquote>
+              </li>
+            </ul>
+            <p>The parameters of the <i>STATE</i> block must be contained within
+            a single set of brackets ({...}).</p>
+          </blockquote>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

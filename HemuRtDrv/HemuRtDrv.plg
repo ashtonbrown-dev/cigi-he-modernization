@@ -1,0 +1,50 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: HemuRtDrv - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP3F.tmp" with contents
+[
+/nologo /ML /W3 /GX /Ox /I "..\coordcnv" /I ".." /D "WIN32" /D "NDEBUG" /D "RELEASE" /D "NO_RTX" /Fp"Release/HemuRtDrv.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Lance\cigi.3\HemuRtDrv\HemuRtDrv.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP3F.tmp" 
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP40.tmp" with contents
+[
+libc.lib oldnames.lib kernel32.lib ws2_32.lib mswsock.lib advapi32.lib user32.lib /nologo /pdb:none /machine:I386 /nodefaultlib /out:"Release/HemuDrv.exe" /libpath:"c:\apis\ccu" /libpath:"C:\Program Files\Venturcom\RTX SDK\lib" /subsystem:console,4.00 
+.\Release\cas.obj
+.\Release\cigi3.obj
+.\Release\common.obj
+.\Release\coordcnv.obj
+.\Release\Fly.obj
+.\Release\hemumsg.obj
+.\Release\HemuRtDrv.obj
+.\Release\RTXCompatibility.obj
+.\Release\RTXSharedBufferQ.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP40.tmp"
+<h3>Output Window</h3>
+Compiling...
+HemuRtDrv.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP42.bat" with contents
+[
+@echo off
+copy .\Release\hemudrv.exe c:\stealthviewer
+copy .\Release\hemudrv.exe ..\hemu4
+]
+Creating command line "C:\DOCUME~1\LANCED~1\LOCALS~1\Temp\RSP42.bat"
+
+        1 file(s) copied.
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+HemuDrv.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

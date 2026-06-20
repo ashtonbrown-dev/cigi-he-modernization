@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Byte Order</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Byte Order</h2>
+<blockquote>
+  <p>When a processor stores or performs an operation on a multiple-byte datum,
+  the datum can be represented in one of two ways. In a &quot;big-endian&quot;
+  configuration, the lowest-addressed, or &quot;leftmost,&quot; byte is the
+  high-order byte. Motorola and some other RISC architectures use this method.
+  In &quot;little-endian&quot; architectures such as those used by Intel, the
+  leftmost byte is the low-order byte.
+  <p ALIGN="LEFT">The figure below illustrates the byte layout of signed and unsigned
+  16- and 32-bit data types on big-endian architectures:</p>
+  <p align="center"><img border="0" src="Images/Figure6.gif" width="665" height="230"></p>
+  <p align="center"><b>Big-Endian Byte Order</b></p>
+  <font FACE="Arial" SIZE="2">
+  <p>&nbsp;</font>
+  <p ALIGN="LEFT">The figure below illustrates the byte layout of the same data types on
+  little-endian architectures:</p>
+  <p align="center"><img border="0" src="Images/Figure7.gif" width="650" height="230"></p>
+  <p align="center"><b>Little-Endian Byte Order</b></p>
+  <p ALIGN="LEFT">CIGI 3 does not impose a byte order upon either the IG or the
+  Host. Instead, the receiver has the responsibility of performing byte swapping
+  if necessary. This has several advantages over one device performing all byte
+  swapping. First, it distributes the additional processing between the IG and
+  Host. It also eliminates the need to perform handshaking between the two
+  devices. It enables the mechanism to work in either synchronous or
+  asynchronous mode. Finally, it simplifies coding, since only the device’s
+  unpacking routines need to account for byte order.</p>
+  <p>The <b>IG Control</b> and <b>Start of Frame</b> packets both contain a
+  16-bit <i>Byte&nbsp;Swap</i> parameter that indicates whether the receiver
+  should byte-swap the incoming message. The sender sets the most significant
+  bit of the high byte and clears all other bits. When the receiver examines
+  this parameter, it must byte-swap the entire message if the most significant
+  bit of the <i>low</i> byte is set. Figure 8 illustrates the bit locations for
+  each state.</p>
+  <p align="center"><img border="0" src="Images/Figure8.gif" width="492" height="195"></p>
+  <p align="center"><b> Use of CIGI Byte Swap Parameter</b></p>
+  <p>Refer to Sections 4.1.1 and 4.2.1 for additional details on the <b>IG
+  Control</b> and <b>Start of Frame</b> packets.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

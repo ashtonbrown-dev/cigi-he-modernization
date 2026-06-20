@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Bit Fields</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Bit Fields</h2>
+<blockquote>
+  <p>To reduce packet size and Ethernet traffic, Booleans, enumerated values,
+  and integers with small ranges typically use only the bits they need. Memory
+  may be divided into bit fields to allow the data to be &quot;packed&quot; into
+  as small a space as possible. The following&nbsp;byte diagram shows an example
+  of how several values might be packed into bit fields:</p>
+  <center>
+  <table BORDER="1" CELLSPACING="1" BORDERCOLOR="#000080" CELLPADDING="1" WIDTH="579">
+    <tr>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">7</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">6</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">5</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">4</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">3</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">2</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">1</font></b></td>
+      <td WIDTH="4%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">0</font></b></td>
+      <td WIDTH="4%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">7</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">6</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">5</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">4</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">3</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">2</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">1</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">0</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">7</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">6</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">5</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">4</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">3</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">2</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">1</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">0</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">7</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">6</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">5</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">4</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">3</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">2</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">1</font></b></td>
+      <td WIDTH="3%" VALIGN="MIDDLE" BGCOLOR="#000080"><b><font FACE="Arial" SIZE="1" COLOR="#ffffff">
+        <p ALIGN="CENTER">0</font></b></td>
+    </tr>
+    <tr>
+      <td WIDTH="13%" VALIGN="MIDDLE" COLSPAN="4" BGCOLOR="#99ccff" HEIGHT="15"><i><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">Val1</font></i></td>
+      <td WIDTH="9%" VALIGN="MIDDLE" COLSPAN="3" BGCOLOR="#ccccff" HEIGHT="15"><i><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">Val2</font></i></td>
+      <td WIDTH="4%" VALIGN="MIDDLE" BGCOLOR="#99ffcc" HEIGHT="15"><i><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">V3</font></i></td>
+      <td WIDTH="4%" VALIGN="MIDDLE" BGCOLOR="#ffcccc" HEIGHT="15"><i><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">V4</font></i></td>
+      <td WIDTH="7%" VALIGN="MIDDLE" COLSPAN="2" BGCOLOR="#99ccff" HEIGHT="15"><i><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">Val5</font></i></td>
+      <td WIDTH="16%" VALIGN="MIDDLE" COLSPAN="5" BGCOLOR="#ccccff" HEIGHT="15"><font FACE="Arial" SIZE="1">
+        <p ALIGN="CENTER">Reserved</font></td>
+      <td WIDTH="25%" VALIGN="MIDDLE" COLSPAN="8" BGCOLOR="#99ffcc" HEIGHT="15">
+        <p>&nbsp;</p>
+      </td>
+      <td WIDTH="24%" VALIGN="MIDDLE" COLSPAN="8" BGCOLOR="#ffcccc" HEIGHT="15">
+        <p>&nbsp;</p>
+      </td>
+    </tr>
+  </table>
+  </center>
+  <p align="center"><b>Example of Multiple Bit Fields</b></p>
+  <p>The above word can be broken down as follows:</p>
+  <ul>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;page-break-after:
+avoid;mso-list:l0 level1 lfo1;tab-stops:list .25in"><i>Val1</i> is a 4-bit
+      unsigned integer value with a range of 0 through 2<sup>4</sup>.</li>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .25in"><i>Val2</i> is a 3-bit unsigned integer value with a range
+      of 0 through 2<sup>3</sup>.</li>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .25in"><i>V3</i> is a single-bit binary value with possible
+      values 0 and 1.</li>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .25in"><i>V4</i> is a single-bit binary value with possible
+      values 0 and 1.</li>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .25in"><i>Val5</i> is a 2-bit unsigned integer value with a range
+      of 0 through 2<sup>2</sup>.</li>
+    <li>
+      <p class="MsoBodyText" style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .25in">The bits marked as “Reserved” are unused and must
+      contain zero.</li>
+  </ul>
+  <span style="mso-fareast-font-family: Times New Roman; mso-bidi-font-family: Times New Roman; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">The
+  remaining two bytes can be used as two 8-bit integers or one 16-bit integer
+  (signed or unsigned).</span>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

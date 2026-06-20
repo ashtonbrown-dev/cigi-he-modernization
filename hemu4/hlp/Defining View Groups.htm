@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Defining View Groups</Title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="49669" -->
+
+<h2>Defining View Groups</h2>
+<blockquote>
+  <p>The VIEWS.DEF file is used to define groups to which view can be assigned. The following is an example
+  view group definition:</p>
+  <blockquote>
+    <pre>VIEWGROUP
+{
+	NAME = &quot;Out-the-Window&quot;;
+	ID = 1;
+
+
+	COMPONENT
+	{
+		NAME        = &quot;Crash Indicator&quot;;
+		ID          = 4001;
+		DEF_STATE   = 0;
+
+		STATE
+		{
+			NAME  = &quot;Off&quot;;
+			VALUE = 0;
+		}
+
+		STATE
+		{
+			NAME  = &quot;On&quot;;
+			VALUE = 1;
+		}
+	}
+}</pre>
+  </blockquote>
+  <p><b>VIEWGROUP</b> definitions define the following parameters:</p>
+  <ul>
+    <li><i>NAME</i>
+      <blockquote>
+        A descriptive, user-recognizable name for the view group. The name must be
+        enclosed within double quotation marks (&quot;…&quot;).
+      </blockquote>
+    <li><i>ID</i>
+      <blockquote>
+        An integer that specifies the view group.
+      </blockquote>
+    <li><i><a name="DISCRETE_COMPONENT">COMPONENT</a></i>
+      <blockquote>
+        Defines a component for the view group.&nbsp; Discrete component definitions specify the following
+        parameters:
+      </blockquote>
+      <ul>
+        <li><i>NAME</i>
+          <blockquote>
+            A descriptive, user-recognizable name for the component. The name
+            must be enclosed within double quotation marks (&quot;…&quot;).
+          </blockquote>
+        <li><i>ID</i>
+          <blockquote>
+            An integer that uniquely identifies the component for a given view
+            group.
+          </blockquote>
+        <li><i>DEF_STATE</i>
+          <blockquote>
+            An integer that specifies the default discrete state for the component.
+          </blockquote>
+        <li><i>DEF_DATA1</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type for the 1st user-defined datum of the component. The
+            value may be an integer or floating-point value. The datum type is
+            specified by one of the following keywords:
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;
+        <table border="1">
+          <tbody>
+            <tr>
+              <td width="30%" bgColor="#0038a8"><b><font color="#ffffff">Keyword</font></b></td>
+              <td width="70%" bgColor="#0038a8"><b><font color="#ffffff">Description</font></b></td>
+            </tr>
+            <tr>
+              <td width="30%">INT32</td>
+              <td width="70%">32-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT32</td>
+              <td width="70%">32-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">INT64</td>
+              <td width="70%">64-bit signed integer</td>
+            </tr>
+            <tr>
+              <td width="30%">UINT64</td>
+              <td width="70%">64-bit unsigned integer</td>
+            </tr>
+            <tr>
+              <td width="30%">FLOAT</td>
+              <td width="70%">32-bit single-precision floating-point number</td>
+            </tr>
+            <tr>
+              <td width="30%">DOUBLE</td>
+              <td width="70%">64-bit double-precision floating-point number</td>
+            </tr>
+          </tbody>
+        </table>
+          </blockquote>
+          <blockquote>
+            The value must precede the datum type and the two must be separated
+            by a comma.
+          </blockquote>
+        <li><i>DEF_DATA2</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 2nd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA3</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 3rd user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA2</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA4</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 4th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA3</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA5</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 5th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA4</i>. This parameter pair is not
+            used if <i>DEF_DATA1</i> specifies a 64-bit data type.
+          </blockquote>
+        <li><i>DEF_DATA6</i>
+          <blockquote>
+            An optional pair of parameters that specify the default value and
+            datum type
+            for the 6th user-defined datum of the component. The parameters are
+            used as described by <i>DEF_DATA1</i>; however, the datum type must
+            be a 32-bit type. This parameter pair is not used if <i>DEF_DATA5</i>
+            specifies a 64-bit data type.
+          </blockquote>
+        <li><i>STATE</i>
+          <blockquote>
+            Defines a discrete state for the component. Each <i>STATE</i> block
+            must include the following parameters:
+            <ul>
+              <li><i>NAME</i>
+                <blockquote>
+                  A descriptive, user-recognizable name for the component state.
+                  The name must be enclosed within double quotation marks
+                  (&quot;…&quot;).
+                </blockquote>
+              <li><i>VALUE</i>
+                <blockquote>
+                  An integer that specifies the value associated with the state.
+                </blockquote>
+              </li>
+            </ul>
+            <p>The parameters of the <i>STATE</i> block must be contained within
+            a single set of brackets ({...}).</p>
+          </blockquote>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

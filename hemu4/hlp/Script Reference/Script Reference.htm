@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<Title>Script Reference</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="6605" endspan -->
+
+<h1>Script Reference</h1>
+<blockquote>
+  <p>The CIGI Host Emulator contains a script facility that may be used to 
+  perform a series of prearranged actions and to send a sequence of CIGI packets 
+  to the Image Generator. Scripts may be used to perform a tedious or 
+  complicated series of actions in a single step. They may be used to perform 
+  recursion tests when the results must be reproducible. They may also be used 
+  in lieu of a scenario (.sf3) file when the definition (.def) files are 
+  expected to be changed.</p>
+  <p>Each action is initiated by a script command. A command consists of a 
+  keyword followed by zero or more parameters. All parameters listed for any 
+  given command in this help file are mandatory. Each command must be on its own 
+  line, and each command and its parameters must be on the same line. No line 
+  may be longer than 255 characters. Commands are processed in the order in 
+  which they are listed in the script. Keywords are not case-sensitive.</p>
+  <p>Comments may be used to annotate a script. A comment may appear on its own 
+  line, or it may follow a command. Each comment must begin with a pound sign 
+  (#). Each line of a multi-line comment must begin with a pound sign.</p>
+  <h3>Keyword List</h3>
+  <p><a href="ADD_ENTITY.htm">ADD_ENTITY</a></p>
+  <p><a href="ARTPART_ENABLE.htm">ARTPART_ENABLE</a></p>
+  <p><a href="ARTPART_ENABLE_XYZ.htm">ARTPART_ENABLE_XYZ</a></p>
+  <p><a href="ARTPART_ENABLE_YPR.htm">ARTPART_ENABLE_YPR</a></p>
+  <p><a href="ARTPART_PITCH.htm">ARTPART_PITCH</a></p>
+  <p><a href="ARTPART_ROLL.htm">ARTPART_ROLL</a></p>
+  <p><a href="ARTPART_X.htm">ARTPART_X</a></p>
+  <p><a href="ARTPART_XYZ.htm">ARTPART_XYZ</a></p>
+  <p><a href="ARTPART_Y.htm">ARTPART_Y</a></p>
+  <p><a href="ARTPART_YAW.htm">ARTPART_YAW</a></p>
+  <p><a href="ARTPART_YPR.htm">ARTPART_YPR</a></p>
+  <p><a href="ARTPART_Z.htm">ARTPART_Z</a></p>
+  <p><a href="ATM_MODEL_ENABLE.htm">ATM_MODEL_ENABLE</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_DOUBLE.htm">
+  ATMOSPHERE_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_FLOAT.htm">
+  ATMOSPHERE_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_INT32.htm">
+  ATMOSPHERE_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_INT64.htm">
+  ATMOSPHERE_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_UINT32.htm">
+  ATMOSPHERE_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_DATUM_UINT64.htm">
+  ATMOSPHERE_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="ATMOSPHERE_COMPONENT_END_UPDATE.htm">
+	ATMOSPHERE_COMPONENT_END_UPDATE</a></p>
+  <p><a href="ATMOSPHERE_COMPONENT_STATE.htm">ATMOSPHERE_COMPONENT_STATE</a></p>
+  <p><a href="CD_SEGMENT.htm">CD_SEGMENT</a></p>
+  <p><a href="CD_SEGMENT_ENABLE.htm">CD_SEGMENT_ENABLE</a></p>
+  <p><a href="CD_VOLUME_CUBOID.htm">CD_VOLUME_CUBOID</a></p>
+  <p><a href="CD_VOLUME_ENABLE.htm">CD_VOLUME_ENABLE</a></p>
+  <p><a href="CD_VOLUME_SPHERE.htm">CD_VOLUME_SPHERE</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_DOUBLE.htm">
+  CELSPHERE_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_FLOAT.htm">
+  CELSPHERE_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_INT32.htm">
+  CELSPHERE_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_INT64.htm">
+  CELSPHERE_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_UINT32.htm">
+  CELSPHERE_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="CELSPHERE_COMPONENT_DATUM_UINT64.htm">
+  CELSPHERE_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="CELSPHERE_COMPONENT_END_UPDATE.htm">
+	CELSPHERE_COMPONENT_END_UPDATE</a></p>
+  <p><a href="CELSPHERE_COMPONENT_STATE.htm">CELSPHERE_COMPONENT_STATE</a></p>
+  <p><a href="DATE.htm">DATE</a></p>
+  <p><a href="ENTITY_ADD_WAYPOINT.htm">ENTITY_ADD_WAYPOINT</a></p>
+  <p><a href="ENTITY_AIRSPEED.htm">ENTITY_AIRSPEED</a></p>
+  <p><a href="ENTITY_ALPHA.htm">ENTITY_ALPHA</a></p>
+  <p><a href="ENTITY_ALTITUDE.htm">ENTITY_ALTITUDE</a></p>
+  <p><a href="ENTITY_ALTITUDE_RELATIVE.htm">ENTITY_ALTITUDE_RELATIVE</a></p>
+  <p><a href="ENTITY_ANIM_DIRECTION.htm">ENTITY_ANIM_DIRECTION</a></p>
+  <p><a href="ENTITY_ANIM_LOOPMODE.htm">ENTITY_ANIM_LOOPMODE</a></p>
+  <p><a href="ENTITY_ANIM_STATE.htm">ENTITY_ANIM_STATE</a></p>
+  <p><a href="ENTITY_ATTACH.htm">ENTITY_ATTACH</a></p>
+  <p><a href="ENTITY_CLAMP_MODE.htm">ENTITY_CLAMP_MODE</a></p>
+  <p><a href="ENTITY_CLEAR_WAYPOINTS.htm">ENTITY_CLEAR_WAYPOINTS</a></p>
+  <p><a href="ENTITY_COLLDET_ENABLE.htm">ENTITY_COLLDET_ENABLE</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_DOUBLE.htm">ENTITY_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_FLOAT.htm">ENTITY_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_INT32.htm">ENTITY_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_INT64.htm">ENTITY_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_UINT32.htm">ENTITY_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="ENTITY_COMPONENT_DATUM_UINT64.htm">ENTITY_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="ENTITY_COMPONENT_END_UPDATE.htm">ENTITY_COMPONENT_END_UPDATE</a></p>
+  <p><a href="ENTITY_COMPONENT_STATE.htm">ENTITY_COMPONENT_STATE</a></p>
+  <p><a href="ENTITY_DETACH.htm">ENTITY_DETACH</a></p>
+  <p><a href="ENTITY_FLY.htm">ENTITY_FLY</a></p>
+  <p><a href="ENTITY_FLY_WAYPOINTS.htm">ENTITY_FLY_WAYPOINTS</a></p>
+  <p><a href="ENTITY_INHERIT_ALPHA.htm">ENTITY_INHERIT_ALPHA</a></p>
+  <p><a href="ENTITY_LATITUDE.htm">ENTITY_LATITUDE</a></p>
+  <p><a href="ENTITY_LONGITUDE.htm">ENTITY_LONGITUDE</a></p>
+  <p><a href="ENTITY_PITCH.htm">ENTITY_PITCH</a></p>
+  <p><a href="ENTITY_PITCH_OFFSET.htm">ENTITY_PITCH_OFFSET</a></p>
+  <p><a href="ENTITY_PITCH_RELATIVE.htm">ENTITY_PITCH_RELATIVE</a></p>
+  <p><a href="ENTITY_POS.htm">ENTITY_POS</a></p>
+  <p><a href="ENTITY_POS_RELATIVE.htm">ENTITY_POS_RELATIVE</a></p>
+  <p><a href="ENTITY_ROLL.htm">ENTITY_ROLL</a></p>
+  <p><a href="ENTITY_ROLL_OFFSET.htm">ENTITY_ROLL_OFFSET</a></p>
+  <p><a href="ENTITY_ROLL_RELATIVE.htm">ENTITY_ROLL_RELATIVE</a></p>
+  <p><a href="ENTITY_SPEED.htm">ENTITY_SPEED</a></p>
+  <p><a href="ENTITY_STATE.htm">ENTITY_STATE</a></p>
+  <p><a href="ENTITY_X_OFFSET.htm">ENTITY_X_OFFSET</a></p>
+  <p><a href="ENTITY_XYZ_OFFSET.htm">ENTITY_XYZ_OFFSET</a></p>
+  <p><a href="ENTITY_Y_OFFSET.htm">ENTITY_Y_OFFSET</a></p>
+  <p><a href="ENTITY_YAW.htm">ENTITY_YAW</a></p>
+  <p><a href="ENTITY_YAW_OFFSET.htm">ENTITY_YAW_OFFSET</a></p>
+  <p><a href="ENTITY_YAW_RELATIVE.htm">ENTITY_YAW_RELATIVE</a></p>
+  <p><a href="ENTITY_YPR.htm">ENTITY_YPR</a></p>
+  <p><a href="ENTITY_YPR_OFFSET.htm">ENTITY_YPR_OFFSET</a></p>
+  <p><a href="ENTITY_YPR_RELATIVE.htm">ENTITY_YPR_RELATIVE</a></p>
+  <p><a href="ENTITY_Z_OFFSET.htm">ENTITY_Z_OFFSET</a></p>
+  <p><a href="EPHEMERIS_MODE.htm">EPHEMERIS_MODE</a></p>
+  <p><a href="EXECUTE.htm">EXECUTE</a></p>
+  <p><a href="FRAME.htm">FRAME</a></p>
+  <p><a href="FRAME_WAIT.htm">FRAME_WAIT</a></p>
+  <p><a href="GLAYER_AEROSOL_CONC.htm">GLAYER_AEROSOL_CONC</a></p>
+  <p><a href="GLAYER_AIR_TEMP.htm">GLAYER_AIR_TEMP</a></p>
+  <p><a href="GLAYER_BARO_PRESSURE.htm">GLAYER_BARO_PRESSURE</a></p>
+  <p><a href="GLAYER_CLOUD_TYPE.htm">GLAYER_CLOUD_TYPE</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_DOUBLE.htm">GLAYER_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_FLOAT.htm">GLAYER_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_INT32.htm">GLAYER_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_INT64.htm">GLAYER_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_UINT32.htm">GLAYER_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="GLAYER_COMPONENT_DATUM_UINT64.htm">GLAYER_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="GLAYER_COMPONENT_END_UPDATE.htm">GLAYER_COMPONENT_END_UPDATE</a></p>
+  <p><a href="GLAYER_COMPONENT_STATE.htm">GLAYER_COMPONENT_STATE</a></p>
+  <p><a href="GLAYER_COVERAGE.htm">GLAYER_COVERAGE</a></p>
+  <p><a href="GLAYER_ELEVATION.htm">GLAYER_ELEVATION</a></p>
+  <p><a href="GLAYER_ENABLE.htm">GLAYER_ENABLE</a></p>
+  <p><a href="GLAYER_HUMIDITY.htm">GLAYER_HUMIDITY</a></p>
+  <p><a href="GLAYER_LIGHTNING_ENABLE.htm">GLAYER_LIGHTNING_ENABLE</a></p>
+  <p><a href="GLAYER_RANDOM_WIND_ENABLE.htm">GLAYER_RANDOM_WIND_ENABLE</a></p>
+  <p><a href="GLAYER_SCUD_ENABLE.htm">GLAYER_SCUD_ENABLE</a></p>
+  <p><a href="GLAYER_SCUD_FREQ.htm">GLAYER_SCUD_FREQ</a></p>
+  <p><a href="GLAYER_SEVERITY.htm">GLAYER_SEVERITY</a></p>
+  <p><a href="GLAYER_THICKNESS.htm">GLAYER_THICKNESS</a></p>
+  <p><a href="GLAYER_TRANSITION_BAND.htm">GLAYER_TRANSITION_BAND</a></p>
+  <p><a href="GLAYER_VISIBILITY.htm">GLAYER_VISIBILITY</a></p>
+  <p><a href="GLAYER_WIND.htm">GLAYER_WIND</a></p>
+  <p><a href="GLOBAL_AIR_TEMP.htm">GLOBAL_AIR_TEMP</a></p>
+  <p><a href="GLOBAL_BARO_PRESSURE.htm">GLOBAL_BARO_PRESSURE</a></p>
+  <p><a href="GLOBAL_HUMIDITY.htm">GLOBAL_HUMIDITY</a></p>
+  <p><a href="GLOBAL_VISIBILITY.htm">GLOBAL_VISIBILITY</a></p>
+  <p><a href="GLOBAL_WIND.htm">GLOBAL_WIND</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_DOUBLE.htm">
+  GTERRAIN_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_FLOAT.htm">GTERRAIN_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_INT32.htm">GTERRAIN_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_INT64.htm">GTERRAIN_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_UINT32.htm">
+  GTERRAIN_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="GTERRAIN_COMPONENT_DATUM_UINT64.htm">
+  GTERRAIN_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="GTERRAIN_COMPONENT_END_UPDATE.htm">GTERRAIN_COMPONENT_END_UPDATE</a></p>
+  <p><a href="GTERRAIN_COMPONENT_STATE.htm">GTERRAIN_COMPONENT_STATE</a></p>
+  <p><a href="MESSAGE.htm">MESSAGE</a></p>
+  <p><a href="MOON_ENABLE.htm">MOON_ENABLE</a></p>
+  <p><a href="PAUSE.htm">PAUSE</a></p>
+  <p><a href="PAUSE_MESSAGE.htm">PAUSE_MESSAGE</a></p>
+  <p><a href="REMOVE_ENTITY.htm">REMOVE_ENTITY</a></p>
+  <p><a href="RUN.htm">RUN</a></p>
+  <p><a href="SPAWN_APP.htm">SPAWN_APP</a></p>
+  <p><a href="STARFIELD_ENABLE.htm">STARFIELD_ENABLE</a></p>
+  <p><a href="STARFIELD_INTENSITY.htm">STARFIELD_INTENSITY</a></p>
+  <p><a href="SUN_ENABLE.htm">SUN_ENABLE</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_DOUBLE.htm">SYSTEM_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_FLOAT.htm">SYSTEM_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_INT32.htm">SYSTEM_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_INT64.htm">SYSTEM_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_UINT32.htm">SYSTEM_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="SYSTEM_COMPONENT_DATUM_UINT64.htm">SYSTEM_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="SYSTEM_COMPONENT_END_UPDATE.htm">SYSTEM_COMPONENT_END_UPDATE</a></p>
+  <p><a href="SYSTEM_COMPONENT_STATE.htm">SYSTEM_COMPONENT_STATE</a></p>
+  <p><a href="TIME.htm">TIME</a></p>
+  <p><a href="VIEW_ATTACH.htm">VIEW_ATTACH</a></p>
+  <p><a href="VIEW_BRING_TO_TOP.htm">VIEW_BRING_TO_TOP</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_DOUBLE.htm">VIEW_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_FLOAT.htm">VIEW_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_INT32.htm">VIEW_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_INT64.htm">VIEW_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_UINT32.htm">VIEW_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="VIEW_COMPONENT_DATUM_UINT64.htm">VIEW_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="VIEW_COMPONENT_END_UPDATE.htm">VIEW_COMPONENT_END_UPDATE</a></p>
+  <p><a href="VIEW_COMPONENT_STATE.htm">VIEW_COMPONENT_STATE</a></p>
+  <p><a href="VIEW_FAR_PLANE.htm">VIEW_FAR_PLANE</a></p>
+  <p><a href="VIEW_FOV_BOTTOM.htm">VIEW_FOV_BOTTOM</a></p>
+  <p><a href="VIEW_FOV_LEFT.htm">VIEW_FOV_LEFT</a></p>
+  <p><a href="VIEW_FOV_RIGHT.htm">VIEW_FOV_RIGHT</a></p>
+  <p><a href="VIEW_FOV_TOP.htm">VIEW_FOV_TOP</a></p>
+  <p><a href="VIEW_GROUP.htm">VIEW_GROUP</a></p>
+  <p><a href="VIEW_MIRROR_MODE.htm">VIEW_MIRROR_MODE</a></p>
+  <p><a href="VIEW_NEAR_PLANE.htm">VIEW_NEAR_PLANE</a></p>
+  <p><a href="VIEW_PITCH.htm">VIEW_PITCH</a></p>
+  <p><a href="VIEW_PIXEL_REP_MODE.htm">VIEW_PIXEL_REP_MODE</a></p>
+  <p><a href="VIEW_PROJECTION_TYPE.htm">VIEW_PROJECTION_TYPE</a></p>
+  <p><a href="VIEW_ROLL.htm">VIEW_ROLL</a></p>
+  <p><a href="VIEW_TYPE.htm">VIEW_TYPE</a></p>
+  <p><a href="VIEW_X.htm">VIEW_X</a></p>
+  <p><a href="VIEW_XYZ.htm">VIEW_XYZ</a></p>
+  <p><a href="VIEW_Y.htm">VIEW_Y</a></p>
+  <p><a href="VIEW_YAW.htm">VIEW_YAW</a></p>
+  <p><a href="VIEW_YPR.htm">VIEW_YPR</a></p>
+  <p><a href="VIEW_Z.htm">VIEW_Z</a></p>
+  <p><a href="VIEWGROUP_ATTACH.htm">VIEWGROUP_ATTACH</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_DOUBLE.htm">
+  VIEWGROUP_COMPONENT_DATUM_DOUBLE</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_FLOAT.htm">
+  VIEWGROUP_COMPONENT_DATUM_FLOAT</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_INT32.htm">
+  VIEWGROUP_COMPONENT_DATUM_INT32</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_INT64.htm">
+  VIEWGROUP_COMPONENT_DATUM_INT64</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_UINT32.htm">
+  VIEWGROUP_COMPONENT_DATUM_UINT32</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_DATUM_UINT64.htm">
+  VIEWGROUP_COMPONENT_DATUM_UINT64</a></p>
+	<p><a href="VIEWGROUP_COMPONENT_END_UPDATE.htm">
+	VIEWGROUP_COMPONENT_END_UPDATE</a></p>
+  <p><a href="VIEWGROUP_COMPONENT_STATE.htm">VIEWGROUP_COMPONENT_STATE</a></p>
+  <p><a href="VIEWGROUP_PITCH.htm">VIEWGROUP_PITCH</a></p>
+  <p><a href="VIEWGROUP_ROLL.htm">VIEWGROUP_ROLL</a></p>
+  <p><a href="VIEWGROUP_X.htm">VIEWGROUP_X</a></p>
+  <p><a href="VIEWGROUP_XYZ.htm">VIEWGROUP_XYZ</a></p>
+  <p><a href="VIEWGROUP_Y.htm">VIEWGROUP_Y</a></p>
+  <p><a href="VIEWGROUP_YAW.htm">VIEWGROUP_YAW</a></p>
+  <p><a href="VIEWGROUP_YPR.htm">VIEWGROUP_YPR</a></p>
+  <p><a href="VIEWGROUP_Z.htm">VIEWGROUP_Z</a></p>
+  <p><a href="WAIT.htm">WAIT</a></p>
+  <p><a href="WAYPOINT_ADD_ABSOLUTE.htm">WAYPOINT_ADD_ABSOLUTE</a></p>
+  <p><a href="WAYPOINT_ADD_RELATIVE.htm">WAYPOINT_ADD_RELATIVE</a></p>
+  <p><a href="WAYPOINT_CLEAR_ALL.htm">WAYPOINT_CLEAR_ALL</a></p>
+  <p><a href="WEATHER_AEROSOL_CONC.htm">WEATHER_AEROSOL_CONC</a></p>
+  <p><a href="WEATHER_AIR_TEMP.htm">WEATHER_AIR_TEMP</a></p>
+  <p><a href="WEATHER_BARO_PRESSURE.htm">WEATHER_BARO_PRESSURE</a></p>
+  <p><a href="WEATHER_CLOUD_TYPE.htm">WEATHER_CLOUD_TYPE</a></p>
+  <p><a href="WEATHER_COVERAGE.htm">WEATHER_COVERAGE</a></p>
+  <p><a href="WEATHER_ENABLE.htm">WEATHER_ENABLE</a></p>
+  <p><a href="WEATHER_HUMIDITY.htm">WEATHER_HUMIDITY</a></p>
+  <p><a href="WEATHER_LIGHTNING_ENABLE.htm">WEATHER_LIGHTNING_ENABLE</a></p>
+  <p><a href="WEATHER_RANDOM_WIND_ENABLE.htm">WEATHER_RANDOM_WIND_ENABLE</a></p>
+  <p><a href="WEATHER_SCUD_ENABLE.htm">WEATHER_SCUD_ENABLE</a></p>
+  <p><a href="WEATHER_SCUD_FREQ.htm">WEATHER_SCUD_FREQ</a></p>
+  <p><a href="WEATHER_SEVERITY.htm">WEATHER_SEVERITY</a></p>
+  <p><a href="WEATHER_TRANSITION_BAND.htm">WEATHER_TRANSITION_BAND</a></p>
+  <p><a href="WEATHER_VISIBILITY.htm">WEATHER_VISIBILITY</a></p>
+  <p><a href="WEATHER_WIND.htm">WEATHER_WIND</a></p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" i-checksum="11837" endspan -->
+
+</BODY>
+</HTML>

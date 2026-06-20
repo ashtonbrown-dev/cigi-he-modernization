@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hemu4", "hemu4\Hemu4.vcxproj", "{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3A11DB30-133C-5525-CE31-9112AEB65E04} = {3A11DB30-133C-5525-CE31-9112AEB65E04}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HemuDrv", "HemuRtDrv\HemuRtDrv.vcxproj", "{3A11DB30-133C-5525-CE31-9112AEB65E04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Debug|Win32.Build.0 = Debug|Win32
+		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Release|Win32.ActiveCfg = Release|Win32
+		{2BCC1D7B-C19C-B64D-54E4-436C4417C7A7}.Release|Win32.Build.0 = Release|Win32
+		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Debug|Win32.Build.0 = Debug|Win32
+		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Release|Win32.ActiveCfg = Release|Win32
+		{3A11DB30-133C-5525-CE31-9112AEB65E04}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

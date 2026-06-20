@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Version Compatibility</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Version Compatibility</h2>
+<blockquote>
+  <p ALIGN="LEFT">All CIGI messages contain a version number identifying the
+  version of CIGI to which the packets in that message conform. This version
+  number is contained in the <i>CIGI Version</i> parameter of both the <b>IG
+  Control</b> and <b>Start of Frame</b> packets.</p>
+  <p ALIGN="LEFT">When a device receives a CIGI message, it can inspect the
+  version number to ensure that both devices are compatible. Some devices may be
+  capable of automatically reverting to an older version of CIGI if necessary.</p>
+  <p ALIGN="LEFT">A major design goal for CIGI 3 is to build in provisions for
+  cross-version, packet-level compatibility in anticipation of future
+  generations of the interface. This document establishes some guidelines in
+  order to attempt to allow a certain degree of forward- and
+  backward-compatibility between Version 3 and higher:</p>
+  <ol>
+    <li>Bit fields begin at the least significant bit available within the byte.</li>
+    <li>All bits marked &quot;Reserved&quot; should be set to zero (0) by the
+      sender.</li>
+    <li>Any parameters added to a packet in future generations of CIGI will
+      utilize existing reserved bits, if appropriate, or be appended to the end
+      of the packet. If the receiver encounters a packet whose <i>Packet Size</i>
+      parameter is larger than expected, any bytes beyond that size will be
+      ignored.</li>
+    <li>If a parameter’s size must be increased, it will utilize any adjacent
+      Reserved space or be moved the end of the packet as a new parameter. In
+      the latter case, the sender should also populate the obsolete parameter
+      within the limitations imposed by its data type.</li>
+    <li>The unit of measure for a parameter will not change. If a change of unit
+      is required, a new parameter will be appended to the end of the packet.</li>
+    <li>If a packet becomes obsolete, that packet’s opcode will not be reused.</li>
+  </ol>
+  <p ALIGN="LEFT">These guidelines are not intended to impose limitations that
+  would be detrimental to the interface. Although every attempt will be made to
+  follow these guidelines when making future changes to CIGI, these are not
+  strict rules and should not take precedence over efficient design.</p>
+  <p>Note that changes made to versions of CIGI prior to Version 3 do not adhere
+  to the above guidelines.</p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

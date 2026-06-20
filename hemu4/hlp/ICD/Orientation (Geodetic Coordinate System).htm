@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Orientation (Geodetic Coordinate System)</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<!--webbot bot="Include" U-Include="../Header.htm" TAG="BODY" startspan -->
+
+<table border="0" width="100%" bgcolor="#0038A8" bordercolorlight="#0038A8" bordercolor="#0038A8" bordercolordark="#0038A8" cellspacing="1">
+  <tr>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8">
+      <p style="margin-left: 5"><i><font color="#FFFFFF"><b>CIGI Host Emulator </b></font></i>
+      <font color="#FFFFFF"><b><i>3</i></b></font></td>
+    <td width="100%" bgcolor="#0038A8" valign="middle" bordercolor="#0038A8" bordercolorlight="#0038A8" bordercolordark="#0038A8" align="right"><img border="0" src="../images/Logos/Boeing%20Logo.bmp" width="120" height="39"></td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="6605" -->
+
+<h2>Orientation (Geodetic Coordinate System)</h2>
+<blockquote>
+  <p><font FACE="Arial" SIZE="2">The orientation of an entity, view, or other
+  object with respect to the geodetic coordinate system is specified relative to
+  a reference plane that is parallel to an ellipsoid-tangential plane. The
+  reference plane passes through the entity’s reference point. A right-hand
+  coordinate system can be defined so that the </font><b><font SIZE="2">X</font></b><font FACE="Arial" SIZE="2">,
+  </font><b><font SIZE="2">Y</font></b><font FACE="Arial" SIZE="2">, and </font><b><font SIZE="2">Z</font></b><font FACE="Arial" SIZE="2">
+  axes correspond to North, East, and down (toward the ellipsoid), respectively.
+  This is called a North-East-Down (NED) Cartesian coordinate system and is
+  shown below:</font></p>
+  <p align="center"><img border="0" src="Images/Figure17.gif" width="460" height="404"></p>
+  <p align="center"><b><a name="GeodeticRefPlane"></a>Local Geodetic Reference Plane with NED Coordinate System</b></p>
+  <font FACE="Arial" SIZE="2">
+  <p ALIGN="LEFT">The order of rotation is about the </font><b><font SIZE="2">Z</font></b><font FACE="Arial" SIZE="2">,
+  </font><b><font SIZE="2">Y</font></b><font FACE="Arial" SIZE="2">, and then </font><b><font SIZE="2">X</font></b><font FACE="Arial" SIZE="2">
+  axes (i.e., yaw, pitch, and then roll) as described below. This discussion
+  assumes an entity but also applies to views, submodels, and other objects.</p>
+  <p ALIGN="LEFT">An entity’s yaw, </font><i><font FACE="Times New Roman" SIZE="2">&#968;</font></i><font FACE="Arial" SIZE="2">,
+  is the measure of the angle formed from True North to the entity’s </font><b><font SIZE="2">+X</font></b><font FACE="Arial" SIZE="2">
+  axis. This angle is specified in degrees and is positive clockwise if looking
+  along the +</font><b><font SIZE="2">Z</font></b><font FACE="Arial" SIZE="2">
+  axis.</p>
+  <p ALIGN="LEFT">An entity’s pitch, </font><i><font FACE="Times New Roman" SIZE="2">&#952;</font></i><font FACE="Arial" SIZE="2">,
+  is the measure of the angle between the reference plane and the entity’s </font><b><font SIZE="2">+X</font></b><font FACE="Arial" SIZE="2">
+  axis. This angle is specified in degrees and is positive above (away from the
+  ellipsoid) the reference plane.</p>
+  <p ALIGN="LEFT">Roll, </font><i><font FACE="Times New Roman" SIZE="2">&#966;</font></i><font FACE="Arial" SIZE="2">,
+  is the measure of the angle between the reference plane and the entity’s </font><b><font SIZE="2">+Y</font></b><font FACE="Arial" SIZE="2">
+  axis along a plane perpendicular to the entity’s </font><b><font SIZE="2">X</font></b><font FACE="Arial" SIZE="2">
+  axis. In other words, it is the angle of rotation about the </font><b><font SIZE="2">X</font></b><font FACE="Arial" SIZE="2">
+  axis <i>after yaw and pitch have been applied</i>. Roll is also specified in
+  degrees and is positive clockwise from the point of view of looking along the </font><b><font SIZE="2">+X</font></b><font FACE="Arial" SIZE="2">
+  axis.</p>
+  <p>The figure below illustrates the rotation about each axis. Note that the </font><b><font SIZE="2">Z</font></b><font FACE="Arial" SIZE="2">
+  axis is labeled in the negative (–) direction (above the reference plane)
+  for clarity. Dashed lines indicate that the line extends below the reference
+  plane.</font></p>
+  <p align="center"><img border="0" src="Images/Figure18.gif" width="504" height="615"></p>
+  <p align="center"><b>Rotation in NED Coordinate System</b></p>
+</blockquote>
+
+<!--webbot bot="Include" U-Include="../Footer.htm" TAG="BODY" startspan -->
+
+<hr noshade color="#0038A8">
+<table border="0" width="100%">
+  <tr>
+    <td width="50%">
+      <p class="copyright">© 2008 The Boeing Company</td>
+    <td width="50%">
+      <p align="right" class="copyright">rev 3.3.0</td>
+  </tr>
+</table>
+
+<!--webbot bot="Include" endspan i-checksum="11837" -->
+
+</BODY>
+</HTML>

@@ -22,27 +22,28 @@
     <SccProjectName />
     <SccLocalPath />
     <ProjectGuid>{71805622-BC7C-A37C-8F42-0D42661ACEF1}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Realtime Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Realtime Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -76,7 +77,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HemuDrv</TargetName>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</PostBuildEventUseInBuild>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HemuDrv</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,8 +117,9 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(SolutionDir)hemu4\"
-xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)hemu4\"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -161,8 +163,9 @@ xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Comma
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(SolutionDir)hemu4\"
-xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)hemu4\"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -205,8 +208,9 @@ xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Comma
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(SolutionDir)hemu4\"
-xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)hemu4\"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -246,8 +250,9 @@ xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Comma
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(SolutionDir)hemu4\"
-xcopy /d /i /y "$(TargetDir)HemuDrv.exe" "$(MSBuildStartupDirectory)\app"</Command>
+      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)hemu4\"
+xcopy /d /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

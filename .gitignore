@@ -12,6 +12,9 @@
 
 # Compiler and linker output
 [Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
 x64/
 x86/
 ipch/
@@ -26,6 +29,10 @@ ipch/
 *.log
 *.exe
 *.dll
+
+# Packaged application output
+/app/
+hemu4/app/
 
 # Local operating-system files
 Thumbs.db

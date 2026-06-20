@@ -663,6 +663,7 @@
 #define IDC_EDIT_WIND_SPEED_VERT        1392
 #define IDC_EDIT_YEAR                   1392
 #define IDC_CHECK_ATMOSPHERICS_ENABLE   1393
+#define IDC_EDIT_SECONDS                1393
 #define IDC_EDIT_REGION_ID              1394
 #define IDC_RADIO_REGION_STATE_INACTIVE 1395
 #define IDC_EDIT_LATITUDE               1396

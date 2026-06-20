@@ -1939,7 +1939,7 @@ int CigiAddPacketReplaceComponentCtrl(const int sessionid, const CIGI_COMPONENT_
 {
     static const CIGI_COMPONENT_CONTROL mask = {  sizeof(CIGI_COMPONENT_CONTROL), CIGI_COMPONENT_CONTROL_OPCODE,
                                                        
-                                                       -1, -1, -1,
+                                                       static_cast<uint16_t>(-1), static_cast<unsigned char>(-1), static_cast<unsigned char>(-1),
                                                        0, 0, 0, 0, 0, 0, 0
                                                   };
 
@@ -1952,7 +1952,7 @@ int CigiAddPacketReplaceShortComponentCtrl(const int sessionid, const CIGI_COMPO
 {
     static const CIGI_COMPONENT_CONTROL_S mask = { sizeof(CIGI_COMPONENT_CONTROL_S), CIGI_COMPONENT_CONTROL_S_OPCODE,
                                                        
-                                                       -1, -1, -1,
+                                                       static_cast<uint16_t>(-1), static_cast<unsigned char>(-1), static_cast<unsigned char>(-1),
                                                        0, 0, 0,
                                                     };
 
@@ -1965,7 +1965,7 @@ int CigiAddPacketReplaceArtPartCtrl(const int sessionid, const CIGI_ARTPART_CONT
 {
     static const CIGI_ARTPART_CONTROL mask = { sizeof(CIGI_ARTPART_CONTROL), CIGI_ARTPART_CONTROL_OPCODE,
                                                 
-                                                -1, -1,
+                                                static_cast<uint16_t>(-1), static_cast<uint8_t>(-1),
                                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                                              };
 
@@ -1978,7 +1978,7 @@ int CigiAddPacketReplaceShortArtPartCtrl(const int sessionid, const CIGI_ARTPART
 {
     static const CIGI_ARTPART_CONTROL_S mask = {  sizeof(CIGI_ARTPART_CONTROL_S),  CIGI_ARTPART_CONTROL_S_OPCODE,
                                                     
-                                                    -1, -1, -1,
+                                                    static_cast<uint16_t>(-1), static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                     0, 0, 0, 0, 0.0, 0.0
                                                };
 
@@ -1991,7 +1991,7 @@ int CigiAddPacketReplaceVelocityCtrl(const int sessionid, const CIGI_VELOCITY_CO
 {
     static const CIGI_VELOCITY_CONTROL mask = { sizeof(CIGI_VELOCITY_CONTROL), CIGI_VELOCITY_CONTROL_OPCODE,
                                             
-                                            -1, -1,
+                                            static_cast<uint16_t>(-1), static_cast<uint8_t>(-1),
                                             0, 0, 0.0, 0.0, 0.0, 0.0, 0.0
                                           };
 
@@ -2065,7 +2065,7 @@ int CigiAddPacketReplaceWaveCtrl(const int sessionid, const CIGI_WAVE_CONTROL *p
 {
     static const CIGI_WAVE_CONTROL mask = { sizeof(CIGI_WAVE_CONTROL), CIGI_WAVE_CONTROL_OPCODE,
                                             
-                                            -1, -1,
+                                            static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                             0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
                                           };
 
@@ -2078,7 +2078,7 @@ int CigiAddPacketReplaceTerrestrialCondCtrl(const int sessionid, const CIGI_TERR
 {
     static const CIGI_TERRESTRIAL_CONDITIONS_CONTROL mask = { sizeof(CIGI_TERRESTRIAL_CONDITIONS_CONTROL), CIGI_TERRESTRIAL_CONDITIONS_CONTROL_OPCODE,
                                                                 
-                                                                -1, -1,
+                                                                static_cast<uint16_t>(-1), static_cast<uint8_t>(-1),
                                                                 0, 0, 0
                                                             };
 
@@ -2091,9 +2091,9 @@ int CigiAddPacketReplaceViewCtrl(const int sessionid, const CIGI_VIEW_CONTROL *p
 {
     static const CIGI_VIEW_CONTROL mask = { sizeof(CIGI_VIEW_CONTROL), CIGI_VIEW_CONTROL_OPCODE,
                                             
-                                            -1, -1,
+                                            static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                             0, 0, 0, 0, 0, 0,
-                                            -1,
+                                            static_cast<uint16_t>(-1),
                                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0
                                           };
 
@@ -2106,7 +2106,7 @@ int CigiAddPacketReplaceSensorCtrl(const int sessionid, const CIGI_SENSOR_CONTRO
 {
     static const CIGI_SENSOR_CONTROL mask = { sizeof(CIGI_SENSOR_CONTROL),  CIGI_SENSOR_CONTROL_OPCODE,
                                                 
-                                                -1, -1,
+                                                static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0
                                             };
 
@@ -2119,7 +2119,7 @@ int CigiAddPacketReplaceMotionTrackerCtrl(const int sessionid, const CIGI_MOTION
 {
     static const CIGI_MOTION_TRACKER_CONTROL mask = {  sizeof(CIGI_MOTION_TRACKER_CONTROL), CIGI_MOTION_TRACKER_CONTROL_OPCODE,
                                                         
-                                                        -1, -1,
+                                                        static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                         0, 0, 0, 0, 0, 0, 0, 0, 0
                                                     };
 
@@ -2144,7 +2144,7 @@ int CigiAddPacketReplaceAccelerationDef(const int sessionid, const CIGI_ACCELERA
 {
     static const CIGI_ACCELERATION_CONTROL_DEF mask = {  sizeof(CIGI_ACCELERATION_CONTROL_DEF_SIZE), CIGI_ACCELERATION_CONTROL_DEF_OPCODE,
                                                 
-                                                -1,
+                                                static_cast<uint16_t>(-1),
 //                                                0.0, 0.0, 0.0, 0.0, 0.0
                                             };
 
@@ -2157,7 +2157,7 @@ int CigiAddPacketReplaceViewDef(const int sessionid, const CIGI_VIEW_DEF *packet
 {
     static const CIGI_VIEW_DEF mask = { sizeof(CIGI_VIEW_DEF), CIGI_VIEW_DEF_OPCODE,
                                         
-                                        -1,
+                                        static_cast<uint16_t>(-1),
                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                                       };
 
@@ -2170,7 +2170,7 @@ int CigiAddPacketReplaceCollDetSegmentDef(const int sessionid, const CIGI_COLL_S
 {
     static const CIGI_COLL_SEGMENT_DEF mask = { sizeof(CIGI_COLL_SEGMENT_DEF), CIGI_COLL_SEGMENT_DEF_OPCODE,
                                                 
-                                                -1, -1,
+                                                static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
                                               };
 
@@ -2183,7 +2183,7 @@ int CigiAddPacketReplaceCollDetVolumeDef(const int sessionid, const CIGI_COLL_VO
 {
     static const CIGI_COLL_VOLUME_DEF mask = { sizeof(CIGI_COLL_VOLUME_DEF), CIGI_COLL_VOLUME_DEF_OPCODE,
                                                 
-                                                -1, -1,
+                                                static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
                                              };
 
@@ -2196,7 +2196,7 @@ int CigiAddPacketReplaceHatHotReq(const int sessionid, const CIGI_HAT_HOT_REQUES
 {
     static const CIGI_HAT_HOT_REQUEST mask = { sizeof(CIGI_HAT_HOT_REQUEST), CIGI_HAT_HOT_REQUEST_OPCODE,
                                                 
-                                                -1, 0
+                                                static_cast<uint16_t>(-1), 0
                                              };
 
     return CigiAddReplaceFixedPacket<CIGI_HAT_HOT_REQUEST>(sessionid, packet, &mask);
@@ -2208,7 +2208,7 @@ int CigiAddPacketReplaceLosSegmentReq(const int sessionid, const CIGI_LOS_SEGMEN
 {
     static const CIGI_LOS_SEGMENT_REQUEST mask = { sizeof(CIGI_LOS_SEGMENT_REQUEST), CIGI_LOS_SEGMENT_REQUEST_OPCODE,
                                                     
-                                                    -1, 0
+                                                    static_cast<uint16_t>(-1), 0
                                                  };
 
     return CigiAddReplaceFixedPacket<CIGI_LOS_SEGMENT_REQUEST>(sessionid, packet, &mask);
@@ -2220,7 +2220,7 @@ int CigiAddPacketReplaceLosVectorReq(const int sessionid, const CIGI_LOS_VECTOR_
 {
     static const CIGI_LOS_VECTOR_REQUEST mask = {  sizeof(CIGI_LOS_VECTOR_REQUEST), CIGI_LOS_VECTOR_REQUEST_OPCODE,
                                                     
-                                                    -1,
+                                                    static_cast<uint16_t>(-1),
                                                     0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
                                                 };
 
@@ -2233,7 +2233,7 @@ int CigiAddPacketReplacePositionReq(const int sessionid, const CIGI_POSITION_REQ
 {
     static const CIGI_POSITION_REQUEST mask = { sizeof(CIGI_POSITION_REQUEST), CIGI_POSITION_REQUEST_OPCODE,
                                                 
-                                                -1, -1, 0, -1, 0
+                                                static_cast<uint8_t>(-1), static_cast<uint8_t>(-1), 0, static_cast<uint8_t>(-1), 0
                                               };
 
     return CigiAddReplaceFixedPacket<CIGI_POSITION_REQUEST>(sessionid, packet, &mask);
@@ -2274,7 +2274,7 @@ int CigiAddPacketReplaceSymbolCtrl(const int sessionid, const CIGI_SYMBOL_CONTRO
     static const CIGI_SYMBOL_CONTROL mask = {
         sizeof(CIGI_SYMBOL_CONTROL),
         CIGI_SYMBOL_CONTROL_OPCODE,
-        -1,
+        static_cast<uint16_t>(-1),
         0, 0, 0, 0, 0, 0, 0, 0,
         0.0f, 0.0f, 0.0f, 0.0f,
         0, 0, 0, 0,
@@ -2419,7 +2419,7 @@ int CigiAddPacketReplaceLosResp(const int sessionid, const CIGI_LOS_EXT_RESPONSE
 {
     static const CIGI_LOS_EXT_RESPONSE mask = { sizeof(CIGI_LOS_EXT_RESPONSE), CIGI_LOS_EXT_RESPONSE_OPCODE,
                                                 
-                                                (uint16_t) - 1, (uint16_t) - 1, (uint8_t) - 1,
+                                                static_cast<uint16_t>(-1), static_cast<uint16_t>(-1), static_cast<int8_t>(-1),
                                                 0, 0, 0, 0, 0, 0, 0
                                               };
 
@@ -2432,7 +2432,7 @@ int CigiAddPacketReplaceSensorResp(const int sessionid, const CIGI_SENSOR_RESPON
 {
     static const CIGI_SENSOR_RESPONSE mask = {  sizeof(CIGI_SENSOR_RESPONSE), CIGI_SENSOR_RESPONSE_OPCODE,
                                                 
-                                                -1, -1,
+                                                static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                 0, 0, 0, 0, 0, 0
                                              };
 
@@ -2445,7 +2445,7 @@ int CigiAddPacketReplaceSensorExtResp(const int sessionid, const CIGI_SENSOR_EXT
 {
     static const CIGI_SENSOR_EXT_RESPONSE mask = { sizeof(CIGI_SENSOR_EXT_RESPONSE), CIGI_SENSOR_EXT_RESPONSE_OPCODE,
                                                     
-                                                    -1, -1, -1,
+                                                    static_cast<uint16_t>(-1), static_cast<uint16_t>(-1), static_cast<uint8_t>(-1),
                                                     0, 0, 0, 0, 0, 0, 0
                                                  };
 
@@ -2458,7 +2458,7 @@ int CigiAddPacketReplacePositionResp(const int sessionid, const CIGI_POSITION_RE
 {
     static const CIGI_POSITION_RESPONSE mask = {   sizeof(CIGI_POSITION_RESPONSE), CIGI_POSITION_RESPONSE_OPCODE,
                                                     
-                                                    -1, -1, -1,
+                                                    static_cast<uint8_t>(-1), static_cast<uint8_t>(-1), static_cast<uint8_t>(-1),
                                                     0, 0, 0, 0, 0, 0, 0
                                                };
 
@@ -2522,7 +2522,7 @@ int CigiAddPacketReplaceCollDetSegmentNotification(const int sessionid, const CI
 {
     static const CIGI_COLL_SEGMENT_NOTIFICATION mask = { sizeof(CIGI_COLL_SEGMENT_NOTIFICATION), CIGI_COLL_SEGMENT_NOTIFICATION_OPCODE,
                                                         
-                                                        -1, -1,
+                                                        static_cast<uint16_t>(-1), static_cast<uint16_t>(-1),
                                                         0, 0, 0, 0.0
                                                        };
 
@@ -2535,7 +2535,7 @@ int CigiAddPacketReplaceCollDetVolumeNotification(const int sessionid, const CIG
 {
     static const CIGI_COLL_VOLUME_NOTIFICATION mask = { sizeof(CIGI_COLL_VOLUME_NOTIFICATION), CIGI_COLL_VOLUME_NOTIFICATION_OPCODE,
                                                         
-                                                        -1, -1,
+                                                        static_cast<uint16_t>(-1), static_cast<uint16_t>(-1),
                                                         0, 0, 0
                                                       };
 

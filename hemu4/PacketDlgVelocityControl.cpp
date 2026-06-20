@@ -276,7 +276,7 @@ void CPacketDlgVelocityControl::PopulatePartIDCombo(void)
     while (pos) {
         map.GetNextAssoc(pos, part_id, artpart);
 
-        sprintf(text, "%d: %s", artpart->GetID(), artpart->GetName());
+        sprintf(text, "%d: %s", artpart->GetID(), (LPCTSTR)artpart->GetName());
         cboitem.pszText = text;
         cboitem.cchTextMax = strlen(text + 1);
         cboitem.lParam = MAKE_TREE_DATA(artpart->GetID(), 0, 0);

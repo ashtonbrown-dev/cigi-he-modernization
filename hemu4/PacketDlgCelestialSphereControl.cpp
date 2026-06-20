@@ -120,7 +120,7 @@ void CPacketDlgCelestialSphereControl::OnOK()
     csc.packet_size = sizeof(CIGI_CELESTIAL_SPHERE_CONTROL);
     csc.hour = m_Hour;
     csc.minute = m_Minute;
-	csc.seconds = m_Seconds;
+	csc.seconds = static_cast<uint32_t>(m_Seconds);
     csc.date = m_Month * 1000000 + m_Day * 10000 + m_Year;
     csc.datetime_valid = m_DateTimeValid;
     csc.ephemeris_enable = m_EphemerisEnable;

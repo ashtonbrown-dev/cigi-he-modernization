@@ -29,6 +29,7 @@ ipch/
 *.log
 *.exe
 *.dll
+*.chm
 
 # Packaged application output
 /app/

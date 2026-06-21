@@ -65,13 +65,12 @@ CEntity::CEntity()
 {
     CDebugTrace trace("CEntity::CEntity()");
 
-    memcpy(&m_InitialCigiData,    0, sizeof(m_InitialCigiData));
-    memcpy(&m_InitialNonCigiData, 0, sizeof(m_InitialNonCigiData));
-
-    SetAlpha(255);
-    SetInitialAlpha(255);
+    memset(&m_InitialCigiData, 0, sizeof(m_InitialCigiData));
+    memset(&m_InitialNonCigiData, 0, sizeof(m_InitialNonCigiData));
 
     CommonEntityInit();
+
+    m_InitialCigiData.alpha = 255;
 }
 
 CEntity::CEntity(const int id, const int type, const int entity_class, const DOF &dof)

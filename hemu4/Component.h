@@ -47,6 +47,7 @@ public:
     static const unsigned char DataTypeUInt64;  // = 4
     static const unsigned char DataTypeDouble;  // = 5
 
+    CComponent();       // Used only for serialization
     CComponent(const int comp_class, TEMPL_COMPONENT *comp);
     virtual ~CComponent();
     CComponent &operator=(const CComponent &rhs);
@@ -85,8 +86,6 @@ public:
     virtual void Serialize(CArchive &ar);
 
 protected:
-    CComponent();       // Used only for serialization
-
     CString m_Name;
     uint16_t m_CompID;
     uint16_t m_InstID;

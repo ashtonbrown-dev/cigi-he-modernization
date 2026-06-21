@@ -32,9 +32,15 @@ public:
     void LoadTemplates(CStdioFile &file);
     void RemoveTemplates();
     void WriteTemplates(CStdioFile &file);
+    virtual void Serialize(CArchive &ar);
     static void AFXAPI SerializeElements(CArchive &ar, TEMPL_TYPE **pElements, int nCount);
 
 private:
+    enum {
+        SERIAL_MAGIC = 0x484D5031,     // "HMP1"
+        SERIAL_VERSION = 1
+    };
+
     virtual void ParseTemplateBlock(CString &str, const CString &token, int *linenum) = 0;
 };
 
@@ -66,6 +72,7 @@ void CTemplMap<TEMPL_TYPE>::LoadTemplates(CStdioFile &file)
 template <class TEMPL_TYPE>
 void CTemplMap<TEMPL_TYPE>::RemoveTemplates()
 {
+    CArray<TEMPL_TYPE *, TEMPL_TYPE *> templates;
     POSITION pos = GetStartPosition();
 
     while (pos) {
@@ -74,14 +81,14 @@ void CTemplMap<TEMPL_TYPE>::RemoveTemplates()
 
         GetNextAssoc(pos, id, templ);
 
-        if (templ) {
-            // Remove the entry from the map.
-            RemoveKey(id);
-
-            // Delete the object.
-            delete templ;
-        }
+        if (templ)
+            templates.Add(templ);
     }
+
+    RemoveAll();
+
+    for (INT_PTR i = 0; i < templates.GetSize(); i++)
+        delete templates[i];
 }
 
 template <class TEMPL_TYPE>
@@ -112,6 +119,81 @@ void AFXAPI CTemplMap<TEMPL_TYPE>::SerializeElements(CArchive &ar, TEMPL_TYPE **
         for (int i = 0; i < nCount; i++) {
             pElements[i] = new TEMPL_TYPE;
             pElements[i]->Serialize(ar);
+        }
+    }
+}
+
+template <class TEMPL_TYPE>
+void CTemplMap<TEMPL_TYPE>::Serialize(CArchive &ar)
+{
+    CObject::Serialize(ar);
+
+    if (ar.IsStoring()) {
+        DWORD_PTR itemCount = 0;
+        POSITION countPos = GetStartPosition();
+
+        while (countPos) {
+            int id = 0;
+            TEMPL_TYPE *templ = NULL;
+            GetNextAssoc(countPos, id, templ);
+
+            if (templ)
+                itemCount++;
+        }
+
+        ar.WriteCount(SERIAL_MAGIC);
+        ar.WriteCount(SERIAL_VERSION);
+        ar.WriteCount(itemCount);
+
+        POSITION pos = GetStartPosition();
+        while (pos) {
+            int id = 0;
+            TEMPL_TYPE *templ = NULL;
+            GetNextAssoc(pos, id, templ);
+
+            if (templ) {
+                ar << id;
+                templ->Serialize(ar);
+            }
+        }
+    } else {
+        DWORD_PTR first = ar.ReadCount();
+
+        if (first != SERIAL_MAGIC) {
+            // Older Win32 builds stored raw pointer values. They cannot be
+            // restored, so consume them and retain the templates loaded from
+            // the default definition files.
+            for (DWORD_PTR i = 0; i < first; i++) {
+                int id = 0;
+                DWORD ignoredPointer = 0;
+
+                ar.EnsureRead(&id, sizeof(id));
+                ar.EnsureRead(&ignoredPointer, sizeof(ignoredPointer));
+            }
+
+            return;
+        }
+
+        DWORD_PTR version = ar.ReadCount();
+        DWORD_PTR itemCount = ar.ReadCount();
+
+        if (version != SERIAL_VERSION)
+            AfxThrowArchiveException(CArchiveException::badSchema);
+
+        RemoveTemplates();
+
+        for (DWORD_PTR i = 0; i < itemCount; i++) {
+            int id = 0;
+            TEMPL_TYPE *templ = new TEMPL_TYPE;
+
+            try {
+                ar >> id;
+                templ->Serialize(ar);
+                SetAt(id, templ);
+            } catch (...) {
+                delete templ;
+                throw;
+            }
         }
     }
 }

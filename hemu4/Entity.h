@@ -60,6 +60,7 @@ public:
     // Construction/Deconstruction
     CEntity(const int id, const int type, const int entity_class, const DOF &dof);
     CEntity(const int id, const TEMPL_ENTITY *templ, const DOF &dof);
+    CEntity();      // Used only by serialization.
     ~CEntity();
     BOOL ApplyTemplate(const TEMPL_ENTITY *templ);
     const char *const GetSharedName(void);
@@ -242,7 +243,6 @@ public:
     BOOL IsDescendantOf(CEntity *ancestor);
 
 protected:
-    CEntity();      // Used only by serialization.
     void ClearAttachPoints(void);
 
     static CIDManager       m_HatIDManager;         // shared

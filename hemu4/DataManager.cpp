@@ -61,6 +61,81 @@ CString ReadBlock(CStdioFile &file, int *linenum);
 CString ReadBlock(CString &src, int *linenum);
 BOOL ReadLine(CString IN OUT &str, int *linenum, CString OUT &token, CString OUT &params);
 
+static const DWORD_PTR ENTITY_MAP_SERIAL_MAGIC = 0x48454e31; // "HEN1"
+static const DWORD_PTR ENTITY_MAP_SERIAL_VERSION = 1;
+
+static BOOL SerializeEntityMap(CArchive &ar, CEntityMap &map)
+{
+    if (ar.IsStoring()) {
+        DWORD_PTR count = 0;
+        POSITION countPos = map.GetStartPosition();
+
+        while (countPos) {
+            int id = 0;
+            CEntity *entity = NULL;
+            map.GetNextAssoc(countPos, id, entity);
+
+            if (entity)
+                count++;
+        }
+
+        ar.WriteCount(ENTITY_MAP_SERIAL_MAGIC);
+        ar.WriteCount(ENTITY_MAP_SERIAL_VERSION);
+        ar.WriteCount(count);
+
+        POSITION pos = map.GetStartPosition();
+        while (pos) {
+            int id = 0;
+            CEntity *entity = NULL;
+            map.GetNextAssoc(pos, id, entity);
+
+            if (entity) {
+                ar << id;
+                entity->Serialize(ar);
+            }
+        }
+
+        return FALSE;
+    }
+
+    DWORD_PTR first = ar.ReadCount();
+
+    if (first != ENTITY_MAP_SERIAL_MAGIC) {
+        // Older Win32 builds stored raw pointer values instead of entities.
+        for (DWORD_PTR i = 0; i < first; i++) {
+            int id = 0;
+            DWORD ignoredPointer = 0;
+
+            ar.EnsureRead(&id, sizeof(id));
+            ar.EnsureRead(&ignoredPointer, sizeof(ignoredPointer));
+        }
+
+        return first > 0;
+    }
+
+    DWORD_PTR version = ar.ReadCount();
+    if (version != ENTITY_MAP_SERIAL_VERSION)
+        AfxThrowArchiveException(CArchiveException::badSchema);
+
+    DWORD_PTR count = ar.ReadCount();
+
+    for (DWORD_PTR i = 0; i < count; i++) {
+        int id = 0;
+        CEntity *entity = new CEntity;
+
+        try {
+            ar >> id;
+            entity->Serialize(ar);
+            map.SetAt(id, entity);
+        } catch (...) {
+            delete entity;
+            throw;
+        }
+    }
+
+    return FALSE;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -122,7 +197,7 @@ void CDataManager::Serialize(CArchive &ar)
 
     if (ar.IsStoring()) {
         ar << m_CurrentDatabaseID;
-        m_EntityMap.Serialize(ar);
+        SerializeEntityMap(ar, m_EntityMap);
         m_ViewMap.Serialize(ar);
         m_EntityTemplMap.Serialize(ar);
         m_ViewTemplMap.Serialize(ar);
@@ -204,18 +279,13 @@ void CDataManager::Serialize(CArchive &ar)
         DeleteAllViews();
         DeleteAllViewGroups();
         DeleteAllDatabases();
-        RemoveAllEntityTemplates();
-        RemoveAllDatabaseTemplates();
-        RemoveAllViewTemplates();
-        RemoveAllViewGroupTemplates();
         RemoveHatLookupItems();
         RemoveLosLookupItems();
         ClearEvents();
         ClearWaypoints();
-        ClearSystemComponents();
 
         ar >> m_CurrentDatabaseID;
-        m_EntityMap.Serialize(ar);
+        BOOL legacyEntityMapSkipped = SerializeEntityMap(ar, m_EntityMap);
         m_ViewMap.Serialize(ar);
         m_EntityTemplMap.Serialize(ar);
         m_ViewTemplMap.Serialize(ar);
@@ -307,6 +377,20 @@ void CDataManager::Serialize(CArchive &ar)
         ar >> junk;
         ar >> junk;
         ar >> junk;
+
+        if (legacyEntityMapSkipped && (m_EntityMap.GetCount() == 0)) {
+            TEMPL_ENTITY *templ = GetEntityTempl(0);
+            TEMPL_ENTITY defaultType;
+
+            if (!templ) {
+                defaultType.Type = 0;
+                defaultType.Name = "None";
+                defaultType.Class = ENTITY_CLASS_FIXEDWING;
+                templ = &defaultType;
+            }
+
+            CreateEntity(0, templ);
+        }
 
         // Populate the trees.
         RebuildEntityTree();
@@ -468,6 +552,9 @@ void CDataManager::DeleteAllEntities(void)
 
     m_SearchEntity = NULL;
 
+    CArray<CEntity *, CEntity *> entities;
+    CArray<int, int> ids;
+
     POSITION pos = m_EntityMap.GetStartPosition();
 
     while (pos) {
@@ -477,16 +564,19 @@ void CDataManager::DeleteAllEntities(void)
         m_EntityMap.GetNextAssoc(pos, id, entity);
 
         if (entity) {
-            // Remove the entry from the map.
-            m_EntityMap.RemoveKey(id);
-
-            // Mark the ID as not used.
-            UnmarkEntityID(id);
-
-            // Delete the object.  The destructor will send a MESSAGE_DEL_ENTITY
-            // message to the driver.
-            delete entity;
+            ids.Add(id);
+            entities.Add(entity);
         }
+    }
+
+    m_EntityMap.RemoveAll();
+
+    for (INT_PTR i = 0; i < ids.GetSize(); i++)
+        UnmarkEntityID(ids[i]);
+
+    for (INT_PTR j = 0; j < entities.GetSize(); j++) {
+        // The destructor sends the driver a delete message when appropriate.
+        delete entities[j];
     }
 }
 
@@ -839,8 +929,10 @@ void CDataManager::RebuildEntityTree(void)
     // Finally, reorganize the tree.
     ReorgEntityTree();
 
-    // And select the first item.
-    tree.SelectItem(tree.GetFirstVisibleItem());
+    // And select the first item if the file actually contains entities.
+    HTREEITEM first = tree.GetFirstVisibleItem();
+    if (first)
+        tree.SelectItem(first);
     theApp.GetMainFrame().GetEntityStateView().RefreshView();
 }
 

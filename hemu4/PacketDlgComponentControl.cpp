@@ -153,6 +153,8 @@ void CPacketDlgComponentControl::OnOK()
 		default:
 			break;
 		}
+
+		return false;
 	};
 
 	            is32 = PopulateData( m_cboData1, &cc.data1, &cc.data2 );

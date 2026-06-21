@@ -322,7 +322,7 @@ int Startup(void)
     // Open the comm port for the trigger.
     hCommPort = OpenCommPort(1);
     if (verbose)
-        RtPrintf("Opened COM1 (%X)\n", hCommPort);
+        RtPrintf("Opened COM1 (%p)\n", static_cast<void *>(hCommPort));
 
     return 1;
 }
@@ -3171,8 +3171,8 @@ long DoSensorResponse(const int sessionid, void *packet)
         RtPrintf("  Sensor Status = %d\n", msg->sensor_status);
         RtPrintf("  Gate Size X = %d\n", msg->gate_x_size);
         RtPrintf("  Gate Size Y = %d\n", msg->gate_y_size);
-        RtPrintf("  Gate Position X = %d\n", msg->gate_x_position);
-        RtPrintf("  Gate Position Y = %d\n", msg->gate_y_position);
+        RtPrintf("  Gate Position X = %f\n", msg->gate_x_position);
+        RtPrintf("  Gate Position Y = %f\n", msg->gate_y_position);
         RtPrintf("  Frame Counter = %lu\n", msg->frame_counter);
         RtPrintf("\n");
     }
@@ -3197,8 +3197,8 @@ long DoSensorExtResponse(const int sessionid, void *packet)
         RtPrintf("  Entity ID Valid = %d\n", msg->entity_id_valid);
         RtPrintf("  Gate Size X = %d\n", msg->gate_x_size);
         RtPrintf("  Gate Size Y = %d\n", msg->gate_y_size);
-        RtPrintf("  Gate Position X = %d\n", msg->gate_x_position);
-        RtPrintf("  Gate Position Y = %d\n", msg->gate_y_position);
+        RtPrintf("  Gate Position X = %f\n", msg->gate_x_position);
+        RtPrintf("  Gate Position Y = %f\n", msg->gate_y_position);
         RtPrintf("  Latitude = %lf\n", msg->lat);
         RtPrintf("  Longitude = %lf\n", msg->lon);
         RtPrintf("  Altitude = %lf\n", msg->alt);
@@ -3330,7 +3330,7 @@ long DoCollisionSegNotification(const int sessionid, void *packet)
         RtPrintf("  Collision Type = %d\n", msg->collision_type);
         RtPrintf("  Contacted Entity ID = %d\n", msg->contacted_entity_id);
         RtPrintf("  Material Code = %lu\n", msg->material_code);
-        RtPrintf("  Intersection Distance = %lu\n", msg->intersection_distance);
+        RtPrintf("  Intersection Distance = %f\n", msg->intersection_distance);
         RtPrintf("\n");
     }
 

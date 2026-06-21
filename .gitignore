@@ -32,8 +32,8 @@ ipch/
 *.chm
 
 # Packaged application output
-/app/
-hemu4/app/
+*.sf4
+!hemu4/app/MyOwnship.sf4
 
 # Local operating-system files
 Thumbs.db

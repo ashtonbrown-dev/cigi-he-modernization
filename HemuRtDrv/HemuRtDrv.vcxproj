@@ -97,7 +97,7 @@
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
-      <AdditionalOptions>/subsystem:console,4.00 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/subsystem:console %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcmt.lib;oldnames.lib;ws2_32.lib;mswsock.lib;LIBCMTD.LIB;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(IntDir)HemuDrv.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>

@@ -1,0 +1,60 @@
+database
+{
+	name	= "Camp Pendleton";
+	id	= 2;
+	origin_latitude		= 38.624670999999999;
+	origin_longitude	= -90.184962999999996;
+	origin_altitude		= 0.0;
+	default_latitude	= 38.624670999999999;
+	default_longitude	= -90.184962999999996;
+	default_altitude	= 500.0;
+    COMPONENT
+	{
+		NAME        = "Terrain Component 1";
+		COMPONENT_CLASS = GLOBAL_TERRAIN;
+		ID          = 2000;
+		INSTANCE_ID = -1;
+		DEF_STATE   = 0;
+		STATE
+		{
+			NAME  = "Off";
+			VALUE = 0;
+		}
+		STATE
+		{
+			NAME  = "On";
+			VALUE = 1;
+		}
+	}
+}
+
+database
+{
+	name	= "29 Palms";
+	id	= 3;
+	origin_latitude		= 38.624670999999999;
+	origin_longitude	= -90.184962999999996;
+	origin_altitude		= 0.0;
+	default_latitude	= 38.624670999999999;
+	default_longitude	= -90.184962999999996;
+	default_altitude	= 500.0;
+    COMPONENT
+	{
+		NAME        = "Terrain Component 2";
+		COMPONENT_CLASS = GLOBAL_TERRAIN;
+		ID          = 3000;
+		INSTANCE_ID = -1;
+		DEF_STATE   = 0;
+		STATE
+		{
+			NAME  = "Off";
+			VALUE = 0;
+		}
+		STATE
+		{
+			NAME  = "On";
+			VALUE = 1;
+		}
+	}
+}
+

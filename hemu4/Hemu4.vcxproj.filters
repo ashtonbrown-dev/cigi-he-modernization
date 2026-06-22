@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -20,7 +20,7 @@
       <UniqueIdentifier>{af6f34e0-a89b-4762-9251-9a3b360131de}</UniqueIdentifier>
       <Extensions>cnt;rtf</Extensions>
     </Filter>
-    <Filter Include="Default">
+    <Filter Include="Runtime Configuration">
       <UniqueIdentifier>{566fe011-4472-4f15-8fde-fa1121d63751}</UniqueIdentifier>
       <ParseFiles>false</ParseFiles>
     </Filter>
@@ -356,10 +356,10 @@
     <ClCompile Include="..\regutils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\RTXCompatibility.cpp">
+    <ClCompile Include="..\WindowsCompatibility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\RTXSharedBufferQ.cpp">
+    <ClCompile Include="..\SharedBufferQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
@@ -691,20 +691,20 @@
     <None Include="..\Change History.txt" />
     <None Include="Hemu4.reg" />
     <None Include="ReadMe.txt" />
-    <None Include="Default\Entities.def">
-      <Filter>Default</Filter>
+    <None Include="..\app\config\default\Entities.def">
+      <Filter>Runtime Configuration</Filter>
     </None>
-    <None Include="Default\Environment.def">
-      <Filter>Default</Filter>
+    <None Include="..\app\config\default\Environment.def">
+      <Filter>Runtime Configuration</Filter>
     </None>
-    <None Include="Default\system.def">
-      <Filter>Default</Filter>
+    <None Include="..\app\config\default\System.def">
+      <Filter>Runtime Configuration</Filter>
     </None>
-    <None Include="Default\Terrain.def">
-      <Filter>Default</Filter>
+    <None Include="..\app\config\default\Terrain.def">
+      <Filter>Runtime Configuration</Filter>
     </None>
-    <None Include="Default\Views.def">
-      <Filter>Default</Filter>
+    <None Include="..\app\config\default\Views.def">
+      <Filter>Runtime Configuration</Filter>
     </None>
     <None Include="hlp\Table of Contents.hhc">
       <Filter>Help Files</Filter>
@@ -1055,13 +1055,13 @@
     <ClInclude Include="..\regutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\RTXCompatibility.h">
+    <ClInclude Include="..\WindowsCompatibility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\RTXSharedBufferQ.h">
+    <ClInclude Include="..\SharedBufferQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\RTXSharedObj.h">
+    <ClInclude Include="..\SharedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">

@@ -237,11 +237,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 
     // Load the default configuration.
-    LoadEntityConfig("Default\\Entities.def");
-    LoadViewConfig("Default\\Views.def");
-    LoadTerrainConfig("Default\\Terrain.def");
-    LoadEnvConfig("Default\\Environment.def");
-    LoadSystemConfig("Default\\System.def");
+    LoadEntityConfig("config\\default\\Entities.def");
+    LoadViewConfig("config\\default\\Views.def");
+    LoadTerrainConfig("config\\default\\Terrain.def");
+    LoadEnvConfig("config\\default\\Environment.def");
+    LoadSystemConfig("config\\default\\System.def");
 
     // The 2nd pane should have no text by default.  Since we need to place
     // the longest string in the string table for MFC to automatically size
@@ -1027,7 +1027,7 @@ void CMainFrame::OnLoadConfig()
 {
     CDebugTrace trace("CMainFrame::OnLoadConfig()");
 
-    CDirDialog dlg(".\\Default", "Definition Files (*.def)|*.def|All Files (*.*)|*.*||");
+    CDirDialog dlg(".\\config\\default", "Definition Files (*.def)|*.def|All Files (*.*)|*.*||");
     if (dlg.DoModal() == IDOK) {
         CString strDir = dlg.GetPath();
 

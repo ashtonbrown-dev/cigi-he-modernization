@@ -12,10 +12,22 @@ modernizing the project for current Windows development tools.
 
 The untouched downloaded references are maintained outside this Git repository.
 
-## Status
+## Build and runtime layout
 
-This is the initial upstream baseline. The build has not yet been modernized or
-verified with a current Visual Studio toolchain.
+The Visual Studio solution contains three Win32 applications and supports only
+`Debug` and `Release` configurations:
+
+- `Hemu4`: the MFC host emulator GUI
+- `HemuDrv`: the Windows driver process
+- `DummyIG4`: a companion image-generator simulator
+
+Both configurations deploy runnable files to `app`. Runtime definitions are
+kept in `app/config/default`, beside the deployed applications but separate
+from source and compiler output.
+
+When a Debug build of Hemu4 is started under the Visual Studio debugger, Hemu4
+also starts `DummyIG4.exe` with the local-loopback defaults before launching
+HemuDrv.
 
 ## License
 

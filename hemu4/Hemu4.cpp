@@ -85,6 +85,27 @@ CHemuApp::CHemuApp()
 
 CHemuApp theApp;
 
+#ifdef _DEBUG
+static void LaunchDummyIGForDebugging()
+{
+    if (!IsDebuggerPresent())
+        return;
+
+    char commandLine[] = "DummyIG4.exe 60 127.1.1.1 8015 8014";
+    STARTUPINFO startupInfo = {sizeof(startupInfo)};
+    PROCESS_INFORMATION processInfo = {0};
+
+    if (CreateProcess(NULL, commandLine, NULL, NULL, FALSE,
+                      CREATE_NEW_CONSOLE, NULL, NULL, &startupInfo, &processInfo)) {
+        CloseHandle(processInfo.hThread);
+        CloseHandle(processInfo.hProcess);
+    } else {
+        MessageBox(NULL, "DummyIG4.exe could not be started.",
+                   "Debug companion", MB_OK | MB_ICONWARNING);
+    }
+}
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // CHemuApp initialization
 
@@ -113,22 +134,14 @@ BOOL CHemuApp::InitInstance()
     g_ImgListIcons.Add(&bmpIcons, RGB(255, 230, 255));
     g_ImgListIcons.SetBkColor(CLR_NONE);    // make transparent
 
-    // Check to see if the real-time driver is already running.  We can
-    // test for the existence of one of "HemuForceShutdownMutex".
-    HANDLE hTemp = RtOpenMutex(MUTEX_ALL_ACCESS, FALSE, "HemuForceShutdownMutex");
+    // Use the shared shutdown mutex to prevent duplicate host/driver pairs.
+    HANDLE hTemp = OpenMutex(MUTEX_ALL_ACCESS, FALSE, "HemuForceShutdownMutex");
     if (hTemp) {
-#ifdef NO_RTX
         MessageBox(NULL, "An instance of the Host Emulator or driver is already "
                    "running.\nExit the application or use the Task Manager "
                    "to terminate the\nHemuDrv.exe process.", "Error", MB_ICONSTOP);
-#else
-        MessageBox(NULL, "An instance of the Host Emulator or driver is already "
-                   "running.\nExit the application or use RTSSKILL "
-                   "to terminate the\nHemuRtDrv.rtss "
-                   "process.", "Error", MB_ICONSTOP);
-#endif
 
-        RtCloseHandle(hTemp);
+        CloseHandle(hTemp);
 
         return FALSE;
     }
@@ -201,6 +214,10 @@ BOOL CHemuApp::InitInstance()
     // Retrieve the network configuration and send a message to the driver.
     if (SetupCommFromRegistry() == FALSE)
         return FALSE;
+
+#ifdef _DEBUG
+    LaunchDummyIGForDebugging();
+#endif
     LoadDriver();
 
     // Get the default database.
@@ -439,53 +456,41 @@ void CHemuApp::InitializeCIGI(void)
 
 int CHemuApp::LoadDriver(void)
 {
-    // Create a mutex that the real-time driver can use to detect if this
-    // process has died.
-    m_ForceShutdownMutexHandle = RtCreateMutex(NULL, TRUE, "HemuForceShutdownMutex");
+    // Create a mutex that the Windows driver can use to detect if this process has died.
+    m_ForceShutdownMutexHandle = CreateMutex(NULL, TRUE, "HemuForceShutdownMutex");
 
     // Create an event so the scripting thread knows to shut down.
     g_ShutdownEventHdl = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    // Load and initialize the real-time driver.
+    // Load and initialize the Windows driver.
     CString DriverPath;
     {
         char directory[256];
         GetCurrentDirectory(256, directory);
-#ifdef NO_RTX
         DriverPath.Format("\"%s\\HemuDrv.exe\"", directory);
 
-        // If we are loading the non-RTX version, check to see if
-        // we have multiple processors.
+        // Adjust the driver's short sleep behavior on multiprocessor systems.
         if (CheckForMultiProcessor())
             DriverPath += " -mp";
-
-#else
-        DriverPath.Format("\"%s\\HemuRtDrv.rtss\"", directory);
-#endif
 
 #ifdef _DEBUG
         DriverPath += " -v";
 #endif
     }   // unload char array from the stack
     PROCESS_INFORMATION procinfo;
-#ifdef NO_RTX
     STARTUPINFO si = {sizeof(si)};
 #ifdef _DEBUG
-    if (!RtCreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
+    if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
                          CREATE_NEW_CONSOLE | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo))
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
 #else
-    if (!RtCreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
+    if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
                          DETACHED_PROCESS | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo))
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
 #endif  // _DEBUG
-#else
-    if (!RtCreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0, 0, 0, 0, 0, &procinfo))
-        MessageBox(NULL, "The real-time driver cannot be loaded.", "Error", MB_ICONSTOP);
-#endif  // NO_RTX
 
     /*
-    // Send a message to the real-time driver to initialize the sockets.
+    // Send a message to the Windows driver to initialize the sockets.
     MESSAGE_SET_ADDR MsgSetAddr;
     IPAddrToStr(::GetIPAddr(), MsgSetAddr.ip_addr);
     MsgSetAddr.send_port = ::GetRemotePort();

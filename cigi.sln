@@ -5,9 +5,12 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hemu4", "hemu4\Hemu4.vcxproj", "{C53E0C44-D106-D2B0-9A75-284BFD3C29DC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{71805622-BC7C-A37C-8F42-0D42661ACEF1} = {71805622-BC7C-A37C-8F42-0D42661ACEF1}
+		{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75} = {74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HemuRtDrv", "HemuRtDrv\HemuRtDrv.vcxproj", "{71805622-BC7C-A37C-8F42-0D42661ACEF1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HemuDrv", "HemuDrv\HemuDrv.vcxproj", "{71805622-BC7C-A37C-8F42-0D42661ACEF1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DummyIG4", "DummyIG4\DummyIG4.vcxproj", "{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +26,10 @@ Global
 		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Debug|Win32.Build.0 = Debug|Win32
 		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Release|Win32.ActiveCfg = Release|Win32
 		{71805622-BC7C-A37C-8F42-0D42661ACEF1}.Release|Win32.Build.0 = Release|Win32
+		{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}.Debug|Win32.ActiveCfg = Debug|Win32
+		{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}.Debug|Win32.Build.0 = Debug|Win32
+		{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}.Release|Win32.ActiveCfg = Release|Win32
+		{74B2C523-84AF-4D3D-AE3B-9D4D6B071F75}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

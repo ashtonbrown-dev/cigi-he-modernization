@@ -194,7 +194,7 @@ CIGI_START_OF_FRAME_OPCODE, 4, 0, 1, 0, 0, 0, 0, 0
         g_SendImmedCIGIMsgQueue.Push((char *)&sof, sizeof(sof));
 
         // Now wait until the driver has had time to process the FRAME.
-        if (RtWaitForSingleObject(g_FrameWaitEventHdl, 1000) != WAIT_OBJECT_0)
+        if (WaitForSingleObject(g_FrameWaitEventHdl, 1000) != WAIT_OBJECT_0)
             PrintMessageText("Warning: Driver did not respond to FRAME command.");
     }
 
@@ -223,7 +223,7 @@ CIGI_START_OF_FRAME_OPCODE, 4, 0, 1, 0, 0, 0, 0, 0
     }
 
     // Now wait until the driver has had time to process the FRAME.
-    if (RtWaitForSingleObject(g_FrameWaitEventHdl, 1000) != WAIT_OBJECT_0)
+    if (WaitForSingleObject(g_FrameWaitEventHdl, 1000) != WAIT_OBJECT_0)
         PrintMessageText("Warning: Driver did not respond to FRAME command.");
 
     return 0;

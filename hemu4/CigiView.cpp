@@ -38,7 +38,7 @@
 #include "hemu4.h"
 #include "hemumsg.h"
 #include "CigiView.h"
-#include "RTXCompatibility.h"
+#include "WindowsCompatibility.h"
 #include "globals.h"
 
 #ifdef _DEBUG
@@ -145,7 +145,7 @@ CCigiView::~CCigiView()
     }
 
     // Close the handle on this side.
-    RtCloseHandle(m_SharedHandle);
+    CloseHandle(m_SharedHandle);
 }
 
 void CCigiView::Serialize(CArchive &ar)

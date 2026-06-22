@@ -107,7 +107,7 @@ CEntity::~CEntity()
     }
 
     // Close the handle on this side.
-    RtCloseHandle(m_SharedHandle);
+    CloseHandle(m_SharedHandle);
 }
 
 void CEntity::CommonEntityInit(int entityId,
@@ -1722,7 +1722,7 @@ int CEntity::AcquireNextWaypoint(const BOOL enable)
         Unlock();
 
         CString str;
-        str.Format("Next waypoint at %lf°%c, %lf°%c, %lfm",
+        str.Format("Next waypoint at %lfï¿½%c, %lfï¿½%c, %lfm",
                    fabs(waypoint.GetLatitude()),
                    (waypoint.GetLatitude() < 0) ? 'S' : 'N',
                    fabs(waypoint.GetLongitude()),

@@ -21,16 +21,12 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#include "RTXSharedBufferQ.h"
+#include "SharedBufferQueue.h"
 #include "coordcnv.h"
 #include "math.h"
 #include "stdio.h"
 
-#ifdef NO_RTX
 #define MAX_ETHERNET_PACKET_SIZE    16384       // Self-imposed limit of 16KB
-#else
-#define MAX_ETHERNET_PACKET_SIZE    1472        // Limited by RTX TCP-IP
-#endif
 
 #ifndef PI
 #define PI                  3.1415926535897932
@@ -737,13 +733,13 @@ extern HANDLE g_ShutdownEventHdl;
 // Event for FRAME and FRAME_WAIT script commands.
 extern HANDLE g_FrameWaitEventHdl;
 
-// Message Queues for RTX-Win32 and Win32-RTX IPC.
-extern RTXSharedBufferQ     g_GuiToDrvMsgQueue;
-extern RTXSharedBufferQ     g_DrvToGuiMsgQueue;
-extern RTXSharedBufferQ     g_SentCIGIMsgQueue;
-extern RTXSharedBufferQ     g_SendImmedCIGIMsgQueue;
-extern RTXSharedBufferQ     g_SendCIGIMsgQueue;
-extern RTXSharedBufferQ     g_RcvCIGIMsgQueue;
+// Shared message queues used by the GUI and driver processes.
+extern SharedBufferQueue     g_GuiToDrvMsgQueue;
+extern SharedBufferQueue     g_DrvToGuiMsgQueue;
+extern SharedBufferQueue     g_SentCIGIMsgQueue;
+extern SharedBufferQueue     g_SendImmedCIGIMsgQueue;
+extern SharedBufferQueue     g_SendCIGIMsgQueue;
+extern SharedBufferQueue     g_RcvCIGIMsgQueue;
 
 // CCU state info
 extern EarthRefModelStruct g_ERM;

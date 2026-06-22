@@ -21,7 +21,7 @@
 #ifndef _MESSAGES_H_
 #define _MESSAGES_H_
 
-#include "HemuRtDrv/StdAfx.h"
+#include "HemuDrv/StdAfx.h"
 
 #define MESSAGE_MAX_SIZE            sizeof(MESSAGE_BEGIN_RECORD)
 

@@ -3704,9 +3704,9 @@ BEGIN
     ID_INDICATOR_SCRL       "SCRL"
     ID_INDICATOR_OVR        "OVR"
     ID_INDICATOR_REC        "REC"
-    IDS_INDICATOR_FRAMERATE_OLD "Real-time driver not loaded"
+    IDS_INDICATOR_FRAMERATE_OLD "Driver not loaded"
     IDS_INDICATOR_IGMODE    "IG Mode: Standby/Reset"
-    IDS_INDICATOR_FR_STATUS "Real-time driver not loaded"
+    IDS_INDICATOR_FR_STATUS "Driver not loaded"
 END
 
 STRINGTABLE

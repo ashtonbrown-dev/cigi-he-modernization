@@ -23,9 +23,9 @@
 
 #include "common.h"
 #include "stdlib.h"
-#include "RTXSharedObj.h"
+#include "SharedObject.h"
 
-class CSharedViewGroupObj : public RTXSharedObj<VIEWGROUP>
+class CSharedViewGroupObj : public SharedObject<VIEWGROUP>
 {
 public:
     HANDLE Create(const char *name);
@@ -38,19 +38,19 @@ public:
     long ClearLockedChangeFlag(void);
 
 protected:
-    static unsigned int m_InstanceCounter;  // Created in Hemu3\globals.cpp and HemuRtDrv\HemuRtDrv.cpp
+    static unsigned int m_InstanceCounter;  // Created in Hemu3\globals.cpp and HemuDrv\HemuDrv.cpp
 };
 
 inline HANDLE CSharedViewGroupObj::Create(const char *name)
 {
-    return RTXSharedObj<VIEWGROUP>::Create(name);
+    return SharedObject<VIEWGROUP>::Create(name);
 }
 
 inline HANDLE CSharedViewGroupObj::Create(void)
 {
     char name[256];
     sprintf(name, "CSharedViewGroupObj%d", m_InstanceCounter++);
-    return RTXSharedObj<VIEWGROUP>::Create(name);
+    return SharedObject<VIEWGROUP>::Create(name);
 }
 
 inline long CSharedViewGroupObj::SetLocked(const VIEWGROUP &value)

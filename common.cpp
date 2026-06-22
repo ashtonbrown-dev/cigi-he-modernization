@@ -38,12 +38,12 @@
 #include "common.h"
 #include "hemumsg.h"
 
-RTXSharedBufferQ        g_DrvToGuiMsgQueue;
-RTXSharedBufferQ        g_GuiToDrvMsgQueue;
-RTXSharedBufferQ        g_SentCIGIMsgQueue;
-RTXSharedBufferQ        g_SendImmedCIGIMsgQueue;
-RTXSharedBufferQ        g_SendCIGIMsgQueue;
-RTXSharedBufferQ        g_RcvCIGIMsgQueue;
+SharedBufferQueue        g_DrvToGuiMsgQueue;
+SharedBufferQueue        g_GuiToDrvMsgQueue;
+SharedBufferQueue        g_SentCIGIMsgQueue;
+SharedBufferQueue        g_SendImmedCIGIMsgQueue;
+SharedBufferQueue        g_SendCIGIMsgQueue;
+SharedBufferQueue        g_RcvCIGIMsgQueue;
 HANDLE                  g_CreatedEntityEventHdl = NULL;
 HANDLE                  g_ShutdownEventHdl = NULL;
 HANDLE                  g_FrameWaitEventHdl = NULL;
@@ -57,12 +57,12 @@ int InitializeIPC(void)
     int retval = 0;
 
     // Create the events. g_ShutdownEventHdl is created in CHemuApp::LoadDriver().
-    g_CreatedEntityEventHdl = RtCreateEvent(NULL, FALSE, FALSE, "CreatedEntityEvent");
-    g_FrameWaitEventHdl = RtCreateEvent(NULL, FALSE, FALSE, "FrameWaitEvent");
+    g_CreatedEntityEventHdl = CreateEvent(NULL, FALSE, FALSE, "CreatedEntityEvent");
+    g_FrameWaitEventHdl = CreateEvent(NULL, FALSE, FALSE, "FrameWaitEvent");
 
     // Set up the message queues.
-    retval = g_GuiToDrvMsgQueue.Create("Win32-RTX_MsgQueue", 256, MESSAGE_MAX_SIZE);
-    retval &= g_DrvToGuiMsgQueue.Create("RTX-Win32_MsgQueue", 512, MESSAGE_MAX_SIZE);   // make large for scripts
+    retval = g_GuiToDrvMsgQueue.Create("Gui-Driver_MsgQueue", 256, MESSAGE_MAX_SIZE);
+    retval &= g_DrvToGuiMsgQueue.Create("Driver-Gui_MsgQueue", 512, MESSAGE_MAX_SIZE);   // make large for scripts
 
     // Initialize the CIGI message queues.
     retval &= g_SentCIGIMsgQueue.Create("Sent_CIGIMsgQueue", 512, MAX_ETHERNET_PACKET_SIZE);

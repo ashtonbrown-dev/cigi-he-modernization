@@ -66,7 +66,7 @@ public:
     DECLARE_MESSAGE_MAP()
 
 private:
-    // Create a handle to a mutex that the real-time driver can use to
+    // Create a handle to a mutex that the Windows driver can use to
     // detect if this process has died.
     HANDLE m_ForceShutdownMutexHandle;
 

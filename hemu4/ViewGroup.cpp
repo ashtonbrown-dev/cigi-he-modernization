@@ -131,7 +131,7 @@ CViewGroup::~CViewGroup()
     }
 
     // Close the handle on this side.
-    RtCloseHandle(m_SharedHandle);
+    CloseHandle(m_SharedHandle);
 }
 
 void CViewGroup::Serialize(CArchive &ar)

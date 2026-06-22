@@ -1,5 +1,5 @@
 /** <pre>
- *  Copyright 2005 The Boeing Company
+ *  Copyright 2004 The Boeing Company
  *  Author: Lance Durham
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -18,12 +18,7 @@
  * </pre>
  */
 
-#ifndef _CAS_H_
-#define _CAS_H_
+#include "WindowsCompatibility.h"
 
-// CAS was originally a member function of the class template SharedObject<>
-// but Visual Studio 6 croaked when it hit the assembly code.  So I made it
-// a non-method function.
-long CAS(long *target, long expected, long newval);
-
-#endif
+int g_sleepRoundValue = 5000;
+__int64 g_highPerformanceClockScale = 0;

@@ -23,9 +23,9 @@
 
 #include "common.h"
 #include "stdlib.h"
-#include "RTXSharedObj.h"
+#include "SharedObject.h"
 
-class CSharedViewObj : public RTXSharedObj<VIEW>
+class CSharedViewObj : public SharedObject<VIEW>
 {
 public:
     HANDLE Create(const char *name);
@@ -40,19 +40,19 @@ public:
     long ClearLockedChangeFlags(void);
 
 protected:
-    static unsigned int m_InstanceCounter;  // Created in Hemu3\globals.cpp and HemuRtDrv\HemuRtDrv.cpp
+    static unsigned int m_InstanceCounter;  // Created in Hemu3\globals.cpp and HemuDrv\HemuDrv.cpp
 };
 
 inline HANDLE CSharedViewObj::Create(const char *name)
 {
-    return RTXSharedObj<VIEW>::Create(name);
+    return SharedObject<VIEW>::Create(name);
 }
 
 inline HANDLE CSharedViewObj::Create(void)
 {
     char name[256];
     sprintf(name, "CSharedViewObj%d", m_InstanceCounter++);
-    return RTXSharedObj<VIEW>::Create(name);
+    return SharedObject<VIEW>::Create(name);
 }
 
 inline long CSharedViewObj::SetLocked(const VIEW &value)

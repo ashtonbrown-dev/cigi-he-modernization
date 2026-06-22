@@ -24,6 +24,10 @@
       <UniqueIdentifier>{566fe011-4472-4f15-8fde-fa1121d63751}</UniqueIdentifier>
       <ParseFiles>false</ParseFiles>
     </Filter>
+    <Filter Include="Runtime Scenarios">
+      <UniqueIdentifier>{ED383F72-AB62-42C9-AC8C-7FA60CA0C7BC}</UniqueIdentifier>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddEntityDlg.cpp">
@@ -705,6 +709,9 @@
     </None>
     <None Include="..\app\config\default\Views.def">
       <Filter>Runtime Configuration</Filter>
+    </None>
+    <None Include="..\app\scenarios\MyOwnship.sf4">
+      <Filter>Runtime Scenarios</Filter>
     </None>
     <None Include="hlp\Table of Contents.hhc">
       <Filter>Help Files</Filter>

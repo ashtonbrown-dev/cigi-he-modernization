@@ -51,6 +51,9 @@
     <LocalDebuggerCommand Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetPath)</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)app</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetPath)</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)app</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -1537,6 +1540,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
     <None Include="..\app\config\default\System.def" />
     <None Include="..\app\config\default\Terrain.def" />
     <None Include="..\app\config\default\Views.def" />
+    <None Include="..\app\scenarios\MyOwnship.sf4" />
     <CustomBuild Include="hlp\Hemu4.hhp">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hhc.exe %(fullpath)</Command>

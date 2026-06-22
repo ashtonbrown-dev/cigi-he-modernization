@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 #include "coordcnv.h"
 #include "cigi4.h"
+#include "CigiProtocolAdapter.h"
 #include "cigi4types.h"
 #include "SharedBufferQueue.h"
 #include "SharedEntityObj.h"
@@ -182,6 +183,7 @@ DOF TranspDelayDOF1 = {0};
 DOF TranspDelayDOF2 = {0};
 
 CIGI_IG_CONTROL igc = {0};
+ICigiProtocolAdapter *ProtocolAdapter = NULL;
 
 void _cdecl main(int  argc, char **argv, char **envp)
 {
@@ -192,7 +194,12 @@ void _cdecl main(int  argc, char **argv, char **envp)
     igc.ig_mode = IG_CONTROL_IG_MODE_OPERATE;
     igc.minor_version = 0;
 	igc.extrap_interpol_enable = TRUE;
-	igc.EntityTypeSubEn = TRUE;
+    igc.EntityTypeSubEn = TRUE;
+
+    CigiProtocolAdapterSelection protocolSelection =
+        CigiProtocolAdapterFactory::Select(CigiProtocolVersion::Current());
+    ProtocolAdapter = protocolSelection.adapter;
+    ProtocolAdapter->Configure(&igc);
 
     if ((argc > 2) && (((strcmp(argv[1], "-v") == 0)) || (strcmp(argv[2], "-v") == 0)))
         verbose = 1;
@@ -564,9 +571,9 @@ ULONG WINAPI SendRcvThread(void *nContext)
 
     // We MUST call CigiStartMessage() and CigiEndMessage() at least once
     // before we can call CigiGetOutgoingMsgBuffer().
-    CigiStartMessage(session);
-    CigiAddPacketIGCtrl(session, &igc);
-    CigiEndMessage(session);
+    ProtocolAdapter->StartMessage(session);
+    ProtocolAdapter->AddIGControlPacket(session, &igc);
+    ProtocolAdapter->EndMessage(session);
 
     do {
         buffsize = recvfrom(rcvsock, (char *)buffer, MAX_ETHERNET_PACKET_SIZE, 0, NULL, 0);
@@ -577,19 +584,21 @@ ULONG WINAPI SendRcvThread(void *nContext)
             GetHighResolutionClockTime(HEMU_CLOCK_FASTEST, &t_rcv);
 
             // Give CIGI a pointer to the incoming data so it can sync the frame counter.
-            CigiSetIncomingMsgBuffer(session, buffer, buffsize);
+            ProtocolAdapter->SetIncomingMessageBuffer(session, buffer, buffsize);
 
-            CigiSyncFrameCounter(session);
+            ProtocolAdapter->SyncFrameCounter(session);
 
             if (OperateMode == MODE_PLAYBACK) {
-                CigiGetOutgoingMsgBuffer(session, &sendbuffer, &sendsize);
+                ProtocolAdapter->GetOutgoingMessageBuffer(session, &sendbuffer,
+                                                          &sendsize);
 
                 if (readsize) {
                     // If we are forcing big-endian output, swap to the
                     // temporary buffer.
                     if (BigEndian) {
                         memcpy((char *)swapbuffer, sendbuffer, sendsize);
-                        CigiSwapOutgoingMsgBuffer((char *)swapbuffer, sendsize);
+                        ProtocolAdapter->SwapOutgoingMessageBuffer(
+                            (char *)swapbuffer, sendsize);
                         sendto(sndsock, (char *)swapbuffer, readsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
                     } else {
                         sendto(sndsock, (char *)sendbuffer, readsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
@@ -609,15 +618,16 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 }
 
                 // Process the message buffer we just received.
-                CigiProcessIncomingMsgBuffer(session);
+                ProtocolAdapter->ProcessIncomingMessage(session);
 
                 // Must begin and end the message, even though we will be overwriting the
                 // buffer.
-                CigiStartMessage(session);
-                CigiEndMessage(session);
+                ProtocolAdapter->StartMessage(session);
+                ProtocolAdapter->EndMessage(session);
 
                 // After we start the message, we need to get a pointer to the next buffer.
-                CigiGetOutgoingMsgBuffer(session, &sendbuffer, &sendsize);
+                ProtocolAdapter->GetOutgoingMessageBuffer(session, &sendbuffer,
+                                                          &sendsize);
 
                 // This could be dangerous because we are writing to an address that the
                 // CIGI API is returning.  But since we are writing the file, we can
@@ -626,7 +636,8 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 GetNextPlaybackMessage(sendbuffer, &readsize);
             } else if (OperateMode == MODE_NORMAL) {
                 // If this is the first call, sendsize will remain zero.
-                CigiGetOutgoingMsgBuffer(session, &sendbuffer, &sendsize);
+                ProtocolAdapter->GetOutgoingMessageBuffer(session, &sendbuffer,
+                                                          &sendsize);
                 readsize = sendsize;    // in case we change modes before the next frame
 
                 if (sendsize) {
@@ -634,7 +645,8 @@ ULONG WINAPI SendRcvThread(void *nContext)
                     // temporary buffer.
                     if (BigEndian) {
                         memcpy((char *)swapbuffer, sendbuffer, sendsize);
-                        CigiSwapOutgoingMsgBuffer((char *)swapbuffer, sendsize);
+                        ProtocolAdapter->SwapOutgoingMessageBuffer(
+                            (char *)swapbuffer, sendsize);
                         sendto(sndsock, (char *)swapbuffer, sendsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
                     } else {
                         sendto(sndsock, (char *)sendbuffer, sendsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
@@ -683,11 +695,11 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 }
 
                 // Process the message buffer we just received.
-                CigiProcessIncomingMsgBuffer(session);
+                ProtocolAdapter->ProcessIncomingMessage(session);
 
                 // Start the next outgoing message.
-                CigiStartMessage(session);
-                CigiAddPacketIGCtrl(session, &igc);
+                ProtocolAdapter->StartMessage(session);
+                ProtocolAdapter->AddIGControlPacket(session, &igc);
 
                 // Build the entity control packets.
                 BuildEntityControlPackets();
@@ -714,16 +726,18 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 }
 
                 // When we have visited each node, end the message.
-                CigiEndMessage(session);
+                ProtocolAdapter->EndMessage(session);
             } else if (OperateMode == MODE_TRANSPDELAYTEST) {
                 // If this is the first call, sendsize will remain zero.
-                CigiGetOutgoingMsgBuffer(session, &sendbuffer, &sendsize);
+                ProtocolAdapter->GetOutgoingMessageBuffer(session, &sendbuffer,
+                                                          &sendsize);
                 if (sendsize) {
                     // If we are forcing big-endian output, swap to the
                     // temporary buffer.
                     if (BigEndian) {
                         memcpy((char *)swapbuffer, sendbuffer, sendsize);
-                        CigiSwapOutgoingMsgBuffer((char *)swapbuffer, sendsize);
+                        ProtocolAdapter->SwapOutgoingMessageBuffer(
+                            (char *)swapbuffer, sendsize);
                         sendto(sndsock, (char *)swapbuffer, sendsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
                     } else {
                         sendto(sndsock, (char *)sendbuffer, sendsize, 0, (SOCKADDR *)&saddr, sizeof(SOCKADDR));
@@ -743,11 +757,11 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 }
 
                 // Process the message buffer we just received.
-                CigiProcessIncomingMsgBuffer(session);
+                ProtocolAdapter->ProcessIncomingMessage(session);
 
                 // Start the next outgoing message.
-                CigiStartMessage(session);
-                CigiAddPacketIGCtrl(session, &igc);
+                ProtocolAdapter->StartMessage(session);
+                ProtocolAdapter->AddIGControlPacket(session, &igc);
 
                 if (TranspDelayLoopCounter == 0) {
                     const CIGI_ENTITY_CONTROL *ec = TranspDelayTestCreateECPacket(0);
@@ -765,7 +779,7 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 TranspDelayLoopCounter++;
 
                 // When we have visited each node, end the message.
-                CigiEndMessage(session);
+                ProtocolAdapter->EndMessage(session);
             }
 
 			// Send a status message every 30 frames.
@@ -1538,13 +1552,25 @@ void CheckMessages(void)
 
         case MSG_SET_CIGI_OPTIONS: {
             if (verbose)
-                printf("Received MSG_SET_BYTE_ORDER from GUI process.\n");
+                printf("Received MSG_SET_CIGI_OPTIONS from GUI process.\n");
 
             BigEndian = ((MESSAGE_SET_CIGI_OPTIONS *)msg)->big_endian;
-            igc.minor_version = ((MESSAGE_SET_CIGI_OPTIONS *)msg)->minor_version;
-            CigiSetMinorVersion(igc.minor_version);
-            if (igc.minor_version == 0)
-                igc.packet_size = sizeof(CIGI_IG_CONTROL);
+            CigiProtocolVersion requestedVersion;
+            if (!CigiProtocolVersion::TryCreate(
+                    ((MESSAGE_SET_CIGI_OPTIONS *)msg)->major_version,
+                    ((MESSAGE_SET_CIGI_OPTIONS *)msg)->minor_version,
+                    &requestedVersion))
+                requestedVersion = CigiProtocolVersion::Current();
+
+            CigiProtocolAdapterSelection selection =
+                CigiProtocolAdapterFactory::Select(requestedVersion);
+            ProtocolAdapter = selection.adapter;
+            ProtocolAdapter->Configure(&igc);
+
+            if (verbose && !selection.exactMatch)
+                printf("CIGI %d.%d packet I/O is not implemented; retaining CIGI 4.0.\n",
+                       requestedVersion.GetMajorVersion(),
+                       requestedVersion.GetMinorVersion());
             break;
         }
 

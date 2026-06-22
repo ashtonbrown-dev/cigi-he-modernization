@@ -34,6 +34,7 @@ ipch/
 # Packaged application output
 *.sf4
 !app/scenarios/*.sf4
+/dist/
 
 # Local operating-system files
 Thumbs.db

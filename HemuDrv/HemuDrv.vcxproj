@@ -69,7 +69,7 @@
       <AdditionalDependencies>libcmt.lib;oldnames.lib;ws2_32.lib;mswsock.lib;LIBCMTD.LIB;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(IntDir)HemuDrv.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>c:\apis\ccu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug\HemuDrv.pdb</ProgramDatabaseFile>
@@ -110,7 +110,7 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
       <AdditionalDependencies>libcmt.lib;oldnames.lib;ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(IntDir)HemuDrv.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>c:\apis\ccu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>

@@ -76,7 +76,7 @@
       <AdditionalDependencies>dbghelp.lib;dinput8.lib;dxguid.lib;htmlhelp.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\Debug\Hemu4.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;c:\apis\ccu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/Hemu4.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -121,7 +121,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
       <AdditionalDependencies>dinput8.lib;dxguid.lib;htmlhelp.lib;winmm.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\Release/Hemu4.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;c:\apis\ccu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/Hemu4.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>

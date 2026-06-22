@@ -31,6 +31,20 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace
+{
+CString GetCigiVersionDisplayName(const CigiProtocolVersion &version)
+{
+    if (version.IsCigi3() && version.GetMinorVersion() <= 1)
+        return _T("3.0/3.1");
+
+    CString displayName;
+    displayName.Format(_T("%d.%d"), version.GetMajorVersion(),
+                       version.GetMinorVersion());
+    return displayName;
+}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CSetupDlg dialog
 
@@ -44,7 +58,6 @@ CSetupDlg::CSetupDlg(CWnd *pParent /*=NULL*/)
     m_nLocalPort = 0;
     m_BigEndian = FALSE;
     m_DefaultDB = 1;
-    m_CigiVersionIdx = -1;
     //}}AFX_DATA_INIT
 }
 
@@ -56,6 +69,7 @@ void CSetupDlg::DoDataExchange(CDataExchange *pDX)
     DDX_Control(pDX, IDC_LABEL_FRAME_RATE, m_LabelFrameRate);
     DDX_Control(pDX, IDC_EDIT_FRAME_RATE, m_EditFrameRate);
     DDX_Control(pDX, IDC_CHECK_ASYNCHRONOUS, m_CheckAsyncMode);
+    DDX_Control(pDX, IDC_COMBO_VERSION, m_ComboVersion);
     DDX_Control(pDX, IDC_IPADDRESS_IG, m_IPAddrCtrl);
     DDX_Check(pDX, IDC_CHECK_ASYNCHRONOUS, m_bAsyncMode);
     DDX_Text(pDX, IDC_EDIT_FRAME_RATE, m_nFrameRate);
@@ -65,12 +79,12 @@ void CSetupDlg::DoDataExchange(CDataExchange *pDX)
     DDX_Check(pDX, IDC_CHECK_BIG_ENDIAN, m_BigEndian);
     DDX_Text(pDX, IDC_EDIT_DEFAULT_DB, m_DefaultDB);
     DDV_MinMaxInt(pDX, m_DefaultDB, 1, 127);
-    DDX_CBIndex(pDX, IDC_COMBO_VERSION, m_CigiVersionIdx);
     //}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CSetupDlg, CDialog)
     //{{AFX_MSG_MAP(CSetupDlg)
+    ON_CBN_SELCHANGE(IDC_COMBO_VERSION, OnCigiVersionChanged)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -80,6 +94,19 @@ END_MESSAGE_MAP()
 void CSetupDlg::OnOK()
 {
     m_IPAddrCtrl.GetAddress(m_Address);
+
+    const int selection = m_ComboVersion.GetCurSel();
+    if (selection != CB_ERR) {
+        const CigiProtocolVersionId id =
+            (CigiProtocolVersionId)m_ComboVersion.GetItemData(selection);
+        m_CigiProtocolVersion = CigiProtocolVersion::FromId(id);
+    }
+
+    if (!m_CigiProtocolVersion.IsPacketIoImplemented()) {
+        AfxMessageBox(
+            _T("This version selection will be saved. Packet I/O will safely remain CIGI 4.0 until the CIGI 3 protocol adapter is implemented."),
+            MB_OK | MB_ICONINFORMATION);
+    }
 
     CDialog::OnOK();
 }
@@ -93,7 +120,8 @@ BOOL CSetupDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    SetCigiMinorVersion(::GetCigiMinorVersion());
+    PopulateCigiVersions();
+    SetCigiProtocolVersion(::GetCigiProtocolVersion());
 
     SetIPAddr(::GetIPAddr());
     SetIGPort(::GetRemotePort());
@@ -108,59 +136,55 @@ BOOL CSetupDlg::OnInitDialog()
     return TRUE;
 }
 
-void CSetupDlg::SetCigiMinorVersion(const int version)
+void CSetupDlg::PopulateCigiVersions(void)
 {
-    switch (version) {
-    case 0:
-    case 1:
-        m_CigiVersionIdx = 0;
-        break;
+    m_ComboVersion.ResetContent();
 
-    case 2:
-        m_CigiVersionIdx = 1;
-        break;
-
-    case 3:
-    default:
-        m_CigiVersionIdx = 2;
-        break;
+    for (int i = 0; i < CigiProtocolVersionCatalog::GetVersionCount(); ++i) {
+        const CigiProtocolVersion version =
+            CigiProtocolVersionCatalog::GetVersion(i);
+        const int item = m_ComboVersion.AddString(GetCigiVersionDisplayName(version));
+        m_ComboVersion.SetItemData(item, version.GetId());
     }
-
-    if (GetSafeHwnd())
-        UpdateData(FALSE);
 }
 
-int CSetupDlg::GetCigiMinorVersion(void)
+void CSetupDlg::SetCigiProtocolVersion(const CigiProtocolVersion &version)
 {
-#if 0 // chas
-    int retval = 2;
+    m_CigiProtocolVersion = version;
+    int selectedItem = CB_ERR;
 
-    if (GetSafeHwnd())
-        UpdateData(TRUE);
-
-    switch (m_CigiVersionIdx) {
-    case 0:
-        retval = 0;
-        break;
-
-    case 1:
-        retval = 2;
-        break;
-
-    case 2:
-        retval = 3;
-        break;
-
-    default:
-        retval = 0;
-        break;
+    for (int i = 0; i < m_ComboVersion.GetCount(); ++i) {
+        const CigiProtocolVersionId id =
+            (CigiProtocolVersionId)m_ComboVersion.GetItemData(i);
+        CigiProtocolVersion itemVersion = CigiProtocolVersion::FromId(id);
+        if (version.IsSameSelection(itemVersion)) {
+            selectedItem = i;
+            break;
+        }
     }
-#else
-    int retval = 0;
 
-    if (GetSafeHwnd())
-        UpdateData(TRUE);
-#endif
+    // A persisted future CIGI 4 minor remains selectable even before it is
+    // promoted into the standard catalog.
+    if (selectedItem == CB_ERR && version.IsCigi4()) {
+        selectedItem = m_ComboVersion.AddString(GetCigiVersionDisplayName(version));
+        m_ComboVersion.SetItemData(selectedItem, version.GetId());
+    }
 
-    return retval;
+    m_ComboVersion.SetCurSel(selectedItem);
+}
+
+CigiProtocolVersion CSetupDlg::GetCigiProtocolVersion(void) const
+{
+    return m_CigiProtocolVersion;
+}
+
+void CSetupDlg::OnCigiVersionChanged()
+{
+    const int selection = m_ComboVersion.GetCurSel();
+    if (selection != CB_ERR) {
+        const CigiProtocolVersionId id =
+            (CigiProtocolVersionId)m_ComboVersion.GetItemData(selection);
+        m_CigiProtocolVersion = CigiProtocolVersion::FromId(id);
+    }
+
 }

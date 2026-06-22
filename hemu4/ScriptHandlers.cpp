@@ -211,7 +211,7 @@ CIGI_START_OF_FRAME_OPCODE, 4, 0, 1, 0, 0, 0, 0, 0
 
 long ScriptDoFrame(const char *buffer, const unsigned int linenum)
 {
-    if (g_CigiMinorVersion == 0) {
+    if (GetCigiMinorVersion() == 0) {
         // Send a SOF to the driver.  The driver will know
         // that if it receives this, it is a signal to wait.
     CIGI_START_OF_FRAME sof = {  sizeof(CIGI_START_OF_FRAME),

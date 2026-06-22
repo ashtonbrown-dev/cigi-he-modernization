@@ -31,6 +31,7 @@
 #endif
 
 #include "DataManager.h"
+#include "CigiProtocolVersion.h"
 
 #define DIRECTINPUT_VERSION     0x0800
 #include <basetsd.h>
@@ -128,8 +129,9 @@ extern volatile unsigned int g_WatchFrameCounter;
 extern int g_HostSession;
 extern int g_IGSession;
 
-// CIGI minor version
-extern int g_CigiMinorVersion;
+// Selected CIGI protocol version. Packet I/O support is provided by the
+// protocol adapter selected in the driver.
+extern CigiProtocolVersion g_CigiProtocolVersion;
 
 // Flags used to indicate state of simulation.
 extern volatile BOOL g_bFreezeFlag;
@@ -245,6 +247,10 @@ int GetCigiMinorVersion(void);
 void SetCigiMinorVersion(const int version);
 BOOL StoreCigiMinorVersion(const int version);
 BOOL RetrieveCigiMinorVersion(int *version);
+CigiProtocolVersion GetCigiProtocolVersion(void);
+void SetCigiProtocolVersion(const CigiProtocolVersion &version);
+BOOL StoreCigiProtocolVersion(const CigiProtocolVersion &version);
+BOOL RetrieveCigiProtocolVersion(CigiProtocolVersion *version);
 void FireMissile(CEntity *missile);
 int PlayTerminatingLaunchAnims(CEntity *missile);
 int PlayPersistentLaunchAnims(CEntity *missile);

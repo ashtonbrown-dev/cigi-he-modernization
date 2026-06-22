@@ -67,7 +67,7 @@ COLORREF EntityClassColor[13] = {   RGB(255, 255, 255),     // GENERIC
 
 extern int g_HostSession = -1;
 extern int g_IGSession = -1;
-extern int g_CigiMinorVersion = 0;
+CigiProtocolVersion g_CigiProtocolVersion = CigiProtocolVersion::Current();
 
 // Because we are dequeueing a bunch of Host-to-IG packets and then
 // IG-to-Host messages, we need to keep track of the Frame Counter
@@ -470,12 +470,21 @@ BOOL RetrieveBigEndian(int *byteorder)
 
 int GetCigiMinorVersion(void)
 {
-    return g_CigiMinorVersion;
+    // Legacy packet-building code asks for only a minor version. Keep those
+    // CIGI 4 packet paths on the safe active wire version when the selected
+    // CIGI 3 adapter is still a stub.
+    if (!g_CigiProtocolVersion.IsPacketIoImplemented())
+        return CigiProtocolVersion::Current().GetMinorVersion();
+
+    return g_CigiProtocolVersion.GetMinorVersion();
 }
 
 void SetCigiMinorVersion(const int version)
 {
-    g_CigiMinorVersion = version;
+    CigiProtocolVersion protocolVersion;
+    if (CigiProtocolVersion::TryCreate(
+            g_CigiProtocolVersion.GetMajorVersion(), version, &protocolVersion))
+        g_CigiProtocolVersion = protocolVersion;
 }
 
 BOOL StoreCigiMinorVersion(const int version)
@@ -498,6 +507,63 @@ BOOL RetrieveCigiMinorVersion(int *version)
         return TRUE;
     } else
         return FALSE;
+}
+
+CigiProtocolVersion GetCigiProtocolVersion(void)
+{
+    return g_CigiProtocolVersion;
+}
+
+void SetCigiProtocolVersion(const CigiProtocolVersion &version)
+{
+    g_CigiProtocolVersion = version;
+}
+
+BOOL StoreCigiProtocolVersion(const CigiProtocolVersion &version)
+{
+    CDebugTrace trace("::StoreCigiProtocolVersion(const CigiProtocolVersion &)");
+
+    if (SetRegEntryInt32("CIGI Host Emulator 4", "CIGI Major Version",
+                        (__int32)version.GetMajorVersion()) != ERROR_SUCCESS)
+        return FALSE;
+
+    if (SetRegEntryInt32("CIGI Host Emulator 4", "CIGI Protocol Minor Version",
+                        (__int32)version.GetMinorVersion()) != ERROR_SUCCESS)
+        return FALSE;
+
+    // Preserve the old key as the active CIGI 4 wire minor. An older build
+    // therefore retains known-good behavior after a CIGI 3 selection.
+    const int legacyMinorVersion = version.IsPacketIoImplemented()
+        ? version.GetMinorVersion()
+        : CigiProtocolVersion::Current().GetMinorVersion();
+    return StoreCigiMinorVersion(legacyMinorVersion);
+}
+
+BOOL RetrieveCigiProtocolVersion(CigiProtocolVersion *version)
+{
+    CDebugTrace trace("::RetrieveCigiProtocolVersion(CigiProtocolVersion *)");
+
+    if (!version)
+        return FALSE;
+
+    __int32 majorVersion;
+    __int32 protocolMinorVersion;
+    if (GetRegEntryInt32("CIGI Host Emulator 4", "CIGI Major Version",
+                        &majorVersion) != ERROR_SUCCESS ||
+        GetRegEntryInt32("CIGI Host Emulator 4", "CIGI Protocol Minor Version",
+                        &protocolMinorVersion) != ERROR_SUCCESS) {
+        // Legacy settings only stored a minor version and always used the
+        // existing CIGI 4 implementation.
+        int legacyMinorVersion;
+        if (!RetrieveCigiMinorVersion(&legacyMinorVersion))
+            return FALSE;
+        majorVersion = 4;
+        protocolMinorVersion = legacyMinorVersion;
+    }
+
+    return CigiProtocolVersion::TryCreate((int)majorVersion,
+                                          (int)protocolMinorVersion,
+                                          version) ? TRUE : FALSE;
 }
 
 void FireMissile(CEntity *missile)

@@ -314,22 +314,25 @@ BOOL CHemuApp::SetupCommFromRegistry(void)
 BOOL CHemuApp::SetupCigiOptionsFromRegistry(void)
 {
     int byteorder = 0;
-    int minor_version = 3;
+    CigiProtocolVersion protocolVersion;
 
     if (!RetrieveBigEndian(&byteorder))
         ::SetBigEndian(FALSE);
     else
         ::SetBigEndian(byteorder ? TRUE : FALSE);
 
-    if (!RetrieveCigiMinorVersion(&minor_version))
-        ::SetCigiMinorVersion(3);
+    if (!RetrieveCigiProtocolVersion(&protocolVersion))
+        ::SetCigiProtocolVersion(CigiProtocolVersion::Current());
     else
-        ::SetCigiMinorVersion(minor_version);
+        ::SetCigiProtocolVersion(protocolVersion);
 
     // Send a message to the driver.
     MESSAGE_SET_CIGI_OPTIONS MsgSetCigiOptions;
     MsgSetCigiOptions.big_endian = ::GetBigEndian();
-    MsgSetCigiOptions.minor_version = ::GetCigiMinorVersion();
+    MsgSetCigiOptions.major_version =
+        ::GetCigiProtocolVersion().GetMajorVersion();
+    MsgSetCigiOptions.minor_version =
+        ::GetCigiProtocolVersion().GetMinorVersion();
     PostDriverMsg(MsgSetCigiOptions);
 
     return TRUE;
@@ -341,8 +344,8 @@ BOOL CHemuApp::ShowSetupDlg(void)
     const bool okPressed = (dlg.DoModal() == IDOK);
 
     if (okPressed) {
-        ::SetCigiMinorVersion(dlg.GetCigiMinorVersion());
-        ::StoreCigiMinorVersion(dlg.GetCigiMinorVersion());
+        ::SetCigiProtocolVersion(dlg.GetCigiProtocolVersion());
+        ::StoreCigiProtocolVersion(dlg.GetCigiProtocolVersion());
         GetMainFrame().EnforceCigiVersion();
 
         ::SetIPAddr(dlg.GetIPAddr());
@@ -369,7 +372,10 @@ BOOL CHemuApp::ShowSetupDlg(void)
 
         MESSAGE_SET_CIGI_OPTIONS MsgSetCigiOptions;
         MsgSetCigiOptions.big_endian = ::GetBigEndian();
-        MsgSetCigiOptions.minor_version = ::GetCigiMinorVersion();
+        MsgSetCigiOptions.major_version =
+            ::GetCigiProtocolVersion().GetMajorVersion();
+        MsgSetCigiOptions.minor_version =
+            ::GetCigiProtocolVersion().GetMinorVersion();
         PostDriverMsg(MsgSetCigiOptions);
 
         /*

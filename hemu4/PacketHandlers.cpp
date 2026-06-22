@@ -107,7 +107,7 @@ long DoCigiIGControl(const int sessionid, void *data)
     // For CIGI 3.0/3.1, we will be grouping by Host-to-IG frame counter.
     // For later versions, we will be grouping by the last IG-to-Host frame
     // counter.
-    if (g_CigiMinorVersion == 0 ) {
+    if (GetCigiMinorVersion() == 0 ) {
         g_WatchFrameCounter = packet->last_ig_frame_num;
     }
 
@@ -117,7 +117,7 @@ long DoCigiIGControl(const int sessionid, void *data)
         if (g_FilterFlags.IGControl) {
             CString str;
 
-            if (g_CigiMinorVersion == 0) {
+            if (GetCigiMinorVersion() == 0) {
                 str.Format("IG Control: Host Frame Ctr=%lu (IG Frame Ctr=%lu)  "
                            "IG Mode=%d  Ver=%d.%d  DB=%d  Timestamp=%u",
                            packet->host_frame_num, packet->last_ig_frame_num,
@@ -1341,7 +1341,7 @@ long DoCigiStartOfFrame(const int sessionid, void *data)
         if (g_FilterFlags.StartOfFrame) {
             CString str;
 
-            if (g_CigiMinorVersion == 0 ) {
+            if (GetCigiMinorVersion() == 0 ) {
                  str.Format("Start of Frame: Ver=%d.%d  DB=%d  IG Mode=%d   ERM=%d  IG Frame Ctr=%lu  Timestamp=%.3fms  (Last Host Frame Ctr=%lu)  OverframingCondition=%d  PagingCondition=%d  ExcessVarLenDataCondition=%d",
 packet->cigi_major_version, packet->minor_version,
 packet->db_number,

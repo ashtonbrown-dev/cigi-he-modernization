@@ -28,6 +28,7 @@
 //
 
 #include "resource.h"
+#include "CigiProtocolVersion.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSetupDlg dialog
@@ -49,8 +50,8 @@ public:
     BOOL GetBigEndian(void);
     void SetDefaultDB(const int dbnum);
     int GetDefaultDB(void);
-    void SetCigiMinorVersion(const int version);
-    int GetCigiMinorVersion(void);
+    void SetCigiProtocolVersion(const CigiProtocolVersion &version);
+    CigiProtocolVersion GetCigiProtocolVersion(void) const;
 
     // Dialog Data
     //{{AFX_DATA(CSetupDlg)
@@ -59,6 +60,7 @@ public:
     CStatic m_LabelFrameRate;
     CEdit   m_EditFrameRate;
     CButton m_CheckAsyncMode;
+    CComboBox m_ComboVersion;
     CIPAddressCtrl  m_IPAddrCtrl;
     BOOL    m_bAsyncMode;
     UINT    m_nFrameRate;
@@ -66,7 +68,6 @@ public:
     UINT    m_nLocalPort;
     BOOL    m_BigEndian;
     int     m_DefaultDB;
-    int     m_CigiVersionIdx;
     //}}AFX_DATA
 
     // Overrides
@@ -79,12 +80,15 @@ protected:
     // Implementation
 protected:
     DWORD m_Address;
+    CigiProtocolVersion m_CigiProtocolVersion;
+    void PopulateCigiVersions(void);
 
     // Generated message map functions
     //{{AFX_MSG(CSetupDlg)
     virtual void OnOK();
     virtual void OnCancel();
     virtual BOOL OnInitDialog();
+    afx_msg void OnCigiVersionChanged();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

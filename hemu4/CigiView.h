@@ -180,7 +180,7 @@ protected:
     CCigiView();    // Used only during serialization.
 
     BOOL                        m_bNotifyDriver;
-    HANDLE                      m_SharedHandle;
+    HANDLE                      m_SharedHandle;  // Non-owning alias; m_SharedObject owns the handle.
     HTREEITEM                   m_Htree;
     VIEW                        m_InitialState;
     CString                     m_Name;

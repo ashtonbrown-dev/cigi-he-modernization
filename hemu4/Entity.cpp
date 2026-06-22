@@ -106,8 +106,7 @@ CEntity::~CEntity()
         PostDriverMsg(msg);
     }
 
-    // Close the handle on this side.
-    CloseHandle(m_SharedHandle);
+    // m_SharedObject owns and closes the shared-memory handle.
 }
 
 void CEntity::CommonEntityInit(int entityId,

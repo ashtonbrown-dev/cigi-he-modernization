@@ -2721,8 +2721,8 @@ void AddPacketsFromQueue(SharedBufferQueue *queue)
 
     do {
         if (size = queue->Pop((char *)buffer, CIGI_MAX_PACKET_SIZE)) {
-            switch (((CIGI_PACKET_HEADER *)buffer)->packet_id) {
-            case CIGI_START_OF_FRAME_OPCODE:
+            if (ProtocolAdapter->IsFrameBoundaryPacket(
+                    (const unsigned char *)buffer, size)) {
                 // If we have sent a SOF, we know we have a FRAME keyword
                 // in a script file.
                 if (verbose)
@@ -2733,168 +2733,14 @@ void AddPacketsFromQueue(SharedBufferQueue *queue)
                 SetEvent(g_FrameWaitEventHdl);
 
                 return;
+            }
 
-            case CIGI_IG_CONTROL_OPCODE:
-                CigiAddPacketIGCtrl(session, (CIGI_IG_CONTROL *)buffer);
-                break;
-
-            case CIGI_ENTITY_POSITION_OPCODE:
-                CigiAddPacketReplaceEntityPosition(session, (CIGI_ENTITY_POSITION *)buffer);
-                break;
-
-            case CIGI_ENTITY_POSITION_CC_OPCODE:
-                CigiAddPacketReplaceCCEntityPosition(session, (CIGI_ENTITY_POSITION_CC *)buffer);
-                break;
-
-            case CIGI_COMPONENT_CONTROL_OPCODE:
-                CigiAddPacketReplaceComponentCtrl(session, (CIGI_COMPONENT_CONTROL *)buffer);
-                break;
-
-            case CIGI_COMPONENT_CONTROL_S_OPCODE:
-                    CigiAddPacketReplaceShortComponentCtrl(session, (CIGI_COMPONENT_CONTROL_S *)buffer);
-                break;
-
-            case CIGI_ARTPART_CONTROL_OPCODE:
-                CigiAddPacketReplaceArtPartCtrl(session, (CIGI_ARTPART_CONTROL *)buffer);
-                break;
-
-            case CIGI_ARTPART_CONTROL_S_OPCODE:
-                CigiAddPacketReplaceShortArtPartCtrl(session, (CIGI_ARTPART_CONTROL_S *)buffer);
-                break;
-
-            case CIGI_VELOCITY_CONTROL_OPCODE:
-                CigiAddPacketReplaceVelocityCtrl(session, (CIGI_VELOCITY_CONTROL *)buffer);
-                break;
-
-            case CIGI_CELESTIAL_SPHERE_CONTROL_OPCODE:
-                CigiAddPacketReplaceCelestialSphereCtrl(session, (CIGI_CELESTIAL_SPHERE_CONTROL *)buffer);
-                break;
-
-            case CIGI_ATMOSPHERE_CONTROL_OPCODE:
-                CigiAddPacketReplaceAtmosphereCtrl(session, (CIGI_ATMOSPHERE_CONTROL *)buffer);
-                break;
-
-            case CIGI_ENV_REGION_CONTROL_OPCODE:
-                CigiAddPacketReplaceEnvRegionCtrl(session, (CIGI_ENV_REGION_CONTROL *)buffer);
-                break;
-
-            case CIGI_WEATHER_CONTROL_OPCODE:
-                CigiAddPacketReplaceWeatherCtrl(session, (CIGI_WEATHER_CONTROL *)buffer);
-                break;
-
-            case CIGI_MARITIME_CONDITIONS_CONTROL_OPCODE:
-                CigiAddPacketReplaceMaritimeCondCtrl(session, (CIGI_MARITIME_CONDITIONS_CONTROL *)buffer);
-                break;
-
-            case CIGI_WAVE_CONTROL_OPCODE:
-                CigiAddPacketReplaceWaveCtrl(session, (CIGI_WAVE_CONTROL *)buffer);
-                break;
-
-            case CIGI_TERRESTRIAL_CONDITIONS_CONTROL_OPCODE:
-                CigiAddPacketReplaceTerrestrialCondCtrl(session, (CIGI_TERRESTRIAL_CONDITIONS_CONTROL *)buffer);
-                break;
-
-            case CIGI_VIEW_CONTROL_OPCODE:
-                CigiAddPacketReplaceViewCtrl(session, (CIGI_VIEW_CONTROL *)buffer);
-                break;
-
-            case CIGI_SENSOR_CONTROL_OPCODE:
-                CigiAddPacketReplaceSensorCtrl(session, (CIGI_SENSOR_CONTROL *)buffer);
-                break;
-
-            case CIGI_MOTION_TRACKER_CONTROL_OPCODE:
-                CigiAddPacketReplaceMotionTrackerCtrl(session, (CIGI_MOTION_TRACKER_CONTROL *)buffer);
-                break;
-
-            case CIGI_ERM_DEF_OPCODE:
-                CigiAddPacketReplaceErmDef(session, (CIGI_ERM_DEF *)buffer);
-                break;
-
-            case CIGI_ACCELERATION_CONTROL_DEF_OPCODE:
-                CigiAddPacketReplaceAccelerationDef(session, (CIGI_ACCELERATION_CONTROL_DEF *)buffer);
-                break;
-
-            case CIGI_VIEW_DEF_OPCODE:
-                CigiAddPacketReplaceViewDef(session, (CIGI_VIEW_DEF *)buffer);
-                break;
-
-            case CIGI_COLL_SEGMENT_DEF_OPCODE:
-                CigiAddPacketReplaceCollDetSegmentDef(session, (CIGI_COLL_SEGMENT_DEF *)buffer);
-                break;
-
-            case CIGI_COLL_VOLUME_DEF_OPCODE:
-                CigiAddPacketReplaceCollDetVolumeDef(session, (CIGI_COLL_VOLUME_DEF *)buffer);
-                break;
-
-            case CIGI_HAT_HOT_REQUEST_OPCODE:
-                CigiAddPacketReplaceHatHotReq(session, (CIGI_HAT_HOT_REQUEST *)buffer);
-                break;
-
-            case CIGI_LOS_SEGMENT_REQUEST_OPCODE:
-                CigiAddPacketReplaceLosSegmentReq(session, (CIGI_LOS_SEGMENT_REQUEST *)buffer);
-                break;
-
-            case CIGI_LOS_VECTOR_REQUEST_OPCODE:
-                CigiAddPacketReplaceLosVectorReq(session, (CIGI_LOS_VECTOR_REQUEST *)buffer);
-                break;
-
-            case CIGI_POSITION_REQUEST_OPCODE:
-                CigiAddPacketReplacePositionReq(session, (CIGI_POSITION_REQUEST *)buffer);
-                break;
-
-            case CIGI_ENV_CONDITIONS_REQUEST_OPCODE:
-                CigiAddPacketReplaceEnvConditionsReq(session, (CIGI_ENV_CONDITIONS_REQUEST *)buffer);
-                break;
-
-            case CIGI_SYMBOL_SURFACE_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolSurfaceDef(session, (CIGI_SYMBOL_SURFACE_DEF *)buffer);
-                break;
-
-            case CIGI_SYMBOL_TEXT_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolTextDef(session, (CIGI_SYMBOL_TEXT_DEF *)buffer);
-                break;
-
-            case CIGI_SYMBOL_CIRCLE_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolCircleDef(session, (CIGI_SYMBOL_CIRCLE_DEF *)buffer);
-                break;
-
-            case CIGI_SYMBOL_POLYGON_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolPolygonDef(session, (CIGI_SYMBOL_POLYGON_DEF *)buffer);
-                break;
-
-            case CIGI_SYMBOL_CLONE_OPCODE:
-                CigiAddPacketReplaceSymbolClone(session, (CIGI_SYMBOL_CLONE *)buffer);
-                break;
-
-            case CIGI_SYMBOL_CONTROL_OPCODE:
-                CigiAddPacketReplaceSymbolCtrl(session, (CIGI_SYMBOL_CONTROL *)buffer);
-                break;
-
-            case CIGI_SYMBOL_CONTROL_S_OPCODE:
-                CigiAddPacketReplaceShortSymbolCtrl(session, (CIGI_SYMBOL_CONTROL_S *)buffer);
-                break;
-
-            case CIGI_ENTITY_CONTROL_OPCODE:
-                CigiAddPacketReplaceEntityCtrl(session, (CIGI_ENTITY_CONTROL *)buffer);
-                break;
-
-            case CIGI_ANIMATION_CONTROL_OPCODE:
-                CigiAddPacketReplaceAnimationCtrl(session, (CIGI_ANIMATION_CONTROL *)buffer);
-                break;
-
-            case CIGI_SYMBOL_TEXTURED_CIRCLE_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolTexturedCircleDef(session, (CIGI_SYMBOL_TEXTURED_CIRCLE_DEF *)buffer);
-                break;
-
-            case CIGI_SYMBOL_TEXTURED_POLYGON_DEF_OPCODE:
-                CigiAddPacketReplaceSymbolTexturedPolygonDef(session, (CIGI_SYMBOL_TEXTURED_POLYGON_DEF *)buffer);
-                break;
-
-            default:
+            if (!ProtocolAdapter->AddLegacyQueuedPacket(
+                    session, (const unsigned char *)buffer, size)) {
                 if (verbose)
-                    printf("Unknown Packet (ID = %d).\n", ((CIGI_PACKET_HEADER *)buffer)->packet_id);
-
-                break;
+                    printf("Unknown Packet (ID = %d).\n",
+                           ProtocolAdapter->GetPacketId(
+                               (const unsigned char *)buffer, size));
             }
         }
     } while (size);

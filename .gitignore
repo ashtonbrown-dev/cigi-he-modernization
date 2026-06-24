@@ -32,6 +32,7 @@ ipch/
 *.chm
 
 # Packaged application output
+*.zip
 *.sf4
 !app/scenarios/*.sf4
 /dist/

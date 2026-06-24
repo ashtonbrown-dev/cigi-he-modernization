@@ -21,6 +21,12 @@ public:
     virtual void GetOutgoingMessageBuffer(int session, unsigned char **buffer,
                                           int *size) = 0;
     virtual void SwapOutgoingMessageBuffer(char *buffer, int size) = 0;
+    virtual int GetPacketId(const unsigned char *buffer, int size) const = 0;
+    virtual bool IsFrameBoundaryPacket(const unsigned char *buffer,
+                                       int size) const = 0;
+    virtual bool AddLegacyQueuedPacket(int session,
+                                       const unsigned char *buffer,
+                                       int size) = 0;
 };
 
 struct CigiProtocolAdapterSelection

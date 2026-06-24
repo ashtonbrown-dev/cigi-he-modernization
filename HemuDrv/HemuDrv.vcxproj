@@ -144,6 +144,7 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     <ClCompile Include="..\cigi4.cpp" />
     <ClCompile Include="..\CigiProtocolAdapter.cpp" />
     <ClCompile Include="..\CigiProtocolVersion.cpp" />
+    <ClCompile Include="..\protocol\cigi3\Cigi3Api.cpp" />
     <ClCompile Include="comm.cpp" />
     <ClCompile Include="..\common.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -214,6 +215,7 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     <ClInclude Include="..\cigi4types.h" />
     <ClInclude Include="..\CigiProtocolAdapter.h" />
     <ClInclude Include="..\CigiProtocolVersion.h" />
+    <ClInclude Include="..\protocol\cigi3\Cigi3Api.h" />
     <ClInclude Include="comm.h" />
     <ClInclude Include="..\common.h" />
     <ClInclude Include="..\coordcnv\coordcnv.h" />

@@ -119,6 +119,24 @@ When an unsupported CIGI 3 selection is active, the factory still returns the
 known-good CIGI 4 adapter fallback. This preserves runtime behavior while
 leaving the callback mapping point ready for a real CIGI 3 adapter.
 
+## Fourth implemented step
+
+The upstream CIGI 3 API reference from
+`C:\Dev\ItWorks\CIGI\upstream\cigi-master` is isolated under
+`protocol/cigi3/legacy`.
+
+The raw CIGI 3 API cannot be included directly beside the existing CIGI 4 API
+because both APIs define the same global `Cigi*` function names and many of the
+same `CIGI_*` packet type and opcode names. The branch now compiles CIGI 3
+through `protocol/cigi3/Cigi3Api.cpp`, which privately renames the legacy
+`Cigi*` functions with a `Cigi3Legacy_` prefix and exposes only a small neutral
+`cigi3::` facade in `protocol/cigi3/Cigi3Api.h`.
+
+This is intentionally not a CIGI 3 packet adapter yet. The current CIGI 4 path
+remains the default known-good runtime path, and CIGI 3 UI/config selections
+remain safe stubs until adapter methods are implemented on top of the isolated
+CIGI 3 API.
+
 ## Open decisions
 
 - Whether the combined app must support loading old `.sf3` scenario files or
@@ -129,5 +147,8 @@ leaving the callback mapping point ready for a real CIGI 3 adapter.
   two explicit selections.
 - How strict the app should be when a selected protocol cannot represent a
   current scenario feature.
-- The next protocol boundary should isolate packet construction for specific
-  scenario commands instead of copying full CIGI 4 packet/dialog code for CIGI 3.
+- The next protocol boundary should add a real CIGI 3 adapter implementation
+  that uses the isolated `protocol/cigi3` facade without exposing raw CIGI 3
+  packet names to the UI or shared scenario model.
+- Packet construction should be isolated around semantic scenario commands
+  instead of copying full CIGI 4 packet/dialog code for CIGI 3.

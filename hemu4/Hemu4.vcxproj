@@ -147,6 +147,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\cigi4.cpp" />
+    <ClCompile Include="..\CigiProtocolAdapter.cpp" />
     <ClCompile Include="..\CigiProtocolVersion.cpp" />
     <ClCompile Include="AddEntityDlg.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -1579,6 +1580,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
   <ItemGroup>
     <ClInclude Include="..\cigi4.h" />
     <ClInclude Include="..\cigi4types.h" />
+    <ClInclude Include="..\CigiProtocolAdapter.h" />
     <ClInclude Include="..\CigiProtocolVersion.h" />
     <ClInclude Include="AddEntityDlg.h" />
     <ClInclude Include="ArtPart.h" />

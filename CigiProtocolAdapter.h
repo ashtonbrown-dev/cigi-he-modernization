@@ -26,6 +26,56 @@ struct CigiHostCallbacks
     CigiProtocolCallback igMessage;
 };
 
+struct CigiParserCallbacks
+{
+    CigiProtocolCallback igControl;
+    CigiProtocolCallback entityPosition;
+    CigiProtocolCallback ccEntityPosition;
+    CigiProtocolCallback componentControl;
+    CigiProtocolCallback shortComponentControl;
+    CigiProtocolCallback artPartControl;
+    CigiProtocolCallback shortArtPartControl;
+    CigiProtocolCallback velocityControl;
+    CigiProtocolCallback celestialSphereControl;
+    CigiProtocolCallback atmosphereControl;
+    CigiProtocolCallback envRegionControl;
+    CigiProtocolCallback weatherControl;
+    CigiProtocolCallback maritimeSurfaceControl;
+    CigiProtocolCallback waveControl;
+    CigiProtocolCallback terrestrialSurfaceControl;
+    CigiProtocolCallback viewControl;
+    CigiProtocolCallback sensorControl;
+    CigiProtocolCallback motionTrackerControl;
+    CigiProtocolCallback ermDef;
+    CigiProtocolCallback accelerationControlDef;
+    CigiProtocolCallback viewDef;
+    CigiProtocolCallback collisionSegmentDef;
+    CigiProtocolCallback collisionVolumeDef;
+    CigiProtocolCallback hatHotRequest;
+    CigiProtocolCallback losSegmentRequest;
+    CigiProtocolCallback losVectorRequest;
+    CigiProtocolCallback positionRequest;
+    CigiProtocolCallback envConditionsRequest;
+    CigiProtocolCallback symbolSurfaceDef;
+    CigiProtocolCallback symbolTextDef;
+    CigiProtocolCallback symbolCircleDef;
+    CigiProtocolCallback symbolPolygonDef;
+    CigiProtocolCallback symbolClone;
+    CigiProtocolCallback symbolControl;
+    CigiProtocolCallback shortSymbolControl;
+    CigiProtocolCallback entityControl;
+    CigiProtocolCallback animationControl;
+
+    CigiProtocolCallback skippedFrame;
+    CigiHostCallbacks igResponses;
+};
+
+struct CigiParserSessions
+{
+    int hostSession;
+    int igSession;
+};
+
 class ICigiProtocolAdapter
 {
 public:
@@ -38,6 +88,11 @@ public:
                                       int maxSessions,
                                       int numBuffers,
                                       int bufferSize) = 0;
+    virtual CigiParserSessions InitializeParserSessions(
+        const CigiParserCallbacks *callbacks,
+        int maxSessions,
+        int numBuffers,
+        int bufferSize) = 0;
     virtual void StartMessage(int session) = 0;
     virtual void AddIGControlPacket(int session, void *igControlPacket) = 0;
     virtual void EndMessage(int session) = 0;

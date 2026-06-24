@@ -48,6 +48,27 @@ public:
         return session;
     }
 
+    virtual CigiParserSessions InitializeParserSessions(
+        const CigiParserCallbacks *callbacks,
+        int maxSessions,
+        int numBuffers,
+        int bufferSize)
+    {
+        CigiParserSessions sessions = {-1, -1};
+
+        CigiInit(maxSessions, CIGI_VERSION);
+
+        sessions.hostSession =
+            CigiCreateSession(CIGI_HOST_SESSION, numBuffers, bufferSize);
+        RegisterParserHostCallbacks(callbacks);
+
+        sessions.igSession =
+            CigiCreateSession(CIGI_IG_SESSION, numBuffers, bufferSize);
+        RegisterParserIgCallbacks(callbacks);
+
+        return sessions;
+    }
+
     virtual void StartMessage(int session)
     {
         CigiStartMessage(session);
@@ -310,6 +331,96 @@ public:
     }
 
 private:
+    void RegisterParserHostCallbacks(const CigiParserCallbacks *callbacks)
+    {
+        if (!callbacks)
+            return;
+
+        CigiSetCallback(CIGI_IG_CONTROL_OPCODE,
+                        callbacks->igControl);
+        CigiSetCallback(CIGI_ENTITY_POSITION_OPCODE,
+                        callbacks->entityPosition);
+        CigiSetCallback(CIGI_ENTITY_POSITION_CC_OPCODE,
+                        callbacks->ccEntityPosition);
+        CigiSetCallback(CIGI_COMPONENT_CONTROL_OPCODE,
+                        callbacks->componentControl);
+        CigiSetCallback(CIGI_COMPONENT_CONTROL_S_OPCODE,
+                        callbacks->shortComponentControl);
+        CigiSetCallback(CIGI_ARTPART_CONTROL_OPCODE,
+                        callbacks->artPartControl);
+        CigiSetCallback(CIGI_ARTPART_CONTROL_S_OPCODE,
+                        callbacks->shortArtPartControl);
+        CigiSetCallback(CIGI_VELOCITY_CONTROL_OPCODE,
+                        callbacks->velocityControl);
+        CigiSetCallback(CIGI_CELESTIAL_SPHERE_CONTROL_OPCODE,
+                        callbacks->celestialSphereControl);
+        CigiSetCallback(CIGI_ATMOSPHERE_CONTROL_OPCODE,
+                        callbacks->atmosphereControl);
+        CigiSetCallback(CIGI_ENV_REGION_CONTROL_OPCODE,
+                        callbacks->envRegionControl);
+        CigiSetCallback(CIGI_WEATHER_CONTROL_OPCODE,
+                        callbacks->weatherControl);
+        CigiSetCallback(CIGI_MARITIME_CONDITIONS_CONTROL_OPCODE,
+                        callbacks->maritimeSurfaceControl);
+        CigiSetCallback(CIGI_WAVE_CONTROL_OPCODE,
+                        callbacks->waveControl);
+        CigiSetCallback(CIGI_TERRESTRIAL_CONDITIONS_CONTROL_OPCODE,
+                        callbacks->terrestrialSurfaceControl);
+        CigiSetCallback(CIGI_VIEW_CONTROL_OPCODE,
+                        callbacks->viewControl);
+        CigiSetCallback(CIGI_SENSOR_CONTROL_OPCODE,
+                        callbacks->sensorControl);
+        CigiSetCallback(CIGI_MOTION_TRACKER_CONTROL_OPCODE,
+                        callbacks->motionTrackerControl);
+        CigiSetCallback(CIGI_ERM_DEF_OPCODE,
+                        callbacks->ermDef);
+        CigiSetCallback(CIGI_ACCELERATION_CONTROL_DEF_OPCODE,
+                        callbacks->accelerationControlDef);
+        CigiSetCallback(CIGI_VIEW_DEF_OPCODE,
+                        callbacks->viewDef);
+        CigiSetCallback(CIGI_COLL_SEGMENT_DEF_OPCODE,
+                        callbacks->collisionSegmentDef);
+        CigiSetCallback(CIGI_COLL_VOLUME_DEF_OPCODE,
+                        callbacks->collisionVolumeDef);
+        CigiSetCallback(CIGI_HAT_HOT_REQUEST_OPCODE,
+                        callbacks->hatHotRequest);
+        CigiSetCallback(CIGI_LOS_SEGMENT_REQUEST_OPCODE,
+                        callbacks->losSegmentRequest);
+        CigiSetCallback(CIGI_LOS_VECTOR_REQUEST_OPCODE,
+                        callbacks->losVectorRequest);
+        CigiSetCallback(CIGI_POSITION_REQUEST_OPCODE,
+                        callbacks->positionRequest);
+        CigiSetCallback(CIGI_ENV_CONDITIONS_REQUEST_OPCODE,
+                        callbacks->envConditionsRequest);
+        CigiSetCallback(CIGI_SYMBOL_SURFACE_DEF_OPCODE,
+                        callbacks->symbolSurfaceDef);
+        CigiSetCallback(CIGI_SYMBOL_TEXT_DEF_OPCODE,
+                        callbacks->symbolTextDef);
+        CigiSetCallback(CIGI_SYMBOL_CIRCLE_DEF_OPCODE,
+                        callbacks->symbolCircleDef);
+        CigiSetCallback(CIGI_SYMBOL_POLYGON_DEF_OPCODE,
+                        callbacks->symbolPolygonDef);
+        CigiSetCallback(CIGI_SYMBOL_CLONE_OPCODE,
+                        callbacks->symbolClone);
+        CigiSetCallback(CIGI_SYMBOL_CONTROL_OPCODE,
+                        callbacks->symbolControl);
+        CigiSetCallback(CIGI_SYMBOL_CONTROL_S_OPCODE,
+                        callbacks->shortSymbolControl);
+        CigiSetCallback(CIGI_ENTITY_CONTROL_OPCODE,
+                        callbacks->entityControl);
+        CigiSetCallback(CIGI_ANIMATION_CONTROL_OPCODE,
+                        callbacks->animationControl);
+    }
+
+    void RegisterParserIgCallbacks(const CigiParserCallbacks *callbacks)
+    {
+        if (!callbacks)
+            return;
+
+        CigiSetCallback(100, callbacks->skippedFrame);
+        RegisterHostCallbacks(&callbacks->igResponses);
+    }
+
     void RegisterHostCallbacks(const CigiHostCallbacks *callbacks)
     {
         if (!callbacks)

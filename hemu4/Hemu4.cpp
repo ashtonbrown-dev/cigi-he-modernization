@@ -37,6 +37,7 @@
 #include "stdafx.h"
 #include "cigi4.h"
 #include "cigi4types.h"
+#include "CigiProtocolAdapter.h"
 #include "globals.h"
 #include "Hemu4.h"
 #include "HemuDoc.h"
@@ -395,69 +396,90 @@ BOOL CHemuApp::ShowSetupDlg(void)
     return okPressed;
 }
 
+static void InitializeCigiParserCallbacks(CigiParserCallbacks *callbacks)
+{
+    if (!callbacks)
+        return;
+
+    callbacks->igControl = DoCigiIGControl;
+    callbacks->entityPosition = DoCigiEntityPosition;
+    callbacks->ccEntityPosition = DoCigiCCEntityPosition;
+    callbacks->componentControl = DoCigiComponentControl;
+    callbacks->shortComponentControl = DoCigiShortComponentControl;
+    callbacks->artPartControl = DoCigiArtPartControl;
+    callbacks->shortArtPartControl = DoCigiShortArtPartControl;
+    callbacks->velocityControl = DoCigiRateControl;
+    callbacks->celestialSphereControl = DoCigiCelestialSphereControl;
+    callbacks->atmosphereControl = DoCigiAtmosphereControl;
+    callbacks->envRegionControl = DoCigiEnvRegionControl;
+    callbacks->weatherControl = DoCigiWeatherControlOpcode;
+    callbacks->maritimeSurfaceControl = DoCigiMaritimeSurfaceControl;
+    callbacks->waveControl = DoCigiWaveControl;
+    callbacks->terrestrialSurfaceControl = DoCigiTerrestrialSurfaceControl;
+    callbacks->viewControl = DoCigiViewControl;
+    callbacks->sensorControl = DoCigiSensorControl;
+    callbacks->motionTrackerControl = DoCigiMotionTrackerControl;
+    callbacks->ermDef = DoCigiErmDef;
+    callbacks->accelerationControlDef = DoCigiTrajectoryDef;
+    callbacks->viewDef = DoCigiViewDef;
+    callbacks->collisionSegmentDef = DoCigiCollisionSegDef;
+    callbacks->collisionVolumeDef = DoCigiCollisionVolDef;
+    callbacks->hatHotRequest = DoCigiHatRequest;
+    callbacks->losSegmentRequest = DoCigiLosSegmentRequest;
+    callbacks->losVectorRequest = DoCigiLosVectorRequest;
+    callbacks->positionRequest = DoCigiPositionRequest;
+    callbacks->envConditionsRequest = DoCigiEnvConditionsRequest;
+    callbacks->symbolSurfaceDef = DoCigiSymbolSurfaceDef;
+    callbacks->symbolTextDef = DoCigiSymbolTextDef;
+    callbacks->symbolCircleDef = DoCigiSymbolCircleDef;
+    callbacks->symbolPolygonDef = DoCigiSymbolLineDef;
+    callbacks->symbolClone = DoCigiSymbolClone;
+    callbacks->symbolControl = DoCigiSymbolControl;
+    callbacks->shortSymbolControl = DoCigiShortSymbolControl;
+    callbacks->entityControl = DoCigiEntityControl;
+    callbacks->animationControl = DoCigiAnimationControl;
+
+    callbacks->skippedFrame = DoSkippedFrame;
+    callbacks->igResponses.startOfFrame = DoCigiStartOfFrame;
+    callbacks->igResponses.hatHotResponse = DoCigiHatResponse;
+    callbacks->igResponses.hatHotExtResponse = DoCigiHatExtResponse;
+    callbacks->igResponses.losResponse = DoCigiLosResponse;
+    callbacks->igResponses.losExtResponse = DoCigiLosExtResponse;
+    callbacks->igResponses.sensorResponse = DoCigiSensorResponse;
+    callbacks->igResponses.sensorExtResponse = DoCigiSensorExtResponse;
+    callbacks->igResponses.positionResponse = DoCigiPositionResponse;
+    callbacks->igResponses.weatherResponse = DoCigiWeatherResponse;
+    callbacks->igResponses.aerosolResponse = DoCigiAerosolResponse;
+    callbacks->igResponses.maritimeSurfaceResponse =
+        DoCigiMaritimeSurfaceResponse;
+    callbacks->igResponses.terrestrialSurfaceResponse =
+        DoCigiTerrestrialSurfaceResponse;
+    callbacks->igResponses.collisionSegmentNotification =
+        DoCigiCollSegmentNotification;
+    callbacks->igResponses.collisionVolumeNotification =
+        DoCigiCollVolumeNotification;
+    callbacks->igResponses.animationStopNotification =
+        DoCigiAnimStopNotification;
+    callbacks->igResponses.eventNotification = DoCigiEventNotification;
+    callbacks->igResponses.igMessage = DoCigiIGMessage;
+}
+
 void CHemuApp::InitializeCIGI(void)
 {
+    CigiParserCallbacks callbacks = {0};
+    InitializeCigiParserCallbacks(&callbacks);
 
-    CigiInit(2, 4);     // Two sessions, version 4
+    CigiProtocolAdapterSelection protocolSelection =
+        CigiProtocolAdapterFactory::Select(::GetCigiProtocolVersion());
+    CigiParserSessions sessions =
+        protocolSelection.adapter->InitializeParserSessions(
+            &callbacks,
+            2,
+            8,
+            MAX_ETHERNET_PACKET_SIZE);
 
-    g_HostSession = CigiCreateSession(CIGI_HOST_SESSION, 8, MAX_ETHERNET_PACKET_SIZE);
-    CigiSetCallback(CIGI_IG_CONTROL_OPCODE, DoCigiIGControl);
-    CigiSetCallback(CIGI_ENTITY_POSITION_OPCODE, DoCigiEntityPosition);
-    CigiSetCallback(CIGI_ENTITY_POSITION_CC_OPCODE, DoCigiCCEntityPosition);
-    CigiSetCallback(CIGI_COMPONENT_CONTROL_OPCODE, DoCigiComponentControl);
-    CigiSetCallback(CIGI_COMPONENT_CONTROL_S_OPCODE, DoCigiShortComponentControl);
-    CigiSetCallback(CIGI_ARTPART_CONTROL_OPCODE, DoCigiArtPartControl);
-    CigiSetCallback(CIGI_ARTPART_CONTROL_S_OPCODE, DoCigiShortArtPartControl);
-    CigiSetCallback(CIGI_VELOCITY_CONTROL_OPCODE, DoCigiRateControl);
-    CigiSetCallback(CIGI_CELESTIAL_SPHERE_CONTROL_OPCODE, DoCigiCelestialSphereControl);
-    CigiSetCallback(CIGI_ATMOSPHERE_CONTROL_OPCODE, DoCigiAtmosphereControl);
-    CigiSetCallback(CIGI_ENV_REGION_CONTROL_OPCODE, DoCigiEnvRegionControl);
-    CigiSetCallback(CIGI_WEATHER_CONTROL_OPCODE, DoCigiWeatherControlOpcode);
-    CigiSetCallback(CIGI_MARITIME_CONDITIONS_CONTROL_OPCODE, DoCigiMaritimeSurfaceControl);
-    CigiSetCallback(CIGI_WAVE_CONTROL_OPCODE, DoCigiWaveControl);
-    CigiSetCallback(CIGI_TERRESTRIAL_CONDITIONS_CONTROL_OPCODE, DoCigiTerrestrialSurfaceControl);
-    CigiSetCallback(CIGI_VIEW_CONTROL_OPCODE, DoCigiViewControl);
-    CigiSetCallback(CIGI_SENSOR_CONTROL_OPCODE, DoCigiSensorControl);
-    CigiSetCallback(CIGI_MOTION_TRACKER_CONTROL_OPCODE, DoCigiMotionTrackerControl);
-    CigiSetCallback(CIGI_ERM_DEF_OPCODE, DoCigiErmDef);
-    CigiSetCallback(CIGI_ACCELERATION_CONTROL_DEF_OPCODE, DoCigiTrajectoryDef);
-    CigiSetCallback(CIGI_VIEW_DEF_OPCODE, DoCigiViewDef);
-    CigiSetCallback(CIGI_COLL_SEGMENT_DEF_OPCODE, DoCigiCollisionSegDef);
-    CigiSetCallback(CIGI_COLL_VOLUME_DEF_OPCODE, DoCigiCollisionVolDef);
-    CigiSetCallback(CIGI_HAT_HOT_REQUEST_OPCODE, DoCigiHatRequest);
-    CigiSetCallback(CIGI_LOS_SEGMENT_REQUEST_OPCODE, DoCigiLosSegmentRequest);
-    CigiSetCallback(CIGI_LOS_VECTOR_REQUEST_OPCODE, DoCigiLosVectorRequest);
-    CigiSetCallback(CIGI_POSITION_REQUEST_OPCODE, DoCigiPositionRequest);
-    CigiSetCallback(CIGI_ENV_CONDITIONS_REQUEST_OPCODE, DoCigiEnvConditionsRequest);
-    CigiSetCallback(CIGI_SYMBOL_SURFACE_DEF_OPCODE, DoCigiSymbolSurfaceDef);
-    CigiSetCallback(CIGI_SYMBOL_TEXT_DEF_OPCODE, DoCigiSymbolTextDef);
-    CigiSetCallback(CIGI_SYMBOL_CIRCLE_DEF_OPCODE, DoCigiSymbolCircleDef);
-    CigiSetCallback(CIGI_SYMBOL_POLYGON_DEF_OPCODE, DoCigiSymbolLineDef);
-    CigiSetCallback(CIGI_SYMBOL_CLONE_OPCODE, DoCigiSymbolClone);
-    CigiSetCallback(CIGI_SYMBOL_CONTROL_OPCODE, DoCigiSymbolControl);
-    CigiSetCallback(CIGI_SYMBOL_CONTROL_S_OPCODE, DoCigiShortSymbolControl);
-    CigiSetCallback(CIGI_ENTITY_CONTROL_OPCODE, DoCigiEntityControl);
-    CigiSetCallback(CIGI_ANIMATION_CONTROL_OPCODE, DoCigiAnimationControl);
-
-    g_IGSession = CigiCreateSession(CIGI_IG_SESSION, 8, MAX_ETHERNET_PACKET_SIZE);
-    CigiSetCallback(100, DoSkippedFrame);                   // Skipped frame handler --> chas - needs opcode for v4.0
-    CigiSetCallback(CIGI_START_OF_FRAME_OPCODE, DoCigiStartOfFrame);
-    CigiSetCallback(CIGI_HAT_HOT_RESPONSE_OPCODE, DoCigiHatResponse);
-    CigiSetCallback(CIGI_HAT_HOT_EXT_RESPONSE_OPCODE, DoCigiHatExtResponse);
-    CigiSetCallback(CIGI_LOS_RESPONSE_OPCODE, DoCigiLosResponse);
-    CigiSetCallback(CIGI_LOS_EXT_RESPONSE_OPCODE, DoCigiLosExtResponse);
-    CigiSetCallback(CIGI_SENSOR_RESPONSE_OPCODE, DoCigiSensorResponse);
-    CigiSetCallback(CIGI_SENSOR_EXT_RESPONSE_OPCODE, DoCigiSensorExtResponse);
-    CigiSetCallback(CIGI_POSITION_RESPONSE_OPCODE, DoCigiPositionResponse);
-    CigiSetCallback(CIGI_WEATHER_RESPONSE_OPCODE, DoCigiWeatherResponse);
-    CigiSetCallback(CIGI_AEROSOL_RESPONSE_OPCODE, DoCigiAerosolResponse);
-    CigiSetCallback(CIGI_MARITIME_SURFACE_RESPONSE_OPCODE, DoCigiMaritimeSurfaceResponse);
-    CigiSetCallback(CIGI_TERRESTRIAL_SURFACE_RESPONSE_OPCODE, DoCigiTerrestrialSurfaceResponse);
-    CigiSetCallback(CIGI_COLL_SEGMENT_NOTIFICATION_OPCODE, DoCigiCollSegmentNotification);
-    CigiSetCallback(CIGI_COLL_VOLUME_NOTIFICATION_OPCODE, DoCigiCollVolumeNotification);
-    CigiSetCallback(CIGI_ANIMATION_STOP_NOTIFICATION_OPCODE, DoCigiAnimStopNotification);
-    CigiSetCallback(CIGI_EVENT_NOTIFICATION_OPCODE, DoCigiEventNotification);
-    CigiSetCallback(CIGI_IG_MESSAGE_OPCODE, DoCigiIGMessage);
+    g_HostSession = sessions.hostSession;
+    g_IGSession = sessions.igSession;
 }
 
 int CHemuApp::LoadDriver(void)

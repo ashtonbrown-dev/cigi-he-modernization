@@ -98,6 +98,27 @@ calls the same CIGI 4 API functions with the same startup values:
 This keeps current CIGI 4 behavior as the default while making future CIGI 3
 host-session callback registration protocol-specific.
 
+## Third implemented step
+
+The GUI packet-watch/parser session initialization seam is now adapter-owned.
+`CHemuApp::InitializeCIGI()` builds a semantic `CigiParserCallbacks` table and
+asks the selected `ICigiProtocolAdapter` to create the GUI-side host and IG
+parser sessions.
+
+The CIGI 4 adapter still owns the same CIGI 4 parser startup sequence:
+
+- `CigiInit(2, CIGI_VERSION)`
+- `CigiCreateSession(CIGI_HOST_SESSION, 8, MAX_ETHERNET_PACKET_SIZE)`
+- existing host-packet parser callback registrations for IG control, entity,
+  component, environment, view, sensor, request, symbol, and animation packets
+- `CigiCreateSession(CIGI_IG_SESSION, 8, MAX_ETHERNET_PACKET_SIZE)`
+- existing IG-response parser callback registrations, including the legacy
+  skipped-frame callback opcode
+
+When an unsupported CIGI 3 selection is active, the factory still returns the
+known-good CIGI 4 adapter fallback. This preserves runtime behavior while
+leaving the callback mapping point ready for a real CIGI 3 adapter.
+
 ## Open decisions
 
 - Whether the combined app must support loading old `.sf3` scenario files or
@@ -108,7 +129,5 @@ host-session callback registration protocol-specific.
   two explicit selections.
 - How strict the app should be when a selected protocol cannot represent a
   current scenario feature.
-- The GUI packet-watch/parser path in `hemu4/Hemu4.cpp` still initializes a
-  CIGI 4 parser session and CIGI 4 callbacks directly. Moving that path should
-  use a separate adapter-owned parser callback table so this driver host-session
-  seam stays small and low risk.
+- The next protocol boundary should isolate packet construction for specific
+  scenario commands instead of copying full CIGI 4 packet/dialog code for CIGI 3.

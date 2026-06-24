@@ -1581,8 +1581,13 @@ void CheckMessages(void)
             ProtocolAdapter = selection.adapter;
             ProtocolAdapter->Configure(&igc);
 
-            if (verbose && !selection.exactMatch)
-                printf("CIGI %d.%d packet I/O is not implemented; retaining CIGI 4.0.\n",
+            if (verbose && !ProtocolAdapter->IsPacketIoSupported())
+                printf("CIGI %d.%d packet I/O is not implemented: %s.\n",
+                       requestedVersion.GetMajorVersion(),
+                       requestedVersion.GetMinorVersion(),
+                       ProtocolAdapter->GetPacketIoUnsupportedReason());
+            else if (verbose && !selection.exactMatch)
+                printf("CIGI %d.%d packet I/O is not implemented; using CIGI 4.0.\n",
                        requestedVersion.GetMajorVersion(),
                        requestedVersion.GetMinorVersion());
             break;

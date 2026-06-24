@@ -471,8 +471,8 @@ BOOL RetrieveBigEndian(int *byteorder)
 int GetCigiMinorVersion(void)
 {
     // Legacy packet-building code asks for only a minor version. Keep those
-    // CIGI 4 packet paths on the safe active wire version when the selected
-    // CIGI 3 adapter is still a stub.
+    // CIGI 4-shaped packet construction paths stable while the selected
+    // CIGI 3 adapter rejects packet I/O at the protocol boundary.
     if (!g_CigiProtocolVersion.IsPacketIoImplemented())
         return CigiProtocolVersion::Current().GetMinorVersion();
 
@@ -531,8 +531,8 @@ BOOL StoreCigiProtocolVersion(const CigiProtocolVersion &version)
                         (__int32)version.GetMinorVersion()) != ERROR_SUCCESS)
         return FALSE;
 
-    // Preserve the old key as the active CIGI 4 wire minor. An older build
-    // therefore retains known-good behavior after a CIGI 3 selection.
+    // Preserve the old key as the known-good CIGI 4 minor. An older build
+    // therefore retains its previous behavior after a CIGI 3 selection.
     const int legacyMinorVersion = version.IsPacketIoImplemented()
         ? version.GetMinorVersion()
         : CigiProtocolVersion::Current().GetMinorVersion();

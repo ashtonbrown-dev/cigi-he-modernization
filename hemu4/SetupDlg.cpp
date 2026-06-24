@@ -104,7 +104,7 @@ void CSetupDlg::OnOK()
 
     if (!m_CigiProtocolVersion.IsPacketIoImplemented()) {
         AfxMessageBox(
-            _T("This version selection will be saved. Packet I/O will safely remain CIGI 4.0 until the CIGI 3 protocol adapter is implemented."),
+            _T("This version selection will be saved. CIGI 3 packet I/O is scaffolded only and will not send CIGI 3 packets until CIGI 3 packet mapping is implemented."),
             MB_OK | MB_ICONINFORMATION);
     }
 

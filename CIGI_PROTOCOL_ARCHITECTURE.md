@@ -137,6 +137,27 @@ remains the default known-good runtime path, and CIGI 3 UI/config selections
 remain safe stubs until adapter methods are implemented on top of the isolated
 CIGI 3 API.
 
+## Fifth implemented step
+
+The factory now returns an explicit `Cigi3ProtocolAdapter` scaffold for CIGI
+3.0/3.1, 3.2, and 3.3 selections. CIGI 3 selections no longer silently route
+through the CIGI 4 adapter.
+
+The CIGI 3 scaffold includes the isolated `protocol/cigi3/Cigi3Api.h` facade so
+the adapter boundary is ready to call the legacy CIGI 3 implementation later.
+For now, packet operations deliberately report unsupported behavior and return
+safe failure/no-data values:
+
+- session initialization returns invalid session IDs
+- outgoing message buffers return `NULL` and size `0`
+- packet ID lookup returns `-1`
+- queued packet insertion returns `false`
+- void packet operations are ignored after reporting that CIGI 3 packet I/O is
+  scaffolded but not implemented
+
+CIGI 4 remains the default and known-good path. The current CIGI 4 adapter and
+packet mappings are unchanged.
+
 ## Open decisions
 
 - Whether the combined app must support loading old `.sf3` scenario files or
@@ -147,8 +168,9 @@ CIGI 3 API.
   two explicit selections.
 - How strict the app should be when a selected protocol cannot represent a
   current scenario feature.
-- The next protocol boundary should add a real CIGI 3 adapter implementation
-  that uses the isolated `protocol/cigi3` facade without exposing raw CIGI 3
-  packet names to the UI or shared scenario model.
+- The next protocol boundary should replace selected CIGI 3 scaffold methods
+  with real CIGI 3 session initialization and callback registration using the
+  isolated `protocol/cigi3` facade, without exposing raw CIGI 3 packet names to
+  the UI or shared scenario model.
 - Packet construction should be isolated around semantic scenario commands
   instead of copying full CIGI 4 packet/dialog code for CIGI 3.

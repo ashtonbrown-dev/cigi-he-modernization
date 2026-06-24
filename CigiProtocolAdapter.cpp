@@ -2,6 +2,9 @@
 
 #include "cigi4.h"
 #include "cigi4types.h"
+#include "protocol/cigi3/Cigi3Api.h"
+
+#include <stdio.h>
 
 namespace
 {
@@ -21,6 +24,16 @@ public:
     virtual CigiProtocolVersion GetActiveVersion() const
     {
         return m_Version;
+    }
+
+    virtual bool IsPacketIoSupported() const
+    {
+        return true;
+    }
+
+    virtual const char *GetPacketIoUnsupportedReason() const
+    {
+        return "";
     }
 
     virtual bool Configure(void *igControlPacket)
@@ -465,7 +478,173 @@ private:
     CigiProtocolVersion m_Version;
 };
 
+class Cigi3ProtocolAdapter : public ICigiProtocolAdapter
+{
+public:
+    Cigi3ProtocolAdapter()
+        : m_Version(CigiProtocolVersion::FromId(CIGI_3_0_3_1)),
+          m_UnsupportedReported(false)
+    {
+    }
+
+    void SetVersion(const CigiProtocolVersion &version)
+    {
+        m_Version = version;
+        m_UnsupportedReported = false;
+    }
+
+    virtual CigiProtocolVersion GetActiveVersion() const
+    {
+        return m_Version;
+    }
+
+    virtual bool IsPacketIoSupported() const
+    {
+        return false;
+    }
+
+    virtual const char *GetPacketIoUnsupportedReason() const
+    {
+        return "CIGI 3 packet I/O is scaffolded but not implemented";
+    }
+
+    virtual bool Configure(void *igControlPacket)
+    {
+        (void)igControlPacket;
+        (void)cigi3::GetApiInfo();
+        return false;
+    }
+
+    virtual int InitializeHostSession(const CigiHostCallbacks *callbacks,
+                                      int maxSessions,
+                                      int numBuffers,
+                                      int bufferSize)
+    {
+        (void)callbacks;
+        (void)maxSessions;
+        (void)numBuffers;
+        (void)bufferSize;
+        ReportUnsupportedOperation("InitializeHostSession");
+        return -1;
+    }
+
+    virtual CigiParserSessions InitializeParserSessions(
+        const CigiParserCallbacks *callbacks,
+        int maxSessions,
+        int numBuffers,
+        int bufferSize)
+    {
+        (void)callbacks;
+        (void)maxSessions;
+        (void)numBuffers;
+        (void)bufferSize;
+        CigiParserSessions sessions = {-1, -1};
+        ReportUnsupportedOperation("InitializeParserSessions");
+        return sessions;
+    }
+
+    virtual void StartMessage(int session)
+    {
+        (void)session;
+        ReportUnsupportedOperation("StartMessage");
+    }
+
+    virtual void AddIGControlPacket(int session, void *igControlPacket)
+    {
+        (void)session;
+        (void)igControlPacket;
+        ReportUnsupportedOperation("AddIGControlPacket");
+    }
+
+    virtual void EndMessage(int session)
+    {
+        (void)session;
+        ReportUnsupportedOperation("EndMessage");
+    }
+
+    virtual void SetIncomingMessageBuffer(int session, unsigned char *buffer,
+                                          int size)
+    {
+        (void)session;
+        (void)buffer;
+        (void)size;
+        ReportUnsupportedOperation("SetIncomingMessageBuffer");
+    }
+
+    virtual void SyncFrameCounter(int session)
+    {
+        (void)session;
+        ReportUnsupportedOperation("SyncFrameCounter");
+    }
+
+    virtual void ProcessIncomingMessage(int session)
+    {
+        (void)session;
+        ReportUnsupportedOperation("ProcessIncomingMessage");
+    }
+
+    virtual void GetOutgoingMessageBuffer(int session, unsigned char **buffer,
+                                          int *size)
+    {
+        (void)session;
+        if (buffer)
+            *buffer = NULL;
+        if (size)
+            *size = 0;
+        ReportUnsupportedOperation("GetOutgoingMessageBuffer");
+    }
+
+    virtual void SwapOutgoingMessageBuffer(char *buffer, int size)
+    {
+        (void)buffer;
+        (void)size;
+        ReportUnsupportedOperation("SwapOutgoingMessageBuffer");
+    }
+
+    virtual int GetPacketId(const unsigned char *buffer, int size) const
+    {
+        (void)buffer;
+        (void)size;
+        return -1;
+    }
+
+    virtual bool IsFrameBoundaryPacket(const unsigned char *buffer,
+                                       int size) const
+    {
+        (void)buffer;
+        (void)size;
+        return false;
+    }
+
+    virtual bool AddLegacyQueuedPacket(int session,
+                                       const unsigned char *buffer,
+                                       int size)
+    {
+        (void)session;
+        (void)buffer;
+        (void)size;
+        ReportUnsupportedOperation("AddLegacyQueuedPacket");
+        return false;
+    }
+
+private:
+    void ReportUnsupportedOperation(const char *operation) const
+    {
+        if (m_UnsupportedReported)
+            return;
+
+        m_UnsupportedReported = true;
+        fprintf(stderr, "CIGI 3 adapter: %s is unsupported. %s.\n",
+                operation,
+                GetPacketIoUnsupportedReason());
+    }
+
+    CigiProtocolVersion m_Version;
+    mutable bool m_UnsupportedReported;
+};
+
 Cigi4ProtocolAdapter Cigi4Adapter;
+Cigi3ProtocolAdapter Cigi3Adapter;
 }
 
 CigiProtocolAdapterSelection CigiProtocolAdapterFactory::Select(
@@ -473,13 +652,17 @@ CigiProtocolAdapterSelection CigiProtocolAdapterFactory::Select(
 {
     CigiProtocolAdapterSelection selection;
 
+    if (requestedVersion.IsCigi3()) {
+        Cigi3Adapter.SetVersion(requestedVersion);
+        selection.adapter = &Cigi3Adapter;
+        selection.exactMatch = true;
+        return selection;
+    }
+
     if (requestedVersion.IsPacketIoImplemented()) {
         Cigi4Adapter.SetVersion(requestedVersion);
         selection.exactMatch = true;
     } else {
-        // TODO(CIGI-3): return a CIGI 3 adapter once packet definitions,
-        // callbacks, and translation from the shared scenario model exist.
-        // Until then, retain the known-good CIGI 4.0 wire behavior.
         Cigi4Adapter.SetVersion(CigiProtocolVersion::Current());
         selection.exactMatch = false;
     }

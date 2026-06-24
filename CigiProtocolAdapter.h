@@ -82,6 +82,8 @@ public:
     virtual ~ICigiProtocolAdapter() {}
 
     virtual CigiProtocolVersion GetActiveVersion() const = 0;
+    virtual bool IsPacketIoSupported() const = 0;
+    virtual const char *GetPacketIoUnsupportedReason() const = 0;
     virtual bool Configure(void *igControlPacket) = 0;
 
     virtual int InitializeHostSession(const CigiHostCallbacks *callbacks,

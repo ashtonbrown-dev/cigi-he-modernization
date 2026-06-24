@@ -108,6 +108,7 @@ unsigned long FindLOS(const int id);
 void AddLOSPackets(void);
 void AddImmediateQueuedPackets(void);
 void AddQueuedPackets(void);
+void InitializeCigiHostCallbacks(CigiHostCallbacks *callbacks);
 
 // For transport delay test:
 void StartTranspDelayTest(MESSAGE_TDTEST_START *msg);
@@ -250,6 +251,30 @@ HEMU_MESSAGE *RcvGuiMessage(void)
         return NULL;
 }
 
+void InitializeCigiHostCallbacks(CigiHostCallbacks *callbacks)
+{
+    if (!callbacks)
+        return;
+
+    callbacks->startOfFrame = DoSOF;
+    callbacks->hatHotResponse = DoHatHotResponse;
+    callbacks->hatHotExtResponse = DoHatHotExtResponse;
+    callbacks->losResponse = DoLOSResponse;
+    callbacks->losExtResponse = DoLOSExtResponse;
+    callbacks->sensorResponse = DoSensorResponse;
+    callbacks->sensorExtResponse = DoSensorExtResponse;
+    callbacks->positionResponse = DoPositionResponse;
+    callbacks->weatherResponse = DoWeatherResponse;
+    callbacks->aerosolResponse = DoAerosolResponse;
+    callbacks->maritimeSurfaceResponse = DoMaritimeResponse;
+    callbacks->terrestrialSurfaceResponse = DoTerrestrialResponse;
+    callbacks->collisionSegmentNotification = DoCollisionSegNotification;
+    callbacks->collisionVolumeNotification = DoCollisionVolNotification;
+    callbacks->animationStopNotification = DoAnimationStopNotification;
+    callbacks->eventNotification = DoEventNotification;
+    callbacks->igMessage = DoIGResponse;
+}
+
 int Startup(void)
 {
     char address[64] = "";
@@ -284,26 +309,15 @@ int Startup(void)
         return 0;
     }
 
-    // Initialize CIGI.
-    CigiInit(1, CIGI_VERSION);
-    session = CigiCreateSession(CIGI_HOST_SESSION, 8, MAX_ETHERNET_PACKET_SIZE);
-    CigiSetCallback(CIGI_START_OF_FRAME_OPCODE, DoSOF);
-    CigiSetCallback(CIGI_HAT_HOT_RESPONSE_OPCODE, DoHatHotResponse);
-    CigiSetCallback(CIGI_HAT_HOT_EXT_RESPONSE_OPCODE, DoHatHotExtResponse);
-    CigiSetCallback(CIGI_LOS_RESPONSE_OPCODE, DoLOSResponse);
-    CigiSetCallback(CIGI_LOS_EXT_RESPONSE_OPCODE, DoLOSExtResponse);
-    CigiSetCallback(CIGI_SENSOR_RESPONSE_OPCODE, DoSensorResponse);
-    CigiSetCallback(CIGI_SENSOR_EXT_RESPONSE_OPCODE, DoSensorExtResponse);
-    CigiSetCallback(CIGI_POSITION_RESPONSE_OPCODE, DoPositionResponse);
-    CigiSetCallback(CIGI_WEATHER_RESPONSE_OPCODE, DoWeatherResponse);
-    CigiSetCallback(CIGI_AEROSOL_RESPONSE_OPCODE, DoAerosolResponse);
-    CigiSetCallback(CIGI_MARITIME_SURFACE_RESPONSE_OPCODE, DoMaritimeResponse);
-    CigiSetCallback(CIGI_TERRESTRIAL_SURFACE_RESPONSE_OPCODE, DoTerrestrialResponse);
-    CigiSetCallback(CIGI_COLL_SEGMENT_NOTIFICATION_OPCODE, DoCollisionSegNotification);
-    CigiSetCallback(CIGI_COLL_VOLUME_NOTIFICATION_OPCODE, DoCollisionVolNotification);
-    CigiSetCallback(CIGI_ANIMATION_STOP_NOTIFICATION_OPCODE, DoAnimationStopNotification);
-    CigiSetCallback(CIGI_EVENT_NOTIFICATION_OPCODE, DoEventNotification);
-    CigiSetCallback(CIGI_IG_MESSAGE_OPCODE, DoIGResponse);
+    // Initialize the selected CIGI host protocol.  The CIGI 4 adapter keeps
+    // the existing API/session/callback behavior; future adapters own their
+    // own opcode registration here.
+    CigiHostCallbacks cigiCallbacks = {0};
+    InitializeCigiHostCallbacks(&cigiCallbacks);
+    session = ProtocolAdapter->InitializeHostSession(&cigiCallbacks,
+                                                     1,
+                                                     8,
+                                                     MAX_ETHERNET_PACKET_SIZE);
 
     // Initialize the Send/Receive thread and events.
     if (!InitializeSendRcv())

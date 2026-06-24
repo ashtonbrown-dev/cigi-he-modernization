@@ -36,6 +36,18 @@ public:
         return true;
     }
 
+    virtual int InitializeHostSession(const CigiHostCallbacks *callbacks,
+                                      int maxSessions,
+                                      int numBuffers,
+                                      int bufferSize)
+    {
+        CigiInit(maxSessions, CIGI_VERSION);
+        const int session =
+            CigiCreateSession(CIGI_HOST_SESSION, numBuffers, bufferSize);
+        RegisterHostCallbacks(callbacks);
+        return session;
+    }
+
     virtual void StartMessage(int session)
     {
         CigiStartMessage(session);
@@ -298,6 +310,47 @@ public:
     }
 
 private:
+    void RegisterHostCallbacks(const CigiHostCallbacks *callbacks)
+    {
+        if (!callbacks)
+            return;
+
+        CigiSetCallback(CIGI_START_OF_FRAME_OPCODE,
+                        callbacks->startOfFrame);
+        CigiSetCallback(CIGI_HAT_HOT_RESPONSE_OPCODE,
+                        callbacks->hatHotResponse);
+        CigiSetCallback(CIGI_HAT_HOT_EXT_RESPONSE_OPCODE,
+                        callbacks->hatHotExtResponse);
+        CigiSetCallback(CIGI_LOS_RESPONSE_OPCODE,
+                        callbacks->losResponse);
+        CigiSetCallback(CIGI_LOS_EXT_RESPONSE_OPCODE,
+                        callbacks->losExtResponse);
+        CigiSetCallback(CIGI_SENSOR_RESPONSE_OPCODE,
+                        callbacks->sensorResponse);
+        CigiSetCallback(CIGI_SENSOR_EXT_RESPONSE_OPCODE,
+                        callbacks->sensorExtResponse);
+        CigiSetCallback(CIGI_POSITION_RESPONSE_OPCODE,
+                        callbacks->positionResponse);
+        CigiSetCallback(CIGI_WEATHER_RESPONSE_OPCODE,
+                        callbacks->weatherResponse);
+        CigiSetCallback(CIGI_AEROSOL_RESPONSE_OPCODE,
+                        callbacks->aerosolResponse);
+        CigiSetCallback(CIGI_MARITIME_SURFACE_RESPONSE_OPCODE,
+                        callbacks->maritimeSurfaceResponse);
+        CigiSetCallback(CIGI_TERRESTRIAL_SURFACE_RESPONSE_OPCODE,
+                        callbacks->terrestrialSurfaceResponse);
+        CigiSetCallback(CIGI_COLL_SEGMENT_NOTIFICATION_OPCODE,
+                        callbacks->collisionSegmentNotification);
+        CigiSetCallback(CIGI_COLL_VOLUME_NOTIFICATION_OPCODE,
+                        callbacks->collisionVolumeNotification);
+        CigiSetCallback(CIGI_ANIMATION_STOP_NOTIFICATION_OPCODE,
+                        callbacks->animationStopNotification);
+        CigiSetCallback(CIGI_EVENT_NOTIFICATION_OPCODE,
+                        callbacks->eventNotification);
+        CigiSetCallback(CIGI_IG_MESSAGE_OPCODE,
+                        callbacks->igMessage);
+    }
+
     CigiProtocolVersion m_Version;
 };
 

@@ -83,6 +83,21 @@ logic; `HemuDrv.cpp` only asks the adapter whether a queued buffer is a frame
 boundary and whether the packet was handled. This is a no-format-change seam for
 future CIGI 3 queue handling.
 
+## Second implemented step
+
+The driver host-session initialization seam is now adapter-owned.
+`HemuDrv.cpp` builds a semantic `CigiHostCallbacks` table, then asks the active
+`ICigiProtocolAdapter` to initialize the host session. The CIGI 4 adapter still
+calls the same CIGI 4 API functions with the same startup values:
+
+- `CigiInit(1, CIGI_VERSION)`
+- `CigiCreateSession(CIGI_HOST_SESSION, 8, MAX_ETHERNET_PACKET_SIZE)`
+- the existing CIGI 4 callback registrations for SOF, HAT/HOT, LOS, sensor,
+  position, weather, collision, animation, event, and IG message packets
+
+This keeps current CIGI 4 behavior as the default while making future CIGI 3
+host-session callback registration protocol-specific.
+
 ## Open decisions
 
 - Whether the combined app must support loading old `.sf3` scenario files or
@@ -93,3 +108,7 @@ future CIGI 3 queue handling.
   two explicit selections.
 - How strict the app should be when a selected protocol cannot represent a
   current scenario feature.
+- The GUI packet-watch/parser path in `hemu4/Hemu4.cpp` still initializes a
+  CIGI 4 parser session and CIGI 4 callbacks directly. Moving that path should
+  use a separate adapter-owned parser callback table so this driver host-session
+  seam stays small and low risk.

@@ -3,6 +3,29 @@
 
 #include "CigiProtocolVersion.h"
 
+typedef long (*CigiProtocolCallback)(const int sessionid, void *packet);
+
+struct CigiHostCallbacks
+{
+    CigiProtocolCallback startOfFrame;
+    CigiProtocolCallback hatHotResponse;
+    CigiProtocolCallback hatHotExtResponse;
+    CigiProtocolCallback losResponse;
+    CigiProtocolCallback losExtResponse;
+    CigiProtocolCallback sensorResponse;
+    CigiProtocolCallback sensorExtResponse;
+    CigiProtocolCallback positionResponse;
+    CigiProtocolCallback weatherResponse;
+    CigiProtocolCallback aerosolResponse;
+    CigiProtocolCallback maritimeSurfaceResponse;
+    CigiProtocolCallback terrestrialSurfaceResponse;
+    CigiProtocolCallback collisionSegmentNotification;
+    CigiProtocolCallback collisionVolumeNotification;
+    CigiProtocolCallback animationStopNotification;
+    CigiProtocolCallback eventNotification;
+    CigiProtocolCallback igMessage;
+};
+
 class ICigiProtocolAdapter
 {
 public:
@@ -11,6 +34,10 @@ public:
     virtual CigiProtocolVersion GetActiveVersion() const = 0;
     virtual bool Configure(void *igControlPacket) = 0;
 
+    virtual int InitializeHostSession(const CigiHostCallbacks *callbacks,
+                                      int maxSessions,
+                                      int numBuffers,
+                                      int bufferSize) = 0;
     virtual void StartMessage(int session) = 0;
     virtual void AddIGControlPacket(int session, void *igControlPacket) = 0;
     virtual void EndMessage(int session) = 0;

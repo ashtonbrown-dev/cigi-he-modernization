@@ -49,6 +49,7 @@
 #include "ObjectStateView.h"
 #include "EntityStateView.h"
 #include "hemumsg.h"
+#include "globals.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -396,6 +397,7 @@ void CDataManager::Serialize(CArchive &ar)
         }
 
         SynchronizeLoadedScenarioToDriver();
+        FinishScenarioLoadPaused();
 
         // Populate the trees.
         RebuildEntityTree();
@@ -1167,6 +1169,8 @@ void CDataManager::ResetDriverRuntimeForScenarioLoad(void)
 {
     CDebugTrace trace("CDataManager::ResetDriverRuntimeForScenarioLoad()");
 
+    PauseDriverForScenarioLoad();
+
     MESSAGE_CLEAR_VIEWS clearViews;
     PostDriverMsg(clearViews);
 
@@ -1177,6 +1181,24 @@ void CDataManager::ResetDriverRuntimeForScenarioLoad(void)
     PostDriverMsg(clearEntities);
 
     DisableDriverDeletesForScenarioLoad();
+}
+
+void CDataManager::PauseDriverForScenarioLoad(void)
+{
+    CDebugTrace trace("CDataManager::PauseDriverForScenarioLoad()");
+
+    ::SetFreezeFlag(TRUE);
+
+    MESSAGE_PAUSE_EXERCISE pause;
+    PostDriverMsg(pause);
+}
+
+void CDataManager::FinishScenarioLoadPaused(void)
+{
+    CDebugTrace trace("CDataManager::FinishScenarioLoadPaused()");
+
+    PauseDriverForScenarioLoad();
+    PrintMessageText("Scenario loaded. Exercise is paused; press Run to start motion.");
 }
 
 void CDataManager::DisableDriverDeletesForScenarioLoad(void)

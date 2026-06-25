@@ -54,6 +54,8 @@ public:
     BOOL GetDataFromTemplate(VIEW *view, const TEMPL_VIEW *templ);
     const char *const GetSharedName(void);
     HANDLE GetSharedHandle(void);
+    void SynchronizeToDriver(void);
+    static CCigiView *CreateForSerialization(void);
     void SetHtree(const HTREEITEM htree);
     HTREEITEM GetHtree(void);
     void SetName(LPCTSTR name);

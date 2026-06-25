@@ -133,6 +133,20 @@ CViewGroup::~CViewGroup()
     // m_SharedObject owns and closes the shared-memory handle.
 }
 
+void CViewGroup::SynchronizeToDriver(void)
+{
+    CDebugTrace trace("CViewGroup::SynchronizeToDriver()");
+
+    MESSAGE_ADD_VIEWGROUP msg;
+    strcpy(msg.sharedname, GetSharedName());
+    PostDriverMsg(msg);
+
+    // Future deletes or scenario reloads must remove this runtime driver
+    // object. Serialization-created view groups are only registered after
+    // CViewGroup::Serialize() has restored their shared-memory state.
+    m_bNotifyDriver = TRUE;
+}
+
 void CViewGroup::Serialize(CArchive &ar)
 {
     CDebugTrace trace("CViewGroup::Serialize(CArchive &)");
@@ -183,8 +197,9 @@ void CViewGroup::Serialize(CArchive &ar)
         TRACE1("	Name = \"%s\"\n", (LPCTSTR)m_Name);
         TRACE1("	Group ID = %d\n", group.cigi.group_id);
     } else {
-        // Reinitialize the flags.
-        m_bNotifyDriver = true;
+        // Reinitialize the flags. Post-load scenario synchronization will
+        // register the fully deserialized view group with the driver.
+        m_bNotifyDriver = FALSE;
 
         // Read the name.
         ar >> length;

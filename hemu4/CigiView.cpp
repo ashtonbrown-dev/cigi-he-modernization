@@ -147,6 +147,27 @@ CCigiView::~CCigiView()
     // m_SharedObject owns and closes the shared-memory handle.
 }
 
+CCigiView *CCigiView::CreateForSerialization(void)
+{
+    CDebugTrace trace("CCigiView::CreateForSerialization()");
+
+    return new CCigiView;
+}
+
+void CCigiView::SynchronizeToDriver(void)
+{
+    CDebugTrace trace("CCigiView::SynchronizeToDriver()");
+
+    MESSAGE_ADD_VIEW msg;
+    strcpy(msg.sharedname, GetSharedName());
+    PostDriverMsg(msg);
+
+    // Future deletes or scenario reloads must remove this runtime driver
+    // object. Serialization-created views are only registered after
+    // CCigiView::Serialize() has restored their shared-memory state.
+    m_bNotifyDriver = TRUE;
+}
+
 void CCigiView::Serialize(CArchive &ar)
 {
     CDebugTrace trace("CCigiView::Serialize(CArchive &)");
@@ -223,8 +244,9 @@ void CCigiView::Serialize(CArchive &ar)
         TRACE1("	view_id = %d\n", view.viewdef.view_id);
         TRACE1("	group_id = %d\n", view.viewdef.group_id);
     } else {
-        // Reinitialize the flags.
-        m_bNotifyDriver = true;
+        // Reinitialize the flags. Post-load scenario synchronization will
+        // register the fully deserialized view with the driver.
+        m_bNotifyDriver = FALSE;
 
         // Read the name.
         ar >> length;
@@ -1246,7 +1268,7 @@ template <> void AFXAPI SerializeElements<CCigiView *>(CArchive &ar, CCigiView *
         }
     } else {
         for (int i = 0; i < nCount; i++) {
-            pElements[i] = new CCigiView(-1);
+            pElements[i] = CCigiView::CreateForSerialization();
             pElements[i]->Serialize(ar);
         }
     }

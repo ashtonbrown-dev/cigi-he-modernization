@@ -57,6 +57,7 @@ public:
     BOOL GetDataFromTemplate(VIEWGROUP *viewgroup, const TEMPL_VIEWGROUP *templ);
     const char *const GetSharedName(void);
     HANDLE GetSharedHandle(void);
+    void SynchronizeToDriver(void);
     void SetHtree(const HTREEITEM htree);
     HTREEITEM GetHtree(void);
     void SetName(LPCTSTR name);

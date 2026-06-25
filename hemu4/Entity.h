@@ -66,6 +66,7 @@ public:
     const char *const GetSharedName(void);
     HANDLE GetSharedHandle(void);
     void SynchronizeToDriver(void);
+    void SetNotifyDriver(BOOL enable);
 
     // Serialization
     virtual void Serialize(CArchive &ar);

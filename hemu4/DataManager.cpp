@@ -273,6 +273,8 @@ void CDataManager::Serialize(CArchive &ar)
         theApp.GetMainFrame().GetEnvTree().DeleteAllItems();
         theApp.InitializeTrees();
 
+        ResetDriverRuntimeForScenarioLoad();
+
         // Delete the entities, views, view groups, databases, mission function
         // objects, and configuration templates.
         DeleteAllEntities();
@@ -1158,6 +1160,54 @@ void CDataManager::SynchronizeLoadedScenarioToDriver(void)
 
         if (entity)
             entity->SynchronizeToDriver();
+    }
+}
+
+void CDataManager::ResetDriverRuntimeForScenarioLoad(void)
+{
+    CDebugTrace trace("CDataManager::ResetDriverRuntimeForScenarioLoad()");
+
+    MESSAGE_CLEAR_VIEWS clearViews;
+    PostDriverMsg(clearViews);
+
+    MESSAGE_CLEAR_VIEWGROUPS clearViewGroups;
+    PostDriverMsg(clearViewGroups);
+
+    MESSAGE_CLEAR_ENTITIES clearEntities;
+    PostDriverMsg(clearEntities);
+
+    DisableDriverDeletesForScenarioLoad();
+}
+
+void CDataManager::DisableDriverDeletesForScenarioLoad(void)
+{
+    CDebugTrace trace("CDataManager::DisableDriverDeletesForScenarioLoad()");
+
+    POSITION viewPos = m_ViewMap.GetStartPosition();
+    while (viewPos) {
+        int id = 0;
+        CCigiView *view = NULL;
+
+        m_ViewMap.GetNextAssoc(viewPos, id, view);
+
+        if (view)
+            view->SetNotifyDriver(FALSE);
+    }
+
+    for (int i = 0; i < VIEWGROUP_ARRAY_SIZE; i++) {
+        if (m_ViewGroupArray[i])
+            m_ViewGroupArray[i]->SetNotifyDriver(FALSE);
+    }
+
+    POSITION entityPos = m_EntityMap.GetStartPosition();
+    while (entityPos) {
+        int id = 0;
+        CEntity *entity = NULL;
+
+        m_EntityMap.GetNextAssoc(entityPos, id, entity);
+
+        if (entity)
+            entity->SetNotifyDriver(FALSE);
     }
 }
 

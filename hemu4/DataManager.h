@@ -243,6 +243,8 @@ private:
     void RebuildViewTree(void);
     void ReorgEntityTree(void);
     void ReorgViewTree(void);
+    void ResetDriverRuntimeForScenarioLoad(void);
+    void DisableDriverDeletesForScenarioLoad(void);
     void SynchronizeLoadedScenarioToDriver(void);
     void ResetEntities(void);
 };

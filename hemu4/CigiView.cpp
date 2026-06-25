@@ -168,6 +168,11 @@ void CCigiView::SynchronizeToDriver(void)
     m_bNotifyDriver = TRUE;
 }
 
+void CCigiView::SetNotifyDriver(BOOL enable)
+{
+    m_bNotifyDriver = enable;
+}
+
 void CCigiView::Serialize(CArchive &ar)
 {
     CDebugTrace trace("CCigiView::Serialize(CArchive &)");

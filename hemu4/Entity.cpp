@@ -210,6 +210,11 @@ void CEntity::SynchronizeToDriver(void)
     m_bNotifyDriver = TRUE;
 }
 
+void CEntity::SetNotifyDriver(BOOL enable)
+{
+    m_bNotifyDriver = enable;
+}
+
 void CEntity::Serialize(CArchive &ar)
 {
     CDebugTrace trace("CEntity::Serialize(CArchive &)");

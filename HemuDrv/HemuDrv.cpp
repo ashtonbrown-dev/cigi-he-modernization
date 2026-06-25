@@ -1612,6 +1612,7 @@ void ChangeMapAndTransportAllEntities(double new_lat, double new_lon, double new
     // Create a queue in case we have to retry any entities.
     static CSimpleQ<CSharedEntityObj *> EntityRetryQueue;
     EntityRetryQueue.SetSize(4);
+    EntityRetryQueue.SetGrowBy(4);
 
     // Visit each entity in the linked list and get the bearing and range.
     unsigned long handle = NULL;
@@ -1639,7 +1640,8 @@ void ChangeMapAndTransportAllEntities(double new_lat, double new_lon, double new
 
     // Now retry any entities in the queue.
     CSharedEntityObj *retry = NULL;
-    while (EntityRetryQueue.Pop(&retry) >= 0) {
+    int retryCount = EntityRetryQueue.GetItemCount();
+    while ((retryCount-- > 0) && (EntityRetryQueue.Pop(&retry) >= 0)) {
         if (retry->GetAndLock(&entity)) {
             // Get the bearing and range relative to the origin.  Store
             // these in the entity's structure (the dvi and dvj variables
@@ -1650,8 +1652,6 @@ void ChangeMapAndTransportAllEntities(double new_lat, double new_lon, double new
                                 &(entity.unsaved.dvi), &(entity.unsaved.dvj));
             retry->SetLocked(entity);
             retry->Unlock();
-        } else {
-            EntityRetryQueue.Push(retry);
         }
     }
 
@@ -1670,17 +1670,19 @@ void ChangeMapAndTransportAllEntities(double new_lat, double new_lon, double new
     shared_obj = EntityList.GetHead(&handle);
 
     while (handle && shared_obj) {
-        (*shared_obj)->GetAndLock(&entity);
-        // Bearing and range are stored in dvi and dvj, respectively.
-        GetRelativePos(new_lat, new_lon, 0.0, entity.unsaved.dvi, entity.unsaved.dvj,
-                       &(entity.cigi.dofs.latitude),
-                       &(entity.cigi.dofs.longitude));
+        if ((*shared_obj)->GetAndLock(&entity)) {
+            // Bearing and range are stored in dvi and dvj, respectively.
+            GetRelativePos(new_lat, new_lon, 0.0, entity.unsaved.dvi,
+                           entity.unsaved.dvj,
+                           &(entity.cigi.dofs.latitude),
+                           &(entity.cigi.dofs.longitude));
 
-        entity.unsaved.dvi = 0.0;
-        entity.unsaved.dvj = 0.0;
+            entity.unsaved.dvi = 0.0;
+            entity.unsaved.dvj = 0.0;
 
-        (*shared_obj)->SetLocked(entity);
-        (*shared_obj)->Unlock();
+            (*shared_obj)->SetLocked(entity);
+            (*shared_obj)->Unlock();
+        }
 
         shared_obj = EntityList.GetNext(&handle);
     }
@@ -1693,6 +1695,7 @@ void BuildEntityControlPackets(void)
     // Create a queue in case we have to retry any entities.
     static CSimpleQ<CSharedEntityObj *> EntityRetryQueue;
     EntityRetryQueue.SetSize(4);
+    EntityRetryQueue.SetGrowBy(4);
 
     // Visit each entity in the linked list.  Update the entity and create a
     // CIGI message.
@@ -1712,14 +1715,14 @@ void BuildEntityControlPackets(void)
     }
 
     CSharedEntityObj *retry = NULL;
-    while (EntityRetryQueue.Pop(&retry) >= 0) {
+    int retryCount = EntityRetryQueue.GetItemCount();
+    while ((retryCount-- > 0) && (EntityRetryQueue.Pop(&retry) >= 0)) {
         if (retry->GetAndLock(&entity)) {
             BuildEntityControlPacketsWorker(&entity);
             retry->SetLocked(entity);
             retry->ClearLockedChangeFlag();
             retry->Unlock();
-        } else
-            EntityRetryQueue.Push(retry);
+        }
     }
 }
 
@@ -1837,6 +1840,8 @@ void BuildViewPackets(void)
     static CSimpleQ<CSharedViewGroupObj *> ViewGroupRetryQueue;
     ViewRetryQueue.SetSize(4);
     ViewGroupRetryQueue.SetSize(4);
+    ViewRetryQueue.SetGrowBy(4);
+    ViewGroupRetryQueue.SetGrowBy(4);
 
     // Visit each view in the linked list.  Update the view and create a
     // CIGI message.
@@ -1875,25 +1880,26 @@ void BuildViewPackets(void)
     // We should not have both a view and a view group locked at the
     // same time.
     CSharedViewObj *ViewRetry = NULL;
-    while (ViewRetryQueue.Pop(&ViewRetry) >= 0) {
+    int viewRetryCount = ViewRetryQueue.GetItemCount();
+    while ((viewRetryCount-- > 0) && (ViewRetryQueue.Pop(&ViewRetry) >= 0)) {
         if (ViewRetry->GetAndLock(&view)) {
             BuildViewPacketsWorker(&view);
             ViewRetry->SetLocked(view);
             ViewRetry->ClearLockedChangeFlags();
             ViewRetry->Unlock();
-        } else
-            ViewRetryQueue.Push(ViewRetry);
+        }
     }
 
     CSharedViewGroupObj *GroupRetry = NULL;
-    while (ViewGroupRetryQueue.Pop(&GroupRetry) >= 0) {
+    int groupRetryCount = ViewGroupRetryQueue.GetItemCount();
+    while ((groupRetryCount-- > 0) &&
+           (ViewGroupRetryQueue.Pop(&GroupRetry) >= 0)) {
         if (GroupRetry->GetAndLock(&group)) {
             BuildViewGroupPacketsWorker(&group);
             GroupRetry->SetLocked(group);
             GroupRetry->ClearLockedChangeFlag();
             GroupRetry->Unlock();
-        } else
-            ViewGroupRetryQueue.Push(GroupRetry);
+        }
     }
 }
 
@@ -2038,6 +2044,7 @@ void UpdateEntities(double dt)
     // Create a queue in case we have to retry any entities.
     static CSimpleQ<CSharedEntityObj *> EntityRetryQueue;
     EntityRetryQueue.SetSize(4);
+    EntityRetryQueue.SetGrowBy(4);
 
     // Visit each entity in the linked list and update the entity.
     unsigned long handle = NULL;
@@ -2058,15 +2065,17 @@ void UpdateEntities(double dt)
 
     // Retry any entities that were locked.
     CSharedEntityObj *retry = NULL;
-    while (RunState && (EntityRetryQueue.Pop(&retry) >= 0)) {
+    int retryCount = EntityRetryQueue.GetItemCount();
+    while (RunState &&
+           (retryCount-- > 0) &&
+           (EntityRetryQueue.Pop(&retry) >= 0)) {
         if (retry->GetAndLock(&entity)) {
             // Update the object.
             if (UpdateEntityPosition(&entity, dt))
                 retry->SetLockedEntityPosition(entity);
 
             retry->Unlock();
-        } else
-            EntityRetryQueue.Push(retry);
+        }
     }
 }
 
@@ -2081,7 +2090,7 @@ void ClearEntities(void)
         EntityList.Remove(&handle);
         delete temp;
 
-        shared_obj = EntityList.GetNext(&handle);
+        shared_obj = EntityList.GetItem(&handle);
     }
 }
 
@@ -2096,7 +2105,7 @@ void ClearViews(void)
         ViewList.Remove(&handle);
         delete temp;
 
-        shared_obj = ViewList.GetNext(&handle);
+        shared_obj = ViewList.GetItem(&handle);
     }
 }
 
@@ -2111,45 +2120,39 @@ void ClearViewGroups(void)
         ViewGroupList.Remove(&handle);
         delete temp;
 
-        shared_obj = ViewGroupList.GetNext(&handle);
+        shared_obj = ViewGroupList.GetItem(&handle);
     }
 }
 
 CSharedEntityObj *FindEntity(const int id, unsigned long *handle)
 {
-    ENTITY_CIGI_DATA data = {0};
-    CSharedEntityObj **shared_obj = EntityList.GetHead(handle);
+    const int retryAttempts = 20;
 
-    // Create a queue in case we have to retry any entities.
-    static CSimpleQ<CSharedEntityObj *> EntityRetryQueue;
-    EntityRetryQueue.SetSize(4);
+    for (int attempt = 0; attempt < retryAttempts; ++attempt) {
+        BOOL lockBlocked = FALSE;
+        ENTITY_CIGI_DATA data = {0};
+        CSharedEntityObj **shared_obj = EntityList.GetHead(handle);
 
-    while (*handle && shared_obj) {
-        if ((*shared_obj)->GetAndLockCigiData(&data)) {
-            (*shared_obj)->Unlock();
+        while (*handle && shared_obj) {
+            if ((*shared_obj)->GetAndLockCigiData(&data)) {
+                CSharedEntityObj *entity = *shared_obj;
+                (*shared_obj)->Unlock();
 
-            if (data.id == id) {
-                return *shared_obj;
-            }
-        } else
-            EntityRetryQueue.Push(*shared_obj);
+                if (data.id == id)
+                    return entity;
+            } else
+                lockBlocked = TRUE;
 
+            shared_obj = EntityList.GetNext(handle);
+        }
 
-        shared_obj = EntityList.GetNext(handle);
+        if (!lockBlocked)
+            break;
+
+        Sleep(1);
     }
 
-    CSharedEntityObj *retry = NULL;
-    while (EntityRetryQueue.Pop(&retry) >= 0) {
-        if (retry->GetAndLockCigiData(&data)) {
-            retry->Unlock();
-
-            if (data.id == id) {
-                return retry;
-            }
-        } else
-            EntityRetryQueue.Push(retry);
-    }
-
+    *handle = NULL;
     return NULL;
 }
 
@@ -2222,10 +2225,17 @@ int DeleteEntity(int id)
     unsigned long handle = NULL;
     CSharedEntityObj *entity = FindEntity(id, &handle);
 
-    if (entity)
-        delete entity;
+    if (!entity) {
+        if (verbose)
+            printf("     Entity ID %d was not found in the driver list.\n", id);
+        return EntityList.GetItemCount();
+    }
 
     int numleft = EntityList.Remove(&handle);
+    delete entity;
+
+    if (verbose)
+        printf("     Deleted entity ID %d. Entities remaining = %d.\n", id, numleft);
 
     return numleft;
 }

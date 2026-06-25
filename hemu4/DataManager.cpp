@@ -392,6 +392,8 @@ void CDataManager::Serialize(CArchive &ar)
             CreateEntity(0, templ);
         }
 
+        SynchronizeLoadedScenarioToDriver();
+
         // Populate the trees.
         RebuildEntityTree();
         RebuildEnvTree();
@@ -1110,6 +1112,38 @@ void CDataManager::ReorgViewTree(void)
     }
 
     theApp.GetMainFrame().GetViewTreeView().RedrawWindow();
+}
+
+void CDataManager::SynchronizeLoadedScenarioToDriver(void)
+{
+    CDebugTrace trace("CDataManager::SynchronizeLoadedScenarioToDriver()");
+
+    // Re-send the selected database before adding loaded entities to the
+    // driver. The driver transports existing entities when the database
+    // changes, so loaded entity coordinates should enter the driver after the
+    // loaded database origin is already active.
+    const unsigned char databaseID = (unsigned char)m_CurrentDatabaseID;
+    if ((databaseID > 0) &&
+        (databaseID < DATABASE_ARRAY_SIZE) &&
+        (m_DatabaseArray[databaseID] != NULL)) {
+        SetSelectedDatabase(databaseID);
+    }
+
+    POSITION pos = m_EntityMap.GetStartPosition();
+    while (pos) {
+        int id = 0;
+        CEntity *entity = NULL;
+
+        m_EntityMap.GetNextAssoc(pos, id, entity);
+
+        if (entity)
+            entity->SynchronizeToDriver();
+    }
+
+    // Loaded views and view groups are currently still registered through
+    // their existing load construction paths. Keep that behavior unchanged for
+    // this regression fix and avoid duplicate MESSAGE_ADD_VIEW /
+    // MESSAGE_ADD_VIEWGROUP registrations.
 }
 
 void CDataManager::CreateGlobalWeatherLayerTreeItems(HTREEITEM hparent, CWeatherMap &map)

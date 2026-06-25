@@ -8,6 +8,79 @@
 
 namespace
 {
+CigiProtocolCapability MakeCapability(CigiProtocolCapabilityStatus status,
+                                      const char *description)
+{
+    CigiProtocolCapability capability;
+    capability.status = status;
+    capability.description = description;
+    return capability;
+}
+
+CigiProtocolCapabilities MakeCigi4Capabilities(
+    const CigiProtocolVersion &version)
+{
+    CigiProtocolCapabilities capabilities;
+    capabilities.version = version;
+    capabilities.sessionLifecycle = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 host and IG sessions use the existing known-good runtime path");
+    capabilities.parserSessions = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 parser sessions and callback registration are implemented");
+    capabilities.packetSend = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 outgoing packet construction and send buffering are implemented");
+    capabilities.packetReceiveWatch = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 incoming packet processing and packet watch are implemented");
+    capabilities.entityControl = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 entity control packets use the existing known-good mapping");
+    capabilities.viewControl = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 view control packets use the existing known-good mapping");
+    capabilities.weatherEnvironment = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 weather and environment packets use the existing known-good mapping");
+    capabilities.articulatedPartComponent = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 4 articulated-part and component packets use the existing known-good mapping");
+    return capabilities;
+}
+
+CigiProtocolCapabilities MakeCigi3Capabilities(
+    const CigiProtocolVersion &version)
+{
+    CigiProtocolCapabilities capabilities;
+    capabilities.version = version;
+    capabilities.sessionLifecycle = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 3 host session lifecycle is initialized through the isolated CIGI 3 facade");
+    capabilities.parserSessions = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_SUPPORTED,
+        "CIGI 3 host/IG parser sessions can be allocated; decode callbacks are not implemented");
+    capabilities.packetSend = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 outgoing packet construction and send buffering are not implemented");
+    capabilities.packetReceiveWatch = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 incoming packet processing and packet watch are not implemented");
+    capabilities.entityControl = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 entity control mapping is not implemented");
+    capabilities.viewControl = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 view control mapping is not implemented");
+    capabilities.weatherEnvironment = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 weather and environment mapping is not implemented");
+    capabilities.articulatedPartComponent = MakeCapability(
+        CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED,
+        "CIGI 3 articulated-part and component mapping is not implemented");
+    return capabilities;
+}
+
 class Cigi4ProtocolAdapter : public ICigiProtocolAdapter
 {
 public:
@@ -24,6 +97,11 @@ public:
     virtual CigiProtocolVersion GetActiveVersion() const
     {
         return m_Version;
+    }
+
+    virtual CigiProtocolCapabilities GetCapabilities() const
+    {
+        return MakeCigi4Capabilities(m_Version);
     }
 
     virtual bool IsPacketIoSupported() const
@@ -483,8 +561,14 @@ class Cigi3ProtocolAdapter : public ICigiProtocolAdapter
 public:
     Cigi3ProtocolAdapter()
         : m_Version(CigiProtocolVersion::FromId(CIGI_3_0_3_1)),
+          m_RuntimeInitialized(false),
           m_UnsupportedReported(false)
     {
+    }
+
+    virtual ~Cigi3ProtocolAdapter()
+    {
+        ShutdownRuntime();
     }
 
     void SetVersion(const CigiProtocolVersion &version)
@@ -496,6 +580,11 @@ public:
     virtual CigiProtocolVersion GetActiveVersion() const
     {
         return m_Version;
+    }
+
+    virtual CigiProtocolCapabilities GetCapabilities() const
+    {
+        return MakeCigi3Capabilities(m_Version);
     }
 
     virtual bool IsPacketIoSupported() const
@@ -521,11 +610,18 @@ public:
                                       int bufferSize)
     {
         (void)callbacks;
-        (void)maxSessions;
-        (void)numBuffers;
-        (void)bufferSize;
-        ReportUnsupportedOperation("InitializeHostSession");
-        return -1;
+
+        if (!InitializeRuntime(maxSessions))
+            return -1;
+
+        cigi3::SetMinorVersion(GetLegacySessionMinorVersion());
+
+        const int session =
+            cigi3::CreateSession(cigi3::HostSession, numBuffers, bufferSize);
+        if (session < 0)
+            ReportLifecycleError("Create host session", session);
+
+        return session;
     }
 
     virtual CigiParserSessions InitializeParserSessions(
@@ -535,11 +631,27 @@ public:
         int bufferSize)
     {
         (void)callbacks;
-        (void)maxSessions;
-        (void)numBuffers;
-        (void)bufferSize;
         CigiParserSessions sessions = {-1, -1};
-        ReportUnsupportedOperation("InitializeParserSessions");
+
+        if (!InitializeRuntime(maxSessions))
+            return sessions;
+
+        cigi3::SetMinorVersion(GetLegacySessionMinorVersion());
+
+        sessions.hostSession =
+            cigi3::CreateSession(cigi3::HostSession, numBuffers, bufferSize);
+        if (sessions.hostSession < 0) {
+            ReportLifecycleError("Create parser host session",
+                                 sessions.hostSession);
+            return sessions;
+        }
+
+        sessions.igSession =
+            cigi3::CreateSession(cigi3::IgSession, numBuffers, bufferSize);
+        if (sessions.igSession < 0)
+            ReportLifecycleError("Create parser IG session",
+                                 sessions.igSession);
+
         return sessions;
     }
 
@@ -628,6 +740,54 @@ public:
     }
 
 private:
+    bool InitializeRuntime(int maxSessions)
+    {
+        if (m_RuntimeInitialized)
+            return true;
+
+        if (!cigi3::IsLegacyApiLinked()) {
+            ReportLifecycleError("Initialize runtime", -1);
+            return false;
+        }
+
+        const int result = cigi3::Initialize(maxSessions);
+        if (result != 0) {
+            ReportLifecycleError("Initialize runtime", result);
+            return false;
+        }
+
+        m_RuntimeInitialized = true;
+        return true;
+    }
+
+    void ShutdownRuntime()
+    {
+        if (!m_RuntimeInitialized)
+            return;
+
+        cigi3::Shutdown();
+        m_RuntimeInitialized = false;
+    }
+
+    int GetLegacySessionMinorVersion() const
+    {
+        const int minorVersion = m_Version.GetMinorVersion();
+
+        if (minorVersion <= 1)
+            return 0;
+
+        // The isolated upstream CIGI 3 allocator has explicit startup buffer
+        // layouts for 3.0/3.1 and 3.2. The 3.3 reference path creates sessions
+        // with the 3.2 layout before applying packet-level 3.3 behavior.
+        return 2;
+    }
+
+    void ReportLifecycleError(const char *operation, int result) const
+    {
+        fprintf(stderr, "CIGI 3 adapter: %s failed with result %d.\n",
+                operation, result);
+    }
+
     void ReportUnsupportedOperation(const char *operation) const
     {
         if (m_UnsupportedReported)
@@ -640,6 +800,7 @@ private:
     }
 
     CigiProtocolVersion m_Version;
+    bool m_RuntimeInitialized;
     mutable bool m_UnsupportedReported;
 };
 

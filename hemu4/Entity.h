@@ -65,6 +65,7 @@ public:
     BOOL ApplyTemplate(const TEMPL_ENTITY *templ);
     const char *const GetSharedName(void);
     HANDLE GetSharedHandle(void);
+    void SynchronizeToDriver(void);
 
     // Serialization
     virtual void Serialize(CArchive &ar);

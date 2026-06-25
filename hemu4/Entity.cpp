@@ -193,6 +193,23 @@ void CEntity::CommonEntityInit(int entityId,
     }
 }
 
+void CEntity::SynchronizeToDriver(void)
+{
+    CDebugTrace trace("CEntity::SynchronizeToDriver()");
+
+    if (m_bNotifyDriver)
+        return;
+
+    MESSAGE_ADD_ENTITY msg;
+    strcpy(msg.sharedname, GetSharedName());
+    PostDriverMsg(msg);
+
+    // Future deletes or scenario reloads must remove this runtime driver
+    // object. Serialization-created entities start with this disabled because
+    // they are only partially populated until CEntity::Serialize() completes.
+    m_bNotifyDriver = TRUE;
+}
+
 void CEntity::Serialize(CArchive &ar)
 {
     CDebugTrace trace("CEntity::Serialize(CArchive &)");

@@ -76,12 +76,39 @@ struct CigiParserSessions
     int igSession;
 };
 
+enum CigiProtocolCapabilityStatus
+{
+    CIGI_PROTOCOL_CAPABILITY_UNSUPPORTED = 0,
+    CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED = 1,
+    CIGI_PROTOCOL_CAPABILITY_SUPPORTED = 2
+};
+
+struct CigiProtocolCapability
+{
+    CigiProtocolCapabilityStatus status;
+    const char *description;
+};
+
+struct CigiProtocolCapabilities
+{
+    CigiProtocolVersion version;
+    CigiProtocolCapability sessionLifecycle;
+    CigiProtocolCapability parserSessions;
+    CigiProtocolCapability packetSend;
+    CigiProtocolCapability packetReceiveWatch;
+    CigiProtocolCapability entityControl;
+    CigiProtocolCapability viewControl;
+    CigiProtocolCapability weatherEnvironment;
+    CigiProtocolCapability articulatedPartComponent;
+};
+
 class ICigiProtocolAdapter
 {
 public:
     virtual ~ICigiProtocolAdapter() {}
 
     virtual CigiProtocolVersion GetActiveVersion() const = 0;
+    virtual CigiProtocolCapabilities GetCapabilities() const = 0;
     virtual bool IsPacketIoSupported() const = 0;
     virtual const char *GetPacketIoUnsupportedReason() const = 0;
     virtual bool Configure(void *igControlPacket) = 0;

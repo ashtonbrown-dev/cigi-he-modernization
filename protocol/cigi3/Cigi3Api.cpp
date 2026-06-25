@@ -291,4 +291,26 @@ bool IsLegacyApiLinked()
            &Cigi3Legacy_CigiCreateSession != 0 &&
            &Cigi3Legacy_CigiShutdown != 0;
 }
+
+int Initialize(int maxSessions)
+{
+    return Cigi3Legacy_CigiInit(maxSessions, CIGI_VERSION);
+}
+
+int Shutdown()
+{
+    return Cigi3Legacy_CigiShutdown();
+}
+
+void SetMinorVersion(int minorVersion)
+{
+    Cigi3Legacy_CigiSetMinorVersion(minorVersion);
+}
+
+int CreateSession(SessionType type, int numBuffers, int bufferSize)
+{
+    const int legacyType =
+        (type == HostSession) ? CIGI_HOST_SESSION : CIGI_IG_SESSION;
+    return Cigi3Legacy_CigiCreateSession(legacyType, numBuffers, bufferSize);
+}
 }

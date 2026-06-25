@@ -115,9 +115,9 @@ The CIGI 4 adapter still owns the same CIGI 4 parser startup sequence:
 - existing IG-response parser callback registrations, including the legacy
   skipped-frame callback opcode
 
-When an unsupported CIGI 3 selection is active, the factory still returns the
-known-good CIGI 4 adapter fallback. This preserves runtime behavior while
-leaving the callback mapping point ready for a real CIGI 3 adapter.
+The later explicit CIGI 3 adapter changed this behavior: CIGI 3 selections no
+longer fall back to the CIGI 4 adapter. Unsupported CIGI 3 packet operations
+must fail clearly instead of sending CIGI 4 packets.
 
 ## Fourth implemented step
 
@@ -148,7 +148,6 @@ the adapter boundary is ready to call the legacy CIGI 3 implementation later.
 For now, packet operations deliberately report unsupported behavior and return
 safe failure/no-data values:
 
-- session initialization returns invalid session IDs
 - outgoing message buffers return `NULL` and size `0`
 - packet ID lookup returns `-1`
 - queued packet insertion returns `false`
@@ -157,6 +156,91 @@ safe failure/no-data values:
 
 CIGI 4 remains the default and known-good path. The current CIGI 4 adapter and
 packet mappings are unchanged.
+
+## Sixth implemented step
+
+The CIGI 3 adapter now owns lifecycle-only session initialization through the
+isolated `protocol/cigi3/Cigi3Api.h` facade. CIGI 3 selections call the
+renamed upstream CIGI 3 runtime instead of returning invalid sessions:
+
+- `cigi3::Initialize(maxSessions)` wraps the legacy `CigiInit(maxSessions, 3)`.
+- `cigi3::CreateSession(cigi3::HostSession, ...)` creates CIGI 3 host
+  sessions.
+- `cigi3::CreateSession(cigi3::IgSession, ...)` creates CIGI 3 IG/parser
+  sessions.
+- `cigi3::Shutdown()` is available to the adapter for CIGI 3 runtime cleanup.
+
+The selected CIGI 3 minor version is applied only to the session-layout level
+that the isolated upstream runtime safely supports today. CIGI 3.0/3.1 uses
+the legacy 3.0/3.1 layout. CIGI 3.2 and the CIGI 3.3 scaffold use the legacy
+3.2 startup layout; exact CIGI 3.3 packet behavior remains a packet-level
+milestone rather than a lifecycle assumption.
+
+Still unsupported in the CIGI 3 adapter:
+
+- CIGI 3 callback registration and callback-to-GUI translation.
+- incoming buffer processing;
+- outgoing message construction;
+- IG Control, SOF, entity, view, weather, articulated-part, sensor, LOS/HAT,
+  collision, event, and symbol packet mapping;
+- queued raw packet insertion from existing CIGI 4-oriented dialogs.
+
+CIGI 4 behavior is unchanged. The CIGI 4 adapter still performs the same
+session initialization, callback registration, packet building, and packet
+processing as before.
+
+The next packet-level milestone should be a deliberately small CIGI 3 packet
+path for core frame synchronization: add CIGI 3 callback registration and
+header/opcode decoding first, then implement only IG Control and Start of
+Frame translation. Entity/view/weather/articulated-part mapping should remain
+separate later milestones.
+
+## Seventh implemented step
+
+The adapter layer now exposes a small semantic capability model through
+`ICigiProtocolAdapter::GetCapabilities()`. This gives the app one protocol
+boundary to ask what is ready instead of adding scattered checks such as
+`if CIGI 3` or `if CIGI 4` across GUI packet dialogs.
+
+The capability model intentionally describes feature families, not raw packet
+structs:
+
+- selected protocol version;
+- session lifecycle;
+- parser/session allocation;
+- packet send;
+- packet receive/watch;
+- entity control;
+- view control;
+- weather/environment;
+- articulated part/component.
+
+Each feature reports one of three statuses:
+
+- `CIGI_PROTOCOL_CAPABILITY_SUPPORTED`;
+- `CIGI_PROTOCOL_CAPABILITY_NOT_IMPLEMENTED`;
+- `CIGI_PROTOCOL_CAPABILITY_UNSUPPORTED`.
+
+The CIGI 4 adapter reports the current known-good behavior as supported for all
+listed feature families. This does not broaden the CIGI 4 implementation; it
+documents the behavior already active on the default path.
+
+The CIGI 3 adapter currently reports:
+
+- session lifecycle: supported;
+- parser/session allocation: supported, but decode callbacks are not
+  implemented;
+- packet send: not implemented;
+- packet receive/watch: not implemented;
+- entity control: not implemented;
+- view control: not implemented;
+- weather/environment: not implemented;
+- articulated part/component: not implemented.
+
+GUI dialogs should later consume these semantic capabilities to decide whether
+to enable, disable, warn, or route an operation through a protocol-neutral
+command. They should not inspect CIGI 3 or CIGI 4 packet structs directly, and
+they should not grow local CIGI-version switch statements.
 
 ## Open decisions
 
@@ -169,7 +253,7 @@ packet mappings are unchanged.
 - How strict the app should be when a selected protocol cannot represent a
   current scenario feature.
 - The next protocol boundary should replace selected CIGI 3 scaffold methods
-  with real CIGI 3 session initialization and callback registration using the
+  with real CIGI 3 callback registration and packet-header decoding using the
   isolated `protocol/cigi3` facade, without exposing raw CIGI 3 packet names to
   the UI or shared scenario model.
 - Packet construction should be isolated around semantic scenario commands

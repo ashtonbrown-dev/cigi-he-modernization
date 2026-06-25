@@ -2155,83 +2155,65 @@ CSharedEntityObj *FindEntity(const int id, unsigned long *handle)
 
 CSharedViewObj *FindView(const int id, unsigned long *handle)
 {
-    VIEW_DEF_DATA data = {0};
-    CSharedViewObj **shared_obj = ViewList.GetHead(handle);
+    const int retryAttempts = 20;
 
-    // Create a queue in case we have to retry any entities.
-    static CSimpleQ<CSharedViewObj *> ViewRetryQueue;
-    ViewRetryQueue.SetSize(4);
+    for (int attempt = 0; attempt < retryAttempts; ++attempt) {
+        BOOL lockBlocked = FALSE;
+        VIEW_DEF_DATA data = {0};
+        CSharedViewObj **shared_obj = ViewList.GetHead(handle);
+
+        while (*handle && shared_obj) {
+            if ((*shared_obj)->GetAndLockViewDef(&data)) {
+                CSharedViewObj *view = *shared_obj;
+                (*shared_obj)->Unlock();
+
+                if (data.view_id == (unsigned int)id)
+                    return view;
+            } else
+                lockBlocked = TRUE;
+
+            shared_obj = ViewList.GetNext(handle);
+        }
+
+        if (!lockBlocked)
+            break;
+
+        Sleep(1);
+    }
 
     *handle = NULL;
-
-    while (*handle && shared_obj) {
-        if ((*shared_obj)->GetAndLockViewDef(&data)) {
-            (*shared_obj)->Unlock();
-
-            if (data.view_id == (unsigned int)id) {
-                return *shared_obj;
-            }
-
-        } else
-            ViewRetryQueue.Push(*shared_obj);
-
-        shared_obj = ViewList.GetNext(handle);
-    }
-
-    CSharedViewObj *retry = NULL;
-    while (ViewRetryQueue.Pop(&retry) >= 0) {
-        if (retry->GetAndLockViewDef(&data)) {
-            retry->Unlock();
-
-            if (data.view_id == (unsigned int)id) {
-                return retry;
-            }
-
-        } else
-            ViewRetryQueue.Push(retry);
-    }
-
     return NULL;
 }
 
 CSharedViewGroupObj *FindViewGroup(const int id, unsigned long *handle)
 {
-    VIEWGROUP_CIGI_DATA data = {0};
-    CSharedViewGroupObj **shared_obj = ViewGroupList.GetHead(handle);
+    const int retryAttempts = 20;
 
-    // Create a queue in case we have to retry any entities.
-    static CSimpleQ<CSharedViewGroupObj *> ViewGroupRetryQueue;
-    ViewGroupRetryQueue.SetSize(4);
+    for (int attempt = 0; attempt < retryAttempts; ++attempt) {
+        BOOL lockBlocked = FALSE;
+        VIEWGROUP_CIGI_DATA data = {0};
+        CSharedViewGroupObj **shared_obj = ViewGroupList.GetHead(handle);
+
+        while (*handle && shared_obj) {
+            if ((*shared_obj)->GetAndLockCigi(&data)) {
+                CSharedViewGroupObj *group = *shared_obj;
+                (*shared_obj)->Unlock();
+
+                if (data.group_id == (unsigned int)id)
+                    return group;
+            } else
+                lockBlocked = TRUE;
+
+            shared_obj = ViewGroupList.GetNext(handle);
+        }
+
+        if (!lockBlocked)
+            break;
+
+        Sleep(1);
+    }
 
     *handle = NULL;
-
-    while (*handle && shared_obj) {
-        if ((*shared_obj)->GetAndLockCigi(&data)) {
-            (*shared_obj)->Unlock();
-
-            if (data.group_id = (unsigned int)id) {
-                return *shared_obj;
-            }
-
-        } else
-            ViewGroupRetryQueue.Push(*shared_obj);
-
-        shared_obj = ViewGroupList.GetNext(handle);
-    }
-
-    CSharedViewGroupObj *retry = NULL;
-    while (ViewGroupRetryQueue.Pop(&retry) >= 0) {
-        if (retry->GetAndLockCigi(&data)) {
-            retry->Unlock();
-
-            if (data.group_id == (unsigned int)id) {
-                return retry;
-            }
-
-        } else
-            ViewGroupRetryQueue.Push(retry);
-    }
-
     return NULL;
 }
 
@@ -2253,10 +2235,17 @@ int DeleteView(int id)
     unsigned long handle = NULL;
     CSharedViewObj *view = FindView(id, &handle);
 
-    if (view)
-        delete view;
+    if (!view) {
+        if (verbose)
+            printf("     View ID %d was not found in the driver list.\n", id);
+        return ViewList.GetItemCount();
+    }
 
     int numleft = ViewList.Remove(&handle);
+    delete view;
+
+    if (verbose)
+        printf("     Deleted view ID %d. Views remaining = %d.\n", id, numleft);
 
     return numleft;
 }
@@ -2266,10 +2255,18 @@ int DeleteViewGroup(int id)
     unsigned long handle = NULL;
     CSharedViewGroupObj *group = FindViewGroup(id, &handle);
 
-    if (group)
-        delete group;
+    if (!group) {
+        if (verbose)
+            printf("     View group ID %d was not found in the driver list.\n", id);
+        return ViewGroupList.GetItemCount();
+    }
 
     int numleft = ViewGroupList.Remove(&handle);
+    delete group;
+
+    if (verbose)
+        printf("     Deleted view group ID %d. View groups remaining = %d.\n",
+                 id, numleft);
 
     return numleft;
 }

@@ -13,6 +13,13 @@ driver-side packet construction, and callback-to-GUI queueing. The GUI/model
 also constructs CIGI 4 raw packet buffers directly in packet dialogs and model
 objects such as entities, components, articulated parts, and weather.
 
+Maintenance note: `Hemu4.exe` owns the `HemuDrv.exe` lifecycle. The GUI must
+keep the driver process handle after launch, request clean driver shutdown on
+exit, release the GUI-death mutex, wait only a bounded time, and close the
+process handle. Future protocol work must not leave a stale `HemuDrv.exe`
+running because that blocks the next HEMU launch with the duplicate-instance
+guard.
+
 The branch already added useful architecture in:
 
 - `CigiProtocolVersion.*`: central version model/catalog.

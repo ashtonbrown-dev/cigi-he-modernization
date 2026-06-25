@@ -69,8 +69,11 @@ private:
     // Create a handle to a mutex that the Windows driver can use to
     // detect if this process has died.
     HANDLE m_ForceShutdownMutexHandle;
+    HANDLE m_DriverProcessHandle;
+    BOOL m_IpcInitialized;
 
     int LoadDriver(void);
+    void ShutdownDriver(void);
     BOOL CheckForMultiProcessor(void);
     BOOL SetupDBFromRegistry(void);
     BOOL SetupCommFromRegistry(void);

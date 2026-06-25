@@ -58,6 +58,11 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CHemuApp
 
+static const char *kDriverShutdownEventName = "HemuRTStartShutdownEvent";
+static const DWORD kDriverShutdownWaitMs = 3000;
+static const DWORD kDriverTerminateWaitMs = 1000;
+static const int kDriverShutdownMessageAttempts = 50;
+
 BEGIN_MESSAGE_MAP(CHemuApp, CWinApp)
     //{{AFX_MSG_MAP(CHemuApp)
     ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
@@ -78,6 +83,9 @@ END_MESSAGE_MAP()
 // CHemuApp construction
 
 CHemuApp::CHemuApp()
+    : m_ForceShutdownMutexHandle(NULL),
+      m_DriverProcessHandle(NULL),
+      m_IpcInitialized(FALSE)
 {
 }
 
@@ -148,7 +156,7 @@ BOOL CHemuApp::InitInstance()
     }
 
     // Initialize our IPC so we can post messages from CMainFrame::OnCreate().
-    InitializeIPC();
+    m_IpcInitialized = (InitializeIPC() != 0);
 
     // Register the application's document templates.  Document templates
     //  serve as the connection between documents, frame windows and views.
@@ -505,17 +513,25 @@ int CHemuApp::LoadDriver(void)
         DriverPath += " -v";
 #endif
     }   // unload char array from the stack
-    PROCESS_INFORMATION procinfo;
+    PROCESS_INFORMATION procinfo = {0};
     STARTUPINFO si = {sizeof(si)};
 #ifdef _DEBUG
     if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
-                         CREATE_NEW_CONSOLE | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo))
+                         CREATE_NEW_CONSOLE | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
+        return 0;
+    }
 #else
     if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
-                         DETACHED_PROCESS | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo))
+                         DETACHED_PROCESS | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
+        return 0;
+    }
 #endif  // _DEBUG
+
+    if (procinfo.hThread)
+        CloseHandle(procinfo.hThread);
+    m_DriverProcessHandle = procinfo.hProcess;
 
     /*
     // Send a message to the Windows driver to initialize the sockets.
@@ -536,6 +552,59 @@ int CHemuApp::LoadDriver(void)
     */
 
     return 1;
+}
+
+void CHemuApp::ShutdownDriver(void)
+{
+    HANDLE shutdownEventHandle = NULL;
+    BOOL driverWasLaunched = (m_DriverProcessHandle != NULL);
+
+    if (driverWasLaunched && m_IpcInitialized) {
+        MESSAGE_SHUTDOWN shutdownMsg;
+        for (int attempt = 0; attempt < kDriverShutdownMessageAttempts; ++attempt) {
+            long result = g_GuiToDrvMsgQueue.Push((char *)&shutdownMsg, shutdownMsg.size);
+            if (result >= 0)
+                break;
+            if (result == -2)
+                break;
+            Sleep(1);
+        }
+    }
+
+    if (driverWasLaunched) {
+        shutdownEventHandle = OpenEvent(EVENT_MODIFY_STATE, FALSE,
+                                        kDriverShutdownEventName);
+        if (!shutdownEventHandle)
+            shutdownEventHandle = CreateEvent(NULL, TRUE, TRUE,
+                                              kDriverShutdownEventName);
+        if (shutdownEventHandle)
+            SetEvent(shutdownEventHandle);
+    }
+
+    if (m_ForceShutdownMutexHandle) {
+        ReleaseMutex(m_ForceShutdownMutexHandle);
+        CloseHandle(m_ForceShutdownMutexHandle);
+        m_ForceShutdownMutexHandle = NULL;
+    }
+
+    if (m_DriverProcessHandle) {
+        DWORD waitResult = WaitForSingleObject(m_DriverProcessHandle,
+                                               kDriverShutdownWaitMs);
+        if (waitResult == WAIT_TIMEOUT) {
+            // Last resort: a stale HemuDrv.exe blocks the next HEMU launch.
+            // Clean shutdown was already requested through IPC, the named
+            // event, and the GUI-death mutex before reaching this point.
+            if (TerminateProcess(m_DriverProcessHandle, 0))
+                WaitForSingleObject(m_DriverProcessHandle,
+                                    kDriverTerminateWaitMs);
+        }
+
+        CloseHandle(m_DriverProcessHandle);
+        m_DriverProcessHandle = NULL;
+    }
+
+    if (shutdownEventHandle)
+        CloseHandle(shutdownEventHandle);
 }
 
 BOOL CHemuApp::CheckForMultiProcessor(void)
@@ -602,6 +671,8 @@ void CHemuApp::OnAppAbout()
 
 int CHemuApp::ExitInstance()
 {
+    ShutdownDriver();
+
     FREE_CONSOLE();
 
     CigiShutdown();

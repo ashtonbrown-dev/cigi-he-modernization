@@ -517,13 +517,13 @@ int CHemuApp::LoadDriver(void)
     STARTUPINFO si = {sizeof(si)};
 #ifdef _DEBUG
     if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
-                         CREATE_NEW_CONSOLE | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
+                         CREATE_NEW_CONSOLE | NORMAL_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
         return 0;
     }
 #else
     if (!CreateProcess(NULL, (LPTSTR)(LPCTSTR)DriverPath, 0, 0, 0,
-                         DETACHED_PROCESS | HIGH_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
+                         DETACHED_PROCESS | NORMAL_PRIORITY_CLASS, 0, 0, &si, &procinfo)) {
         MessageBox(NULL, "The driver cannot be loaded.", "Error", MB_ICONSTOP);
         return 0;
     }

@@ -347,7 +347,7 @@ int InitializeShutdown(void)
         return 0;
     }
 
-    // Set the priority of main thread.
+    // iw-no-need-to-set-priority // Set the priority of main thread.
     if (SetThreadPriority(GetCurrentThread(), PRIORITY_HIGH) == FALSE) {
         if (verbose)
             printf("Cannot set main thread priority.  Error = %d\n", GetLastError());
@@ -363,6 +363,7 @@ int InitializeShutdown(void)
             printf("Cannot create thread.  Error = %d\n", GetLastError());
         return 0;
     }
+    // iw-no-need-to-set-priority
     if (SetThreadPriority(hWaitForWin32ProcToDieThread, PRIORITY_HIGHEST) == FALSE) {
         if (verbose)
             printf("Cannot set thread priority.  Error = %d\n", GetLastError());
@@ -385,6 +386,7 @@ int InitializeShutdown(void)
         return 0;
     }
 
+    // iw-no-need-to-set-priority
     if (SetThreadPriority(hShutdownThread, PRIORITY_HIGHER) == FALSE) {
         if (verbose)
             printf("Cannot set shutdown thread priority.  Error = %d\n", GetLastError());
@@ -423,6 +425,7 @@ int InitializeSendRcv(void)
         return 0;
     }
 
+    // iw-no-need-to-set-priority
     if (SetThreadPriority(hSendRcvThread, PRIORITY_HIGHEST) == FALSE) {
         if (verbose)
             printf("Cannot set send/receive thread priority.  Error = %d\n", GetLastError());
@@ -984,6 +987,7 @@ int StartRecord(char *filename)
     // Create low-priority record thread.
     hRecordShutdownEvent = CreateEvent(NULL, TRUE, FALSE, "HemuRTRecordShutdownEvent");
     hRecordThread = CreateThread(0, 0, RecordThread, NULL, CREATE_SUSPENDED, 0);
+    // iw-no-need-to-set-priority
     SetThreadPriority(hRecordThread, PRIORITY_LOW);
     ResumeThread(hRecordThread);
 
@@ -1142,6 +1146,7 @@ int StartPlayback(char *filename)
     // Create low-priority read thread. We can reuse the record shutdown event.
     hPlaybackShutdownEvent = CreateEvent(NULL, FALSE, FALSE, "HemuRTPlaybackShutdownEvent");
     hPlaybackThread = CreateThread(0, 0, PlaybackThread, NULL, CREATE_SUSPENDED, 0);
+    // iw-no-need-to-set-priority
     SetThreadPriority(hPlaybackThread, PRIORITY_LOW);
     ResumeThread(hPlaybackThread);
 

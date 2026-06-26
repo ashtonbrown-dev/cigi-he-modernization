@@ -255,8 +255,17 @@ CIGI 3.3 support is present as early alpha functionality and is not yet feature 
    }
    }
 
-   & gh release view $Tag --repo $RepoFullName *> $null
-   $ReleaseExists = ($LASTEXITCODE -eq 0)
+   $oldErrorActionPreference = $ErrorActionPreference
+   $ErrorActionPreference = "Continue"
+   try {
+       & gh release view $Tag --repo $RepoFullName *> $null
+       $releaseViewExitCode = $LASTEXITCODE
+   }
+   finally {
+       $ErrorActionPreference = $oldErrorActionPreference
+   }
+
+   $ReleaseExists = ($releaseViewExitCode -eq 0)
 
    if ($ReleaseExists) {
    Fail "Release already exists for $Tag. Refusing to overwrite existing release or assets."

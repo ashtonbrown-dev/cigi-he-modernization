@@ -274,7 +274,7 @@ CIGI 3.3 support is present as early alpha functionality and is not yet feature 
    Write-Host ""
    Write-Host "Release does not exist. Creating new DRAFT release..." -ForegroundColor Cyan
 
-    & gh release create $Tag $ZipPath --repo $RepoFullName --title $ReleaseTitle --notes-file $NotesPath --target $TargetRef --draft
+    & gh release create $Tag $ZipPath --repo $RepoFullName --title $ReleaseTitle --notes-file $NotesPath --target $TargetRef --draft --prerelease
     if ($LASTEXITCODE -ne 0) {
         Fail "gh release create failed"
     }

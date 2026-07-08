@@ -87,7 +87,7 @@
     <PostBuildEvent>
       <Command>if not exist "$(ProjectDir)..\app\" mkdir "$(ProjectDir)..\app"
 xcopy /i /y "$(TargetPath)" "$(ProjectDir)..\app\"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)..\scripts\Deploy-ReleaseRuntime.ps1" -VCToolsRedistDir "$(VCToolsRedistInstallDir)." -AppDir "$(ProjectDir)..\app"</Command>
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

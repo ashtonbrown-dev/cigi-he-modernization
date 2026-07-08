@@ -28,7 +28,8 @@
     <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings"></ImportGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -54,7 +55,8 @@
       <AdditionalIncludeDirectories>..\coordcnv;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HEMU_DRV;NTDDI_VERSION=0x05010000;_WIN32_WINNT=0x501;WINVER=0x0501;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <PrecompiledHeaderOutputFile>.\Debug/HemuDrv.pch</PrecompiledHeaderOutputFile>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
@@ -81,11 +83,12 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Debug/HemuDrv.tlb</TypeLibraryName>
-      <HeaderFileName></HeaderFileName>
+      <HeaderFileName>
+      </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -99,7 +102,8 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
       <AdditionalIncludeDirectories>..\coordcnv;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HEMU_DRV;NTDDI_VERSION=0x05010000;_WIN32_WINNT=0x501;WINVER=0x0501;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <PrecompiledHeaderOutputFile>.\Release/HemuDrv.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -120,11 +124,12 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Release/HemuDrv.tlb</TypeLibraryName>
-      <HeaderFileName></HeaderFileName>
+      <HeaderFileName>
+      </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
+      <Command>if not exist "$(ProjectDir)..\app\" mkdir "$(ProjectDir)..\app"
+xcopy /i /y "$(TargetPath)" "$(ProjectDir)..\app\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -235,5 +240,6 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
     <None Include="..\Change History.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

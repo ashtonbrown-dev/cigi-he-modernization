@@ -31,7 +31,8 @@
     <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings"></ImportGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -88,16 +89,16 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Debug/Hemu4.tlb</TypeLibraryName>
-      <HeaderFileName></HeaderFileName>
+      <HeaderFileName>
+      </HeaderFileName>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"
-xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,16 +134,18 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Release/Hemu4.tlb</TypeLibraryName>
-      <HeaderFileName></HeaderFileName>
+      <HeaderFileName>
+      </HeaderFileName>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"
-xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
+      <Command>if not exist "$(ProjectDir)..\app\" mkdir "$(ProjectDir)..\app"
+xcopy /i /y "$(TargetPath)" "$(ProjectDir)..\app\"
+xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)..\scripts\Deploy-ReleaseRuntime.ps1" -VCToolsRedistDir "$(VCToolsRedistInstallDir)." -AppDir "$(ProjectDir)..\app"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -442,8 +445,10 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(SolutionDir)app\"</Command>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="..\coordcnv\coordcnv.c">
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"></ForcedIncludeFiles>
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"></ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -1789,7 +1794,8 @@ makehm IDW_,HIDW_,0x50000 resource.h &gt;&gt;"hlp\$(TargetName).hm"
     <ClInclude Include="WeatherStateView.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties RESOURCE_FILE="Hemu4.rc" />

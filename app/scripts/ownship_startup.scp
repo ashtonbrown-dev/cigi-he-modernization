@@ -1,0 +1,15 @@
+# CIGI HEMU startup script: Ownship only
+# Entity 0 is the Ownship.
+# Type 118 is f18c in app/config/default/Entities.def.
+
+MESSAGE "Starting Ownship demo"
+
+ADD_ENTITY 0 118
+ENTITY_STATE 0 1
+ENTITY_POS 0 37.0830 -76.3600 1500
+ENTITY_YPR 0 90 0 0
+ENTITY_AIRSPEED 0 300
+ENTITY_FLY 0
+
+MESSAGE "Ownship is active at 300 knots. Running simulation."
+RUN 0

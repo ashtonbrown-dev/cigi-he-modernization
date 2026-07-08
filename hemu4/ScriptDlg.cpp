@@ -109,6 +109,25 @@ void CScriptDlg::OnButtonBrowse()
     CFileDialog dlg(TRUE, "scp", NULL, OFN_HIDEREADONLY | OFN_CREATEPROMPT,
                     "Script Files (*.scp)|*.scp|All Files (*.*)|*.*||");
 
+    TCHAR modulePath[MAX_PATH] = {0};
+    CString scriptsDirectory;
+    DWORD modulePathLength = GetModuleFileName(NULL, modulePath, MAX_PATH);
+
+    if ((modulePathLength > 0) && (modulePathLength < MAX_PATH)) {
+        CString executablePath(modulePath);
+        int separator = executablePath.ReverseFind('\\');
+
+        if (separator >= 0) {
+            scriptsDirectory = executablePath.Left(separator + 1) + "scripts";
+            DWORD attributes = GetFileAttributes((LPCTSTR)scriptsDirectory);
+
+            if ((attributes != INVALID_FILE_ATTRIBUTES) &&
+                ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
+                dlg.m_ofn.lpstrInitialDir = (LPCTSTR)scriptsDirectory;
+            }
+        }
+    }
+
     if (dlg.DoModal() != IDCANCEL) {
         InitializePlayback((LPCTSTR)dlg.GetPathName());
         m_ButtonEdit.EnableWindow(TRUE);

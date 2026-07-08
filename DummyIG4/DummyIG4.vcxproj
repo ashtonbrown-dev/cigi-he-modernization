@@ -85,8 +85,9 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
+      <Command>if not exist "$(ProjectDir)..\app\" mkdir "$(ProjectDir)..\app"
+xcopy /i /y "$(TargetPath)" "$(ProjectDir)..\app\"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)..\scripts\Deploy-ReleaseRuntime.ps1" -VCToolsRedistDir "$(VCToolsRedistInstallDir)." -AppDir "$(ProjectDir)..\app"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,8 +123,8 @@ xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)app\" mkdir "$(SolutionDir)app"
-xcopy /i /y "$(TargetPath)" "$(SolutionDir)app\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

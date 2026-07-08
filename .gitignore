@@ -36,6 +36,8 @@ ipch/
 *.sf4
 !app/scenarios/*.sf4
 /dist/
+/PACKAGE-NOTES.md
+/CIGI_PROTOCOL_ARCHITECTURE.md
 
 # Local operating-system files
 Thumbs.db

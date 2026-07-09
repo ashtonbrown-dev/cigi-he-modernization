@@ -202,7 +202,7 @@ BOOL TEMPL_ARTPART::WriteText(CStdioFile &file)
     file.WriteString("\n\tARTPART\n\t{\n");
 
     // Store the name and value.
-    str.Format("\t\tNAME            = \"%s\";\n", Name);
+    str.Format("\t\tNAME            = \"%s\";\n", Name.GetString());
     file.WriteString((LPCTSTR)str);
 
     str.Format("\t\tID              = %d;\n", ID);

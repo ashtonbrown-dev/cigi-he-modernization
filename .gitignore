@@ -35,6 +35,7 @@ ipch/
 *.zip
 *.sf4
 !app/scenarios/*.sf4
+app/captures/*.cap
 /dist/
 /PACKAGE-NOTES.md
 /CIGI_PROTOCOL_ARCHITECTURE.md

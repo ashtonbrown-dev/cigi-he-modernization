@@ -71,13 +71,69 @@ BEGIN_MESSAGE_MAP(CHemuApp, CWinApp)
     //}}AFX_MSG_MAP
     // Standard file based document commands
     ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-    ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+    ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
     // Global help commands
     //ON_COMMAND(ID_HELP_FINDER, CWinApp::OnHelpFinder)
     //ON_COMMAND(ID_HELP, CWinApp::OnHelp)
     //ON_COMMAND(ID_CONTEXT_HELP, CWinApp::OnContextHelp)
     //ON_COMMAND(ID_DEFAULT_HELP, CWinApp::OnHelpFinder)
 END_MESSAGE_MAP()
+
+void CHemuApp::OnFileOpen()
+{
+    TCHAR modulePath[MAX_PATH] = {0};
+    CString initialDirectory;
+    CString executableDirectory;
+    DWORD modulePathLength = GetModuleFileName(NULL, modulePath, MAX_PATH);
+
+    if ((modulePathLength > 0) && (modulePathLength < MAX_PATH)) {
+        CString executablePath(modulePath);
+        int separator = executablePath.ReverseFind('\\');
+
+        if (separator >= 0) {
+            executableDirectory = executablePath.Left(separator + 1);
+            CString scenariosDirectory = executableDirectory + "scenarios";
+            DWORD attributes = GetFileAttributes((LPCTSTR)scenariosDirectory);
+
+            if ((attributes != INVALID_FILE_ATTRIBUTES) &&
+                ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
+                initialDirectory = scenariosDirectory;
+            } else {
+                for (int i = 1; (i <= 10) && (initialDirectory == ""); i++) {
+                    CString key;
+                    key.Format("File%d", i);
+
+                    CString recentPath = GetProfileString("Recent File List", key, "");
+                    int recentSeparator = recentPath.ReverseFind('\\');
+
+                    if (recentSeparator >= 0) {
+                        CString recentDirectory = recentPath.Left(recentSeparator + 1);
+                        attributes = GetFileAttributes((LPCTSTR)recentDirectory);
+
+                        if ((attributes != INVALID_FILE_ATTRIBUTES) &&
+                            ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
+                            initialDirectory = recentDirectory;
+                        }
+                    }
+                }
+
+                if (initialDirectory == "")
+                    initialDirectory = executableDirectory;
+            }
+        }
+    }
+
+    CFileDialog dlg(TRUE, "sf4", NULL,
+                    OFN_HIDEREADONLY | OFN_FILEMUSTEXIST |
+                    OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR,
+                    "Scenario Files (*.sf4)|*.sf4|All Files (*.*)|*.*||");
+
+    if (initialDirectory != "")
+        dlg.m_ofn.lpstrInitialDir = (LPCTSTR)initialDirectory;
+
+    if (dlg.DoModal() == IDOK)
+        OpenDocumentFile(dlg.GetPathName());
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CHemuApp construction

@@ -34,6 +34,76 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static BOOL DirectoryExists(LPCTSTR path)
+{
+    DWORD attributes = GetFileAttributes(path);
+
+    return ((attributes != INVALID_FILE_ATTRIBUTES) &&
+            ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0));
+}
+
+static CString GetExecutableDirectory()
+{
+    TCHAR modulePath[MAX_PATH] = {0};
+    DWORD modulePathLength = GetModuleFileName(NULL, modulePath, MAX_PATH);
+
+    if ((modulePathLength == 0) || (modulePathLength >= MAX_PATH))
+        return "";
+
+    CString executablePath(modulePath);
+    int separator = executablePath.ReverseFind('\\');
+
+    if (separator < 0)
+        return "";
+
+    return executablePath.Left(separator + 1);
+}
+
+static CString GetRecentDirectoryFromRegistry(LPCTSTR keyFormat)
+{
+    for (int i = 0; i < 10; i++) {
+        CString key;
+        key.Format(keyFormat, i);
+
+        CString recentPath;
+        if (GetRegEntryStr("CIGI Host Emulator 4", (LPCTSTR)key, &recentPath) != ERROR_SUCCESS)
+            continue;
+
+        int separator = recentPath.ReverseFind('\\');
+        if (separator < 0)
+            continue;
+
+        CString recentDirectory = recentPath.Left(separator + 1);
+        if (DirectoryExists((LPCTSTR)recentDirectory))
+            return recentDirectory;
+    }
+
+    return "";
+}
+
+static CString GetInitialDirectoryForAppFolder(LPCTSTR folderName,
+                                               LPCTSTR recentRegistryKeyFormat,
+                                               BOOL createFolderIfMissing)
+{
+    CString executableDirectory = GetExecutableDirectory();
+    if (executableDirectory == "")
+        return "";
+
+    CString appDirectory = executableDirectory + folderName;
+
+    if (!DirectoryExists((LPCTSTR)appDirectory) && createFolderIfMissing)
+        CreateDirectory((LPCTSTR)appDirectory, NULL);
+
+    if (DirectoryExists((LPCTSTR)appDirectory))
+        return appDirectory;
+
+    CString recentDirectory = GetRecentDirectoryFromRegistry(recentRegistryKeyFormat);
+    if (recentDirectory != "")
+        return recentDirectory;
+
+    return executableDirectory;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CRecPlaybackDlg dialog
 
@@ -135,8 +205,14 @@ void CRecPlaybackDlg::IncrementFrame(void)
 
 void CRecPlaybackDlg::OnButtonBrowse()
 {
-    CFileDialog dlg(TRUE, "cap", NULL, OFN_HIDEREADONLY | OFN_CREATEPROMPT,
+    CFileDialog dlg(TRUE, "cap", NULL,
+                    OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_NOCHANGEDIR,
                     "Capture Files (*.cap)|*.cap|All Files (*.*)|*.*||");
+
+    CString initialDirectory = GetInitialDirectoryForAppFolder("captures", "CapFile%d", TRUE);
+    if (initialDirectory != "")
+        dlg.m_ofn.lpstrInitialDir = (LPCTSTR)initialDirectory;
+
     if (dlg.DoModal() == IDCANCEL)
         return;
 

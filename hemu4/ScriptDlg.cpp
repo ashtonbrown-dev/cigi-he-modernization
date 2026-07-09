@@ -35,6 +35,76 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static BOOL DirectoryExists(LPCTSTR path)
+{
+    DWORD attributes = GetFileAttributes(path);
+
+    return ((attributes != INVALID_FILE_ATTRIBUTES) &&
+            ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0));
+}
+
+static CString GetExecutableDirectory()
+{
+    TCHAR modulePath[MAX_PATH] = {0};
+    DWORD modulePathLength = GetModuleFileName(NULL, modulePath, MAX_PATH);
+
+    if ((modulePathLength == 0) || (modulePathLength >= MAX_PATH))
+        return "";
+
+    CString executablePath(modulePath);
+    int separator = executablePath.ReverseFind('\\');
+
+    if (separator < 0)
+        return "";
+
+    return executablePath.Left(separator + 1);
+}
+
+static CString GetRecentDirectoryFromRegistry(LPCTSTR keyFormat)
+{
+    for (int i = 0; i < 10; i++) {
+        CString key;
+        key.Format(keyFormat, i);
+
+        CString recentPath;
+        if (GetRegEntryStr("CIGI Host Emulator 4", (LPCTSTR)key, &recentPath) != ERROR_SUCCESS)
+            continue;
+
+        int separator = recentPath.ReverseFind('\\');
+        if (separator < 0)
+            continue;
+
+        CString recentDirectory = recentPath.Left(separator + 1);
+        if (DirectoryExists((LPCTSTR)recentDirectory))
+            return recentDirectory;
+    }
+
+    return "";
+}
+
+static CString GetInitialDirectoryForAppFolder(LPCTSTR folderName,
+                                               LPCTSTR recentRegistryKeyFormat,
+                                               BOOL createFolderIfMissing)
+{
+    CString executableDirectory = GetExecutableDirectory();
+    if (executableDirectory == "")
+        return "";
+
+    CString appDirectory = executableDirectory + folderName;
+
+    if (!DirectoryExists((LPCTSTR)appDirectory) && createFolderIfMissing)
+        CreateDirectory((LPCTSTR)appDirectory, NULL);
+
+    if (DirectoryExists((LPCTSTR)appDirectory))
+        return appDirectory;
+
+    CString recentDirectory = GetRecentDirectoryFromRegistry(recentRegistryKeyFormat);
+    if (recentDirectory != "")
+        return recentDirectory;
+
+    return executableDirectory;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CScriptDlg dialog
 
@@ -106,27 +176,13 @@ BOOL CScriptDlg::OnInitDialog()
 
 void CScriptDlg::OnButtonBrowse()
 {
-    CFileDialog dlg(TRUE, "scp", NULL, OFN_HIDEREADONLY | OFN_CREATEPROMPT,
+    CFileDialog dlg(TRUE, "scp", NULL,
+                    OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_NOCHANGEDIR,
                     "Script Files (*.scp)|*.scp|All Files (*.*)|*.*||");
 
-    TCHAR modulePath[MAX_PATH] = {0};
-    CString scriptsDirectory;
-    DWORD modulePathLength = GetModuleFileName(NULL, modulePath, MAX_PATH);
-
-    if ((modulePathLength > 0) && (modulePathLength < MAX_PATH)) {
-        CString executablePath(modulePath);
-        int separator = executablePath.ReverseFind('\\');
-
-        if (separator >= 0) {
-            scriptsDirectory = executablePath.Left(separator + 1) + "scripts";
-            DWORD attributes = GetFileAttributes((LPCTSTR)scriptsDirectory);
-
-            if ((attributes != INVALID_FILE_ATTRIBUTES) &&
-                ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
-                dlg.m_ofn.lpstrInitialDir = (LPCTSTR)scriptsDirectory;
-            }
-        }
-    }
+    CString initialDirectory = GetInitialDirectoryForAppFolder("scripts", "ScriptFile%d", FALSE);
+    if (initialDirectory != "")
+        dlg.m_ofn.lpstrInitialDir = (LPCTSTR)initialDirectory;
 
     if (dlg.DoModal() != IDCANCEL) {
         InitializePlayback((LPCTSTR)dlg.GetPathName());

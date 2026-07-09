@@ -62,6 +62,7 @@ public:
     afx_msg void OnAppAbout();
     afx_msg void OnHelpContents();
     afx_msg void OnHelpIndex();
+    afx_msg void OnFileOpen();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

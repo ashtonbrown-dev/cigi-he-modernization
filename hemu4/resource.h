@@ -891,6 +891,9 @@
 #define IDC_LABEL_DOMAIN                1616
 #define IDC_LABEL_SUBCATEGORY           1617
 #define IDC_LABEL_EXTRA                 1618
+#define IDC_COMBO_SETUP_PROFILE         1619
+#define IDC_BUTTON_SAVE_SETUP_PROFILE   1620
+#define IDC_BUTTON_DELETE_SETUP_PROFILE 1621
 #define ID_CONFIGURATION                32771
 #define ID_VIEW_CONFIGURATION           32772
 #define ID_FILE_LOAD_TEMPLATE           32775
@@ -1001,7 +1004,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        201
 #define _APS_NEXT_COMMAND_VALUE         32919
-#define _APS_NEXT_CONTROL_VALUE         1619
+#define _APS_NEXT_CONTROL_VALUE         1622
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif

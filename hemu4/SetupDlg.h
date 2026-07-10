@@ -27,11 +27,24 @@
 // SetupDlg.h : header file
 //
 
+#include <afxtempl.h>
+
 #include "resource.h"
 #include "CigiProtocolVersion.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSetupDlg dialog
+
+struct SETUP_PROFILE
+{
+    CString name;
+    DWORD ipAddr;
+    unsigned short remotePort;
+    unsigned short localPort;
+    BOOL bigEndian;
+    int defaultDB;
+    CigiProtocolVersion cigiProtocolVersion;
+};
 
 class CSetupDlg : public CDialog
 {
@@ -56,6 +69,7 @@ public:
     // Dialog Data
     //{{AFX_DATA(CSetupDlg)
     enum { IDD = IDD_DIALOG_SETUP };
+    CComboBox m_ComboSetupProfile;
     CStatic m_LabelHz;
     CStatic m_LabelFrameRate;
     CEdit   m_EditFrameRate;
@@ -81,7 +95,16 @@ protected:
 protected:
     DWORD m_Address;
     CigiProtocolVersion m_CigiProtocolVersion;
+    CArray<SETUP_PROFILE, SETUP_PROFILE&> m_SetupProfiles;
+    int m_SelectedSetupProfile;
     void PopulateCigiVersions(void);
+    void LoadSetupProfiles(void);
+    void PopulateSetupProfileCombo(void);
+    void ApplySetupProfile(const SETUP_PROFILE &profile);
+    BOOL CaptureSetupProfile(SETUP_PROFILE *profile);
+    BOOL SaveSetupProfiles(const int selectedProfile);
+    BOOL SaveSelectedSetupProfileName(void);
+    int FindSetupProfileByName(const CString &name) const;
 
     // Generated message map functions
     //{{AFX_MSG(CSetupDlg)
@@ -89,6 +112,9 @@ protected:
     virtual void OnCancel();
     virtual BOOL OnInitDialog();
     afx_msg void OnCigiVersionChanged();
+    afx_msg void OnSetupProfileChanged();
+    afx_msg void OnSaveSetupProfile();
+    afx_msg void OnDeleteSetupProfile();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -44,6 +44,8 @@ struct SETUP_PROFILE
     BOOL bigEndian;
     int defaultDB;
     CigiProtocolVersion cigiProtocolVersion;
+    BOOL publishSelectedEntityViewControl;
+    unsigned short selectedEntityViewId;
 };
 
 class CSetupDlg : public CDialog
@@ -65,6 +67,10 @@ public:
     int GetDefaultDB(void);
     void SetCigiProtocolVersion(const CigiProtocolVersion &version);
     CigiProtocolVersion GetCigiProtocolVersion(void) const;
+    void SetPublishSelectedEntityViewControl(BOOL enabled);
+    BOOL GetPublishSelectedEntityViewControl(void);
+    void SetSelectedEntityViewId(unsigned short viewId);
+    unsigned short GetSelectedEntityViewId(void);
 
     // Dialog Data
     //{{AFX_DATA(CSetupDlg)
@@ -82,6 +88,8 @@ public:
     UINT    m_nLocalPort;
     BOOL    m_BigEndian;
     int     m_DefaultDB;
+    BOOL    m_PublishSelectedEntityViewControl;
+    UINT    m_SelectedEntityViewId;
     //}}AFX_DATA
 
     // Overrides
@@ -199,6 +207,34 @@ inline int CSetupDlg::GetDefaultDB(void)
         UpdateData(TRUE);
 
     return m_DefaultDB;
+}
+
+inline void CSetupDlg::SetPublishSelectedEntityViewControl(BOOL enabled)
+{
+    m_PublishSelectedEntityViewControl = enabled;
+    if (GetSafeHwnd())
+        UpdateData(FALSE);
+}
+
+inline BOOL CSetupDlg::GetPublishSelectedEntityViewControl(void)
+{
+    if (GetSafeHwnd())
+        UpdateData(TRUE);
+    return m_PublishSelectedEntityViewControl;
+}
+
+inline void CSetupDlg::SetSelectedEntityViewId(unsigned short viewId)
+{
+    m_SelectedEntityViewId = viewId;
+    if (GetSafeHwnd())
+        UpdateData(FALSE);
+}
+
+inline unsigned short CSetupDlg::GetSelectedEntityViewId(void)
+{
+    if (GetSafeHwnd())
+        UpdateData(TRUE);
+    return (unsigned short)m_SelectedEntityViewId;
 }
 
 //{{AFX_INSERT_LOCATION}}

@@ -170,6 +170,41 @@ public:
         CigiAddPacketIGCtrl(session, (CIGI_IG_CONTROL *)igControlPacket);
     }
 
+    virtual bool AddEntityDestroyedPacket(
+        int session, const CigiEntityDestructionData &entity)
+    {
+        CIGI_ENTITY_CONTROL packet = {0};
+        packet.packet_id = CIGI_ENTITY_CONTROL_OPCODE;
+        packet.packet_size = sizeof(CIGI_ENTITY_CONTROL);
+        packet.entity_id = entity.entityId;
+        packet.entity_state = ENTITY_STATE_DESTROYED;
+        packet.extended_entity_type = entity.extendedType ? 1 : 0;
+        if (entity.extendedType) {
+            packet.entity_kind = entity.kind;
+            packet.entity_domain = entity.domain;
+            packet.entity_country_type = entity.country;
+            packet.entity_category = entity.category;
+            packet.entity_subcategory = entity.subcategory;
+            packet.entity_specific = entity.specific;
+            packet.entity_extra = entity.extra;
+        } else {
+            packet.entity_country_type = (unsigned short)entity.entityType;
+        }
+        return CigiAddFixedPacket<CIGI_ENTITY_CONTROL>(session, &packet) == CIGI_SUCCESS;
+    }
+
+    virtual bool AddEntitySelectionViewControlPacket(
+        int session, unsigned short viewId, unsigned short entityId)
+    {
+        CIGI_VIEW_CONTROL packet = {0};
+        packet.packet_id = CIGI_VIEW_CONTROL_OPCODE;
+        packet.packet_size = sizeof(CIGI_VIEW_CONTROL);
+        packet.group_id = 0;
+        packet.view_id = viewId;
+        packet.entity_id = entityId;
+        return CigiAddFixedPacket<CIGI_VIEW_CONTROL>(session, &packet) == CIGI_SUCCESS;
+    }
+
     virtual void EndMessage(int session)
     {
         CigiEndMessage(session);
@@ -666,6 +701,25 @@ public:
         (void)session;
         (void)igControlPacket;
         ReportUnsupportedOperation("AddIGControlPacket");
+    }
+
+    virtual bool AddEntityDestroyedPacket(
+        int session, const CigiEntityDestructionData &entity)
+    {
+        (void)session;
+        (void)entity;
+        ReportUnsupportedOperation("AddEntityDestroyedPacket");
+        return false;
+    }
+
+    virtual bool AddEntitySelectionViewControlPacket(
+        int session, unsigned short viewId, unsigned short entityId)
+    {
+        (void)session;
+        (void)viewId;
+        (void)entityId;
+        ReportUnsupportedOperation("AddEntitySelectionViewControlPacket");
+        return false;
     }
 
     virtual void EndMessage(int session)

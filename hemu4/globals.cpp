@@ -68,6 +68,9 @@ COLORREF EntityClassColor[13] = {   RGB(255, 255, 255),     // GENERIC
 extern int g_HostSession = -1;
 extern int g_IGSession = -1;
 CigiProtocolVersion g_CigiProtocolVersion = CigiProtocolVersion::Current();
+BOOL g_PublishSelectedEntityViewControl = TRUE;
+unsigned short g_SelectedEntityViewId = 0;
+int g_LastPublishedSelectedEntityId = -1;
 
 // Because we are dequeueing a bunch of Host-to-IG packets and then
 // IG-to-Host messages, we need to keep track of the Frame Counter
@@ -564,6 +567,58 @@ BOOL RetrieveCigiProtocolVersion(CigiProtocolVersion *version)
     return CigiProtocolVersion::TryCreate((int)majorVersion,
                                           (int)protocolMinorVersion,
                                           version) ? TRUE : FALSE;
+}
+
+BOOL GetPublishSelectedEntityViewControl(void)
+{
+    return g_PublishSelectedEntityViewControl;
+}
+
+void NotifySelectedEntityChanged(int entityId)
+{
+    if (!g_PublishSelectedEntityViewControl || entityId < 0 || entityId > 65535 ||
+        entityId == g_LastPublishedSelectedEntityId || !g_DataManager.GetEntity(entityId))
+        return;
+
+    MESSAGE_PUBLISH_SELECTED_ENTITY message;
+    message.view_id = g_SelectedEntityViewId;
+    message.entity_id = (unsigned short)entityId;
+    PostDriverMsg(message);
+    g_LastPublishedSelectedEntityId = entityId;
+}
+
+void SetPublishSelectedEntityViewControl(BOOL enabled)
+{
+    const BOOL normalized = enabled ? TRUE : FALSE;
+    if (g_PublishSelectedEntityViewControl == normalized)
+        return;
+
+    g_PublishSelectedEntityViewControl = normalized;
+    g_LastPublishedSelectedEntityId = -1;
+    if (normalized) {
+        CEntity *selected = g_DataManager.GetSelectedEntity();
+        if (selected)
+            NotifySelectedEntityChanged(selected->GetID());
+    }
+}
+
+unsigned short GetSelectedEntityViewId(void)
+{
+    return g_SelectedEntityViewId;
+}
+
+void SetSelectedEntityViewId(unsigned short viewId)
+{
+    if (g_SelectedEntityViewId == viewId)
+        return;
+
+    g_SelectedEntityViewId = viewId;
+    g_LastPublishedSelectedEntityId = -1;
+    if (g_PublishSelectedEntityViewControl) {
+        CEntity *selected = g_DataManager.GetSelectedEntity();
+        if (selected)
+            NotifySelectedEntityChanged(selected->GetID());
+    }
 }
 
 void FireMissile(CEntity *missile)

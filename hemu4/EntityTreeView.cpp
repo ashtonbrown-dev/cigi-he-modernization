@@ -132,6 +132,10 @@ void CEntityTreeView::OnSelchangedTree(NMHDR *pNMHDR, LRESULT *pResult)
 
         // Select the entity in the situational display.
         theApp.GetMainFrame().SelectSituationViewEntity(new_entity);
+
+        // Child/property nodes carry the owning entity ID. The helper also
+        // suppresses duplicate publications within the same entity.
+        NotifySelectedEntityChanged(new_entity);
     }
 
     RepopulateEntityStateParentList();

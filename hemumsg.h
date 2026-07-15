@@ -65,6 +65,7 @@
 #define MSG_TDTEST_START                  MSG_GENERIC + 39
 #define MSG_TDTEST_STOP                   MSG_GENERIC + 40
 #define MSG_SET_IG_CONTROL                MSG_GENERIC + 41
+#define MSG_PUBLISH_SELECTED_ENTITY       MSG_GENERIC + 42
 
 // Driver-to-Win32 Messages
 #define MSG_PLAYBACK_EOF                   MSG_GENERIC + 100
@@ -146,6 +147,15 @@ class MESSAGE_CLEAR_ENTITIES : public HEMU_MESSAGE
 {
 public:
     MESSAGE_CLEAR_ENTITIES();
+};
+
+class MESSAGE_PUBLISH_SELECTED_ENTITY : public HEMU_MESSAGE
+{
+public:
+    unsigned short view_id;
+    unsigned short entity_id;
+
+    MESSAGE_PUBLISH_SELECTED_ENTITY();
 };
 
 class MESSAGE_DEL_VIEW : public HEMU_MESSAGE

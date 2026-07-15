@@ -34,6 +34,9 @@
 #include "comm.h"
 #include "WindowsCompatibility.h"
 
+#include <deque>
+#include <vector>
+
 // Priority level codes
 #define PRIORITY_HIGHEST        THREAD_PRIORITY_ABOVE_NORMAL
 #define PRIORITY_HIGHER         THREAD_PRIORITY_NORMAL
@@ -108,6 +111,9 @@ unsigned long FindLOS(const int id);
 void AddLOSPackets(void);
 void AddImmediateQueuedPackets(void);
 void AddQueuedPackets(void);
+void AddPendingLifecyclePackets(void);
+void QueueEntityDestroyed(const ENTITY_CIGI_DATA &entity);
+bool QueueAllEntitiesDestroyed(void);
 void InitializeCigiHostCallbacks(CigiHostCallbacks *callbacks);
 
 // For transport delay test:
@@ -173,6 +179,15 @@ CLinkedList<CSharedViewGroupObj *> ViewGroupList;
 CLinkedList<HAT_REQUEST> HATRequestList;
 CLinkedList<LOS_REQUEST> LOSRequestList;
 CLinkedList<ENV_REQUEST> EnvRequestList;
+std::deque<CigiEntityDestructionData> PendingEntityDestroys;
+
+struct PendingEntitySelection
+{
+    unsigned short viewId;
+    unsigned short entityId;
+};
+
+std::deque<PendingEntitySelection> PendingEntitySelections;
 
 // These are for the transport delay test:
 HANDLE hCommPort = NULL;
@@ -718,6 +733,10 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 ProtocolAdapter->StartMessage(session);
                 ProtocolAdapter->AddIGControlPacket(session, &igc);
 
+                // Lifecycle packets must precede replacement entity state so a
+                // quickly reused ID is observed as Destroyed, then Active.
+                AddPendingLifecyclePackets();
+
                 // Build the entity control packets.
                 BuildEntityControlPackets();
 
@@ -1234,13 +1253,7 @@ void CheckMessages(void)
                 shared_obj->Unlock();
             }
 
-            // Send a message to the IG to destroy the entity.
-            CIGI_ENTITY_CONTROL ec = { 0 };
-            ec.packet_id = CIGI_ENTITY_CONTROL_OPCODE;
-            ec.packet_size = sizeof(CIGI_ENTITY_CONTROL);
-            ec.entity_id = id;
-            ec.entity_state = ENTITY_STATE_DESTROYED;  // destroy
-            g_SendImmedCIGIMsgQueue.Push((char *)&ec, sizeof(CIGI_ENTITY_CONTROL));
+            QueueEntityDestroyed(data);
 
             int itemcount = DeleteEntity(id);
 
@@ -1254,8 +1267,20 @@ void CheckMessages(void)
             if (verbose)
                 printf("Received MESSAGE_CLEAR_ENTITIES from GUI process.\n");
 
+            if (!QueueAllEntitiesDestroyed()) {
+                g_GuiToDrvMsgQueue.Push((char *)msg, msg->size);
+                break;
+            }
             ClearEntities();
             break;
+
+        case MSG_PUBLISH_SELECTED_ENTITY: {
+            PendingEntitySelection selection;
+            selection.viewId = ((MESSAGE_PUBLISH_SELECTED_ENTITY *)msg)->view_id;
+            selection.entityId = ((MESSAGE_PUBLISH_SELECTED_ENTITY *)msg)->entity_id;
+            PendingEntitySelections.push_back(selection);
+            break;
+        }
 
         case MSG_ADD_VIEW: {
             if (verbose)
@@ -2780,6 +2805,67 @@ void AddPacketsFromQueue(SharedBufferQueue *queue)
 void AddImmediateQueuedPackets(void)
 {
     AddPacketsFromQueue(&g_SendImmedCIGIMsgQueue);
+}
+
+void QueueEntityDestroyed(const ENTITY_CIGI_DATA &entity)
+{
+    CigiEntityDestructionData pending = {0};
+    pending.entityId = (unsigned short)entity.id;
+    pending.entityType = entity.type;
+    pending.extendedType = entity.extended_type != 0;
+    pending.kind = entity.entity_kind;
+    pending.domain = entity.entity_domain;
+    pending.country = entity.entity_country;
+    pending.category = entity.entity_category;
+    pending.subcategory = entity.entity_subcategory;
+    pending.specific = entity.entity_specific;
+    pending.extra = entity.entity_extra;
+    PendingEntityDestroys.push_back(pending);
+}
+
+bool QueueAllEntitiesDestroyed(void)
+{
+    std::vector<ENTITY_CIGI_DATA> entities;
+    unsigned long handle = NULL;
+    CSharedEntityObj **sharedObject = EntityList.GetHead(&handle);
+    while (handle && sharedObject) {
+        ENTITY_CIGI_DATA entity = {0};
+        if (!(*sharedObject)->GetAndLockCigiData(&entity))
+            return false;
+        (*sharedObject)->Unlock();
+        entities.push_back(entity);
+        sharedObject = EntityList.GetNext(&handle);
+    }
+
+    for (std::vector<ENTITY_CIGI_DATA>::const_iterator it = entities.begin();
+         it != entities.end(); ++it) {
+        QueueEntityDestroyed(*it);
+    }
+    return true;
+}
+
+void AddPendingLifecyclePackets(void)
+{
+    if (!ProtocolAdapter->IsPacketIoSupported()) {
+        PendingEntityDestroys.clear();
+        PendingEntitySelections.clear();
+        return;
+    }
+
+    while (!PendingEntityDestroys.empty()) {
+        if (!ProtocolAdapter->AddEntityDestroyedPacket(
+                session, PendingEntityDestroys.front()))
+            break;
+        PendingEntityDestroys.pop_front();
+    }
+
+    while (!PendingEntitySelections.empty()) {
+        const PendingEntitySelection &selection = PendingEntitySelections.front();
+        if (!ProtocolAdapter->AddEntitySelectionViewControlPacket(
+                session, selection.viewId, selection.entityId))
+            break;
+        PendingEntitySelections.pop_front();
+    }
 }
 
 void AddQueuedPackets(void)

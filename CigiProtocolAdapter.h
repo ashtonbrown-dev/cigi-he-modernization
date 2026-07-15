@@ -102,6 +102,20 @@ struct CigiProtocolCapabilities
     CigiProtocolCapability articulatedPartComponent;
 };
 
+struct CigiEntityDestructionData
+{
+    unsigned short entityId;
+    int entityType;
+    bool extendedType;
+    unsigned char kind;
+    unsigned char domain;
+    unsigned short country;
+    unsigned char category;
+    unsigned char subcategory;
+    unsigned char specific;
+    unsigned char extra;
+};
+
 class ICigiProtocolAdapter
 {
 public:
@@ -124,6 +138,10 @@ public:
         int bufferSize) = 0;
     virtual void StartMessage(int session) = 0;
     virtual void AddIGControlPacket(int session, void *igControlPacket) = 0;
+    virtual bool AddEntityDestroyedPacket(
+        int session, const CigiEntityDestructionData &entity) = 0;
+    virtual bool AddEntitySelectionViewControlPacket(
+        int session, unsigned short viewId, unsigned short entityId) = 0;
     virtual void EndMessage(int session) = 0;
     virtual void SetIncomingMessageBuffer(int session, unsigned char *buffer,
                                           int size) = 0;

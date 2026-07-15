@@ -805,6 +805,8 @@
 #define IDC_LABEL_YAW_BOTTOM            1532
 #define IDC_GRAPH                       1533
 #define IDC__LABEL_ORIENTATION          1533
+#define IDC_CHECK_PUBLISH_SELECTED_ENTITY 1622
+#define IDC_EDIT_SELECTED_ENTITY_VIEW_ID 1623
 #define IDC_LABEL_WIDTH                 1534
 #define IDC_MAX_PERIOD                  1534
 #define IDC_LABEL_HEIGHT                1535
@@ -1004,7 +1006,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        201
 #define _APS_NEXT_COMMAND_VALUE         32919
-#define _APS_NEXT_CONTROL_VALUE         1622
+#define _APS_NEXT_CONTROL_VALUE         1624
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif

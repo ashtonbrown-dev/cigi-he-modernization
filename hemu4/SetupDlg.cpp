@@ -180,6 +180,8 @@ SETUP_PROFILE GetCurrentSetupProfile()
     profile.bigEndian = ::GetBigEndian();
     profile.defaultDB = ::GetDefaultDB();
     profile.cigiProtocolVersion = ::GetCigiProtocolVersion();
+    profile.publishSelectedEntityViewControl = TRUE;
+    profile.selectedEntityViewId = 0;
     return profile;
 }
 }
@@ -197,6 +199,8 @@ CSetupDlg::CSetupDlg(CWnd *pParent /*=NULL*/)
     m_nLocalPort = 0;
     m_BigEndian = FALSE;
     m_DefaultDB = 1;
+    m_PublishSelectedEntityViewControl = TRUE;
+    m_SelectedEntityViewId = 0;
     //}}AFX_DATA_INIT
     m_SelectedSetupProfile = CB_ERR;
 }
@@ -220,6 +224,9 @@ void CSetupDlg::DoDataExchange(CDataExchange *pDX)
     DDX_Check(pDX, IDC_CHECK_BIG_ENDIAN, m_BigEndian);
     DDX_Text(pDX, IDC_EDIT_DEFAULT_DB, m_DefaultDB);
     DDV_MinMaxInt(pDX, m_DefaultDB, 1, 127);
+    DDX_Check(pDX, IDC_CHECK_PUBLISH_SELECTED_ENTITY, m_PublishSelectedEntityViewControl);
+    DDX_Text(pDX, IDC_EDIT_SELECTED_ENTITY_VIEW_ID, m_SelectedEntityViewId);
+    DDV_MinMaxUInt(pDX, m_SelectedEntityViewId, 0, 65535);
     //}}AFX_DATA_MAP
 }
 
@@ -399,6 +406,14 @@ void CSetupDlg::LoadSetupProfiles(void)
             profile.cigiProtocolVersion = protocolVersion;
         }
 
+        profile.publishSelectedEntityViewControl = ReadSetupProfileInt(
+            sectionName, _T("PublishSelectedEntityViewControl"), 1,
+            filePath) ? TRUE : FALSE;
+        const int selectedEntityViewId = ReadSetupProfileInt(
+            sectionName, _T("SelectedEntityViewId"), 0, filePath);
+        if (selectedEntityViewId >= 0 && selectedEntityViewId <= 65535)
+            profile.selectedEntityViewId = (unsigned short)selectedEntityViewId;
+
         m_SetupProfiles.Add(profile);
     }
 
@@ -448,6 +463,9 @@ void CSetupDlg::ApplySetupProfile(const SETUP_PROFILE &profile)
     SetBigEndian(profile.bigEndian);
     SetDefaultDB(profile.defaultDB);
     SetCigiProtocolVersion(profile.cigiProtocolVersion);
+    SetPublishSelectedEntityViewControl(
+        profile.publishSelectedEntityViewControl);
+    SetSelectedEntityViewId(profile.selectedEntityViewId);
 }
 
 BOOL CSetupDlg::CaptureSetupProfile(SETUP_PROFILE *profile)
@@ -465,6 +483,10 @@ BOOL CSetupDlg::CaptureSetupProfile(SETUP_PROFILE *profile)
     profile->localPort = (unsigned short)m_nLocalPort;
     profile->bigEndian = m_BigEndian;
     profile->defaultDB = m_DefaultDB;
+    profile->publishSelectedEntityViewControl =
+        m_PublishSelectedEntityViewControl;
+    profile->selectedEntityViewId =
+        (unsigned short)m_SelectedEntityViewId;
 
     const int selection = m_ComboVersion.GetCurSel();
     if (selection != CB_ERR) {
@@ -536,6 +558,13 @@ BOOL CSetupDlg::SaveSetupProfiles(const int selectedProfile)
             sectionName, _T("CigiMinor"),
             profile.cigiProtocolVersion.GetMinorVersion(), filePath)
              ? ok : FALSE;
+        ok = WriteSetupProfileInt(
+            sectionName, _T("PublishSelectedEntityViewControl"),
+            profile.publishSelectedEntityViewControl ? 1 : 0, filePath)
+             ? ok : FALSE;
+        ok = WriteSetupProfileInt(
+            sectionName, _T("SelectedEntityViewId"),
+            profile.selectedEntityViewId, filePath) ? ok : FALSE;
     }
 
     return ok;

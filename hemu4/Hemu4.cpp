@@ -428,6 +428,11 @@ BOOL CHemuApp::ShowSetupDlg(void)
         ::SetBigEndian(dlg.GetBigEndian());
         ::StoreBigEndian(dlg.GetBigEndian());
 
+        // Apply the selected profile's entity-selection publishing policy.
+        ::SetSelectedEntityViewId(dlg.GetSelectedEntityViewId());
+        ::SetPublishSelectedEntityViewControl(
+            dlg.GetPublishSelectedEntityViewControl());
+
         // Send a message to the driver.
         MESSAGE_SET_ADDR MsgSetAddr;
         IPAddrToStr(::GetIPAddr(), MsgSetAddr.ip_addr);

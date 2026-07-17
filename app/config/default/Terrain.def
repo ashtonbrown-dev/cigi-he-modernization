@@ -2,11 +2,11 @@ database
 {
 	name	= "Camp Pendleton";
 	id	= 2;
-	origin_latitude		= 38.624670999999999;
-	origin_longitude	= -90.184962999999996;
+	origin_latitude		= 33.3012583;
+	origin_longitude	= -117.3551694;
 	origin_altitude		= 0.0;
-	default_latitude	= 38.624670999999999;
-	default_longitude	= -90.184962999999996;
+	default_latitude	= 33.3071806;
+	default_longitude	= -117.3483250;
 	default_altitude	= 500.0;
     COMPONENT
 	{
@@ -32,12 +32,12 @@ database
 {
 	name	= "29 Palms";
 	id	= 3;
-	origin_latitude		= 38.624670999999999;
-	origin_longitude	= -90.184962999999996;
+	origin_latitude		= 34.2961104;
+	origin_longitude	= -116.1620951;
 	origin_altitude		= 0.0;
-	default_latitude	= 38.624670999999999;
-	default_longitude	= -90.184962999999996;
-	default_altitude	= 500.0;
+	default_latitude	= 34.2961104;
+	default_longitude	= -116.1620951;
+	default_altitude	= 1125.0;
     COMPONENT
 	{
 		NAME        = "Terrain Component 2";

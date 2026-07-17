@@ -49,6 +49,8 @@ public:
     long int GetSize(void);
     long int GetItemCount(void);
     long int Push(const char *buffer, const long length);
+    long int PushPair(const char *firstBuffer, const long firstLength,
+                      const char *secondBuffer, const long secondLength);
     long int Pop(char *buffer, const long length);
 
 private:

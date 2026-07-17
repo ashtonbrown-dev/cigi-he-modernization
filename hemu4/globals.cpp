@@ -253,6 +253,8 @@ void CalcNewAvgFrameRate(void)
     int i;
 
     if (g_FrameRate == 0) {
+        for (i = 0; i < 7; ++i)
+            history[i] = 0;
         g_AvgFrameRate = 0;
         return;
     }

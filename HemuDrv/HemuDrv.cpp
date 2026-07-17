@@ -583,13 +583,14 @@ ULONG WINAPI SendRcvThread(void *nContext)
     static unsigned char *sendbuffer = NULL;
     static unsigned int i = 0;
     static unsigned int j = 0;          // used by Win32 version
-    static unsigned int loopcount = 0;
+    static unsigned int rateFrameCount = 0;
     static int buffsize = 0;
     static int readsize = 0;    // number of bytes read from the buffer last frame
     static int sendsize = 0;
     static int error = 0;
     static LARGE_INTEGER t1, t2, dt = {1};
     static LARGE_INTEGER t_rcv, t_send, t_rcv_prev = {1};
+    static LARGE_INTEGER rateWindowStart = {0};
     static LARGE_INTEGER sleep_interval = {5000};   // 0.5ms
     static MESSAGE_FRAME_RATE MsgFrameRate;
     static MESSAGE_NO_CONNECT MsgNoConnect;
@@ -645,8 +646,9 @@ ULONG WINAPI SendRcvThread(void *nContext)
                     MESSAGE_NOTIFY_RECPLAYBACK_FRAME notify_msg;
                     SendGuiMessage(&notify_msg);
 
-                    g_SentCIGIMsgQueue.Push((char *)sendbuffer, readsize);
-                    g_SentCIGIMsgQueue.Push((char *)deltas, 2 * sizeof(LARGE_INTEGER));
+                    g_SentCIGIMsgQueue.PushPair(
+                        (char *)sendbuffer, readsize,
+                        (char *)deltas, 2 * sizeof(LARGE_INTEGER));
                 }
 
                 // Process the message buffer we just received.
@@ -690,11 +692,10 @@ ULONG WINAPI SendRcvThread(void *nContext)
                     deltas[0].QuadPart = t_rcv.QuadPart - t_rcv_prev.QuadPart;
                     deltas[1].QuadPart = t_send.QuadPart - t_rcv.QuadPart;
 
-                    // First push the (unswapped) message.
-                    g_SentCIGIMsgQueue.Push((char *)sendbuffer, sendsize);
-
-                    // Then push the time deltas.
-                    g_SentCIGIMsgQueue.Push((char *)deltas, 2 * sizeof(LARGE_INTEGER));
+                    // Keep the message and its timing record together.
+                    g_SentCIGIMsgQueue.PushPair(
+                        (char *)sendbuffer, sendsize,
+                        (char *)deltas, 2 * sizeof(LARGE_INTEGER));
                 }
 
 #ifdef WITH_HUD
@@ -818,15 +819,25 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 ProtocolAdapter->EndMessage(session);
             }
 
-			// Send a status message every 30 frames.
-            if (loopcount++ % 30 == 0) {
-                if (dt.QuadPart == 0)
-                  MsgFrameRate.framerate = 0;
+            // Report the measured SOF cadence over a full window. Sampling a
+            // single interval and averaging its reciprocal exaggerates normal
+            // scheduler jitter and can display impossible connection rates.
+            if (rateWindowStart.QuadPart == 0) {
+                rateWindowStart = t_rcv;
+                rateFrameCount = 0;
+            } else if (++rateFrameCount >= 30) {
+                const LONGLONG rateWindowTicks =
+                    t_rcv.QuadPart - rateWindowStart.QuadPart;
+                if (rateWindowTicks <= 0)
+                    MsgFrameRate.framerate = 0;
                 else
-                    MsgFrameRate.framerate = (long)(0.5 + (10000000.0f / dt.QuadPart));
+                    MsgFrameRate.framerate = (long)(0.5 +
+                        (rateFrameCount * 10000000.0 / rateWindowTicks));
 
                 SendGuiMessage(&MsgFrameRate);
-			}
+                rateWindowStart = t_rcv;
+                rateFrameCount = 0;
+            }
 
             i = 0;
         } else {
@@ -847,6 +858,8 @@ ULONG WINAPI SendRcvThread(void *nContext)
                 // to increase amount of time between status messages.
                 if (j++ == (unsigned int)(mp ? 1000 : 100)) {
                     j = 0;
+                    rateWindowStart.QuadPart = 0;
+                    rateFrameCount = 0;
 
                     // Send a status message.
                     SendGuiMessage(&MsgNoConnect);

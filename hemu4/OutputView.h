@@ -31,8 +31,20 @@
 #include "PacketWatchView.h"
 #include "MessageView.h"
 #include "SheetTabCtrl.h"
+#include "ExternalToolHostPage.h"
 
-#define NUM_OUTPUTTAB_PAGES     2
+class COutputTabPage
+{
+public:
+    COutputTabPage();
+
+    CString Title;
+    CWnd *Window;
+    CExternalToolHostPage *ExternalPage;
+    BOOL Owned;
+};
+
+typedef CArray<COutputTabPage, COutputTabPage &> COutputTabPageArray;
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputView form view
@@ -66,8 +78,15 @@ protected:
     BOOL m_Initialized;
     CPacketWatchView        m_DlgWatch;
     CMessageView            m_DlgMessages;
-    CDialog *m_TabDlg[NUM_OUTPUTTAB_PAGES];
-    DLGTEMPLATE *m_DlgTempl[NUM_OUTPUTTAB_PAGES];
+    DLGTEMPLATE *m_MessageDlgTemplate;
+    DLGTEMPLATE *m_WatchDlgTemplate;
+    COutputTabPageArray m_TabPages;
+
+    void AddTabPage(LPCTSTR title, CWnd *window, BOOL owned,
+                    CExternalToolHostPage *externalPage = NULL);
+    void ResizeTabPages(void);
+    void PrintExternalTabDiagnostic(LPCTSTR diagnostic);
+    int FindTabPage(LPCTSTR title) const;
 
     DECLARE_DYNCREATE(COutputView)
 

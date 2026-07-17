@@ -50,40 +50,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// Callback function for enumerating joystick axes.  We will be setting
-// the range for each axis.
-BOOL CALLBACK EnumAxesCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
-{
-    DIPROPRANGE rangeinfo;
-    rangeinfo.diph.dwSize = sizeof(DIPROPRANGE);
-    rangeinfo.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-    rangeinfo.diph.dwHow = DIPH_BYID;
-    rangeinfo.diph.dwObj = lpddoi->dwType;
-
-    if (lpddoi->guidType == GUID_XAxis) {
-        rangeinfo.lMin = -100;
-        rangeinfo.lMax = 100;
-    } else if (lpddoi->guidType == GUID_YAxis) {
-        rangeinfo.lMin = -100;
-        rangeinfo.lMax = 100;
-    } else if (lpddoi->guidType == GUID_ZAxis) {    // ???
-        rangeinfo.lMin = -100;
-        rangeinfo.lMax = 100;
-    } else if (lpddoi->guidType == GUID_RzAxis) {   // Rudder
-        rangeinfo.lMin = -100;
-        rangeinfo.lMax = 100;
-    } else if (lpddoi->guidType == GUID_Slider) {   // Throttle
-        rangeinfo.lMin = -1200;
-		rangeinfo.lMax = 300;
-//		rangeinfo.lMax = 0;
-	}
-
-    // Set the range.
-    g_pJoystick->SetProperty(DIPROP_RANGE, &rangeinfo.diph);
-
-    return DIENUM_CONTINUE;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // CFlyDlg dialog
 IMPLEMENT_DYNCREATE(CFlyDlg, CDialog)
@@ -98,6 +64,15 @@ CFlyDlg::CFlyDlg(CWnd *pParent /*=NULL*/)
     m_dPitch = 0.0f;
     m_dRoll = 0.0f;
     m_bSetRates = FALSE;
+    m_HardwarePrecision = 0;
+    ZeroMemory(&m_PreviousHardwareState, sizeof(m_PreviousHardwareState));
+    m_HasPreviousHardwareState = FALSE;
+    m_PovDirection = 0;
+    m_PovHoldStarted = 0;
+    m_PovLastRepeat = 0;
+    m_PovImmediate = FALSE;
+    m_HardwareEntityId = -1;
+    m_LastHardwarePovDelta = 0;
 
     //{{AFX_DATA_INIT(CFlyDlg)
     //}}AFX_DATA_INIT
@@ -149,7 +124,6 @@ BEGIN_MESSAGE_MAP(CFlyDlg, CDialog)
     ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_ROLL, OnReleasedcaptureSliderRoll)
     ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_PITCH, OnReleasedcaptureSliderPitch)
     ON_CBN_SELCHANGE(IDC_COMBO_MODE, OnSelchangeComboMode)
-    ON_WM_TIMER()
     ON_BN_CLICKED(IDC_BUTTON_FIRE, OnButtonFire)
     ON_CBN_CLOSEUP(IDC_COMBO_FLY_TARGET, OnCloseupComboTarget)
     ON_CBN_CLOSEUP(IDC_COMBO_FLY_WEAPON, OnCloseupComboMissile)
@@ -304,7 +278,8 @@ void CFlyDlg::SetFreezeResumeButtonText(void)
 {
     const LPCSTR buttonText = GetFreezeFlag() ? "Resume" : "Freeze";
 
-    m_FreezeResumeButton.SetWindowText(buttonText);
+    if (m_FreezeResumeButton.GetSafeHwnd())
+        m_FreezeResumeButton.SetWindowText(buttonText);
 }
 
 void CFlyDlg::ConfigureSpeedSlider(void)
@@ -398,18 +373,7 @@ BOOL CFlyDlg::OnInitDialog()
     UpdateMissileCombo();
     UpdateTargetCombo();
 
-    if (g_pJoystick) {
-        // Set up the joystick device.
-        DIDEVCAPS caps;
-        caps.dwSize = sizeof(DIDEVCAPS);
-        g_pJoystick->SetCooperativeLevel(m_hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
-        g_pJoystick->GetCapabilities(&caps);    // Get number of axes, buttons, etc.
-        g_pJoystick->EnumObjects(EnumAxesCallback, NULL, DIDFT_AXIS);
-        g_pJoystick->Acquire();
-    }
-
-    // Set the timer.
-    SetTimer(0, 20, NULL);
+    UpdatePrecisionControls();
 
     SetFreezeResumeButtonText();
 
@@ -530,6 +494,22 @@ LRESULT CFlyDlg::OnChangeJoyPos(WPARAM wParam, LPARAM lParam)
         m_bSetRates = TRUE;
 
         break;
+    }
+
+    if (m_bSetRates) {
+        RATES rates;
+        rates.dx = m_dX;
+        rates.dy = m_dY;
+        rates.dz = m_dZ;
+        rates.dyaw = m_dYaw;
+        rates.dpitch = m_dPitch;
+        rates.droll = m_dRoll;
+
+        const RATES oldRates = curr_entity->GetAndLockRates();
+        if (memcmp(&rates, &oldRates, sizeof(RATES)) != 0)
+            curr_entity->SetLockedRates(rates);
+        curr_entity->Unlock();
+        m_bSetRates = FALSE;
     }
 
     return 0;
@@ -729,280 +709,270 @@ void CFlyDlg::OnSelchangeComboMode()
     }
 }
 
-void CFlyDlg::OnTimer(UINT nIDEvent)
+void CFlyDlg::ProcessHardwareJoystickState(
+    const HEMU_JOYSTICK_STATE &state)
 {
-    // Flags to test for button switch bounce.  For some reason, we get a bounce
-    // with the retail version of the DirectX DLLs.
-    static int b0flag = 0;
-    static int b1flag = 0;
-    static int b2flag = 0;
-    static int b3flag = 0;
-    static int b4flag = 0;
-
-    // Flag indicating we need to trap the first throttle slider message.  We do
-    // this so the hardware position doesn't override the current speed value
-    // whenever we launch the Fly dialog.
-    static long do_throttle = 0;
-    static long prev_throttle = 0;
-
-    // Since buffered DirectInput messages don't tell us if the user holds the
-    // POV hat in one position, we have to keep track of this ourselves.  At
-    // the end of the while() loop, we will add the delta to the position.
-    static int holdcount = -20;
-    static int delta = 0;
-    static int max = 1200;
-    static int min = -300;
-
-    static DIJOYSTATE2 prev_data = {0};
-    DIJOYSTATE2 data = {0};
-
-    // Get the selected entity.
     CEntity *entity = g_DataManager.GetSelectedEntity();
+    const DWORD now = GetTickCount();
 
-    if (g_pJoystick) {
-        // Poll the joystick to get the current state.
-        if (FAILED(g_pJoystick->Poll())) {
-            // Attempt to reacquire the joystick.
-            if (SUCCEEDED(g_pJoystick->Acquire()))
-                g_pJoystick->Poll();
+    const int selectedEntityId = entity ? entity->GetID() : -1;
+    const BOOL entityChanged = selectedEntityId != m_HardwareEntityId;
+    if (entityChanged) {
+        CEntity *previousEntity = g_DataManager.GetEntity(m_HardwareEntityId);
+        if (previousEntity) {
+            HEMU_JOYSTICK_STATE neutralState;
+            ZeroMemory(&neutralState, sizeof(neutralState));
+            neutralState.pov = (DWORD)-1;
+            ApplyHardwareRates(previousEntity, neutralState, 0);
         }
-
-        g_pJoystick->GetDeviceState(sizeof(DIJOYSTATE2), &data);
-
-        // X and Y axes
-        if (data.lX != prev_data.lX) {
-            m_JoyWindow.SetPosX(data.lX);
-            prev_data.lX = data.lX;
-        }
-
-        if (data.lY != prev_data.lY) {
-            m_JoyWindow.SetPosY(-data.lY);
-            prev_data.lY = data.lY;
-        }
-
-        // Rudder
-        if (data.lRz != prev_data.lRz) {
-            if (entity) {
-                // Yaw for all modes except Fly.
-                if ((entity->GetFlyMode() == ENTITY_FLYMODE_FLY)
-                    && (entity->GetClass() != ENTITY_CLASS_ROTORCRAFT)) {
-                    m_dYaw = 0.0f;
-                } else {
-                    // Rate will be scaled to precision in OnChangeJoyPos().
-                    m_dYaw = (long)(data.lRz) * 0.5f;
-                    m_bSetRates = TRUE;
-                }
-            }
-
-            prev_data.lRz = data.lRz;
-        }
-
-        // POV Hat
-        if (data.rgdwPOV[0] != prev_data.rgdwPOV[0]) {
-            if (data.rgdwPOV[0] == 0) {         // Forward (0 degrees)
-                holdcount = 0;
-                delta = 1;
-            } else if (data.rgdwPOV[0] == 18000) { // Back (180 degrees)
-                holdcount = 0;
-                delta = -1;
-            } else if (data.rgdwPOV[0] == -1) { // Center
-                holdcount = -1;
-                delta = 0;
-            }
-
-            prev_data.rgdwPOV[0] = data.rgdwPOV[0];
-        }
-
-        // Buttons 0 - 5
-        if (data.rgbButtons[0] != prev_data.rgbButtons[0]) {
-            if (data.rgbButtons[0] & 0x80) { // If button is down
-                if (!b0flag) {
-                    OnButtonFire();
-                    b0flag = 1;
-                }
-            } else
-                b0flag = 0;
-
-            prev_data.rgbButtons[0] = data.rgbButtons[0];
-        }
-
-        if (data.rgbButtons[1] != prev_data.rgbButtons[1]) {
-            if (data.rgbButtons[1] & 0x80) { // If button is down
-                if (!b1flag) {
-                    if (m_TargetCount > 1) {
-                        // If we call m_ComboTarget.GetCount() in the above if(),
-                        // the % operator in this line causes the joystick to flutter
-                        // in Release mode with the DirectX 8.1 retail drivers,
-                        // even if the if() fails.  It's probably because of some
-                        // compiler optimizations.  It doesn't do it if we use the
-                        // m_TargetCount member variable, though.
-                        m_ComboTarget.SetCurSel((m_ComboTarget.GetCurSel() + 1) % m_TargetCount);
-                        OnSelchangeTarget();
-                    }
-
-                    b1flag = 1;
-                }
-
-            } else
-                b1flag = 0;
-
-            prev_data.rgbButtons[1] = data.rgbButtons[1];
-        }
-
-        if (data.rgbButtons[2] != prev_data.rgbButtons[2]) {
-            if (data.rgbButtons[2] & 0x80) { // If button is down
-                if (!b3flag) {
-                    OnButtonFreezeResume();
-                    b3flag = 1;
-                }
-            } else
-                b3flag = 0;
-
-            prev_data.rgbButtons[2] = data.rgbButtons[2];
-        }
-
-        if (data.rgbButtons[3] != prev_data.rgbButtons[3]) {
-            if (data.rgbButtons[3] & 0x80) { // If button is down
-                if (!b2flag) {
-                    int newmode = (m_FlyModeCombo.GetCurSel() + 1) % 4;
-                    m_FlyModeCombo.SetCurSel(newmode);
-
-                    if (entity)
-                        entity->SetFlyMode(newmode);
-
-                    b2flag = 1;
-
-                    // Update the Fly Mode indicator in the Entity State window.
-                    theApp.GetMainFrame().GetEntityStateView().RefreshFlyMode(newmode);
-                }
-            } else
-                b2flag = 0;
-
-            prev_data.rgbButtons[3] = data.rgbButtons[3];
-        }
-
-        if (data.rgbButtons[4] != prev_data.rgbButtons[4]) {
-            if (data.rgbButtons[4] & 0x80) { // If button is down
-                if (!b4flag) {
-                    if (m_CheckPrecision10.GetCheck()) {
-                        m_CheckPrecision10.SetCheck(FALSE);
-                        m_CheckPrecision50.SetCheck(TRUE);
-                    } else if (m_CheckPrecision50.GetCheck()) {
-                        m_CheckPrecision50.SetCheck(FALSE);
-                        m_CheckPrecision100.SetCheck(TRUE);
-                    } else if (m_CheckPrecision100.GetCheck()) {
-                        m_CheckPrecision100.SetCheck(FALSE);
-                    } else {
-                        m_CheckPrecision10.SetCheck(TRUE);
-                    }
-
-                    b4flag = 1;
-                }
-            } else
-                b4flag = 0;
-
-            prev_data.rgbButtons[4] = data.rgbButtons[4];
-        }
+        m_HardwareEntityId = selectedEntityId;
     }
 
+    int povDirection = 0;
+    if (state.pov == 0)
+        povDirection = 1;
+    else if (state.pov == 18000)
+        povDirection = -1;
+
+    if (povDirection != m_PovDirection) {
+        m_PovDirection = povDirection;
+        m_PovHoldStarted = now;
+        m_PovLastRepeat = now;
+        m_PovImmediate = povDirection ? TRUE : FALSE;
+    }
+
+    DWORD heldMilliseconds = m_PovDirection ? now - m_PovHoldStarted : 0;
+    int povMagnitude = m_PovDirection ? 1 : 0;
+    if (heldMilliseconds >= 2000)
+        ++povMagnitude;
+    if (heldMilliseconds >= 6000)
+        ++povMagnitude;
+    const int povDelta = m_PovDirection * povMagnitude;
+    const BOOL hardwareAxesChanged = !m_HasPreviousHardwareState
+        || state.x != m_PreviousHardwareState.x
+        || state.y != m_PreviousHardwareState.y
+        || state.rudder != m_PreviousHardwareState.rudder;
+    const BOOL povRateChanged = povDelta != m_LastHardwarePovDelta;
+
+    if (GetSafeHwnd()) {
+        if (!m_HasPreviousHardwareState
+            || state.x != m_PreviousHardwareState.x) {
+            m_JoyWindow.SetPosX(state.x, FALSE);
+            m_RollSlider.SetPos(state.x);
+        }
+        if (!m_HasPreviousHardwareState
+            || state.y != m_PreviousHardwareState.y) {
+            m_JoyWindow.SetPosY(-state.y, FALSE);
+            m_PitchSlider.SetPos(state.y);
+        }
+    }
 
     if (entity) {
-        switch (entity->GetFlyMode()) {
-        case ENTITY_FLYMODE_FLY: {
-            switch (entity->GetClass()) {
-            case ENTITY_CLASS_ROTORCRAFT:
-                if (delta && ((holdcount == 0) || (holdcount > 10))) {
-                    int d_coll = delta;
-                    if (holdcount > 10)
-                        d_coll *= 5;
+        // Hardware rates persist in the entity. Reapplying an unchanged,
+        // centered device here would overwrite the on-screen joystick at the
+        // hardware polling rate. Apply only when the physical input changes.
+        if (entityChanged || hardwareAxesChanged || povRateChanged)
+            ApplyHardwareRates(entity, state, povDelta);
 
-                    int pos = 100 - m_SpeedSlider.GetPos();
-
-                    // Add the delta to the current value.
-                    if ((pos + d_coll <= 100) && (pos + d_coll >= 0))
-                        pos += d_coll;
-
-                    entity->SetCollective(pos);
-                }
-
-                break;
-
-            default:
-                // Update the entity.state.
-                if (delta && ((holdcount == 0) || (holdcount > 10))) {
-                    int pos = (int)(entity->GetSpeed());
-
-                    // Add the delta to the current value.
-                    if ((pos + delta <= max) && (pos + delta >= min))
-                        pos += delta;
-
-                    entity->SetSpeed((float)pos);
+        const BOOL repeatPov = m_PovDirection
+            && heldMilliseconds >= 220
+            && now - m_PovLastRepeat >= 20;
+        if (m_PovImmediate || repeatPov) {
+            if (entity->GetFlyMode() == ENTITY_FLYMODE_FLY) {
+                if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT) {
+                    int collective = entity->GetCollective();
+                    const int collectiveDelta = repeatPov
+                        ? m_PovDirection * 5 : m_PovDirection;
+                    collective = max(0, min(100,
+                        collective + collectiveDelta));
+                    entity->SetCollective(collective);
+                    if (GetSafeHwnd())
+                        m_SpeedSlider.SetPos(100 - collective);
+                } else {
+                    double speed = entity->GetSpeed() + povDelta;
+                    speed = max(-300.0, min(1200.0, speed));
+                    entity->SetSpeed(speed);
                 }
             }
 
-            if (holdcount >= 0) {
-                if (holdcount == 100) {
-                    if (delta > 0)
-                        delta += 1;
-                    else
-                        delta -= 1;
-                } else if (holdcount == 300) {
-                    if (delta > 0)
-                        delta += 1;
-                    else
-                        delta -= 1;
-                }
-
-                holdcount++;
-            }
-
-            break;
-        }
-
-        case ENTITY_FLYMODE_MAGIC_CARPET: {
-            double translatefactor;
-
-            if (m_CheckPrecision10.GetCheck())
-                translatefactor = 1.0f;
-            else if (m_CheckPrecision10.GetCheck())
-                translatefactor = 0.5f;
-            else if (m_CheckPrecision10.GetCheck())
-                translatefactor = 0.1f;
-            else
-                translatefactor = 10.0f;
-
-            m_dZ = (float)(translatefactor * delta * 10);   //LWD: 100
-            m_bSetRates = TRUE;
-        }
-
-        default:
-            break;
+            m_PovImmediate = FALSE;
+            m_PovLastRepeat = now;
         }
     }
 
-    if (m_bSetRates) {
-CString str;
-str.Format( "%6.2f %6.2f %6.2f %6.2f %6.2f %6.2f\r", m_dX, m_dY, m_dZ, m_dYaw, m_dPitch, m_dRoll );
-OutputDebugString( str );
-        RATES old_rates = entity->GetAndLockRates();
-        RATES rates;
-        rates.dx = m_dX;
-        rates.dy = m_dY;
-        rates.dz = m_dZ;
-        rates.dyaw = m_dYaw;
-        rates.dpitch = m_dPitch;
-        rates.droll = m_dRoll;
+    const BOOL button0Pressed = (state.buttons[0] & 0x80) != 0;
+    const BOOL button1Pressed = (state.buttons[1] & 0x80) != 0;
+    const BOOL button2Pressed = (state.buttons[2] & 0x80) != 0;
+    const BOOL button3Pressed = (state.buttons[3] & 0x80) != 0;
+    const BOOL button4Pressed = (state.buttons[4] & 0x80) != 0;
 
-        if (memcmp(&rates, &old_rates, sizeof(RATES)) != 0)
-            entity->SetLockedRates(rates);
-
-        entity->Unlock();
-
-        m_bSetRates = FALSE;
+    if (button0Pressed && (!m_HasPreviousHardwareState
+        || !(m_PreviousHardwareState.buttons[0] & 0x80))) {
+        if (GetSafeHwnd())
+            OnButtonFire();
     }
 
+    if (button1Pressed && (!m_HasPreviousHardwareState
+        || !(m_PreviousHardwareState.buttons[1] & 0x80))) {
+        if (GetSafeHwnd() && m_TargetCount > 1) {
+            m_ComboTarget.SetCurSel(
+                (m_ComboTarget.GetCurSel() + 1) % m_TargetCount);
+            OnSelchangeTarget();
+        }
+    }
 
-    CDialog::OnTimer(nIDEvent);
+    if (button2Pressed && (!m_HasPreviousHardwareState
+        || !(m_PreviousHardwareState.buttons[2] & 0x80))) {
+        OnButtonFreezeResume();
+    }
+
+    if (button3Pressed && (!m_HasPreviousHardwareState
+        || !(m_PreviousHardwareState.buttons[3] & 0x80))) {
+        if (entity) {
+            const int newMode = (entity->GetFlyMode() + 1) % 4;
+            entity->SetFlyMode(newMode);
+            if (GetSafeHwnd())
+                m_FlyModeCombo.SetCurSel(newMode);
+            theApp.GetMainFrame().GetEntityStateView().RefreshFlyMode(newMode);
+            ApplyHardwareRates(entity, state, povDelta);
+        }
+    }
+
+    if (button4Pressed && (!m_HasPreviousHardwareState
+        || !(m_PreviousHardwareState.buttons[4] & 0x80))) {
+        m_HardwarePrecision = (m_HardwarePrecision + 1) % 4;
+        UpdatePrecisionControls();
+        if (entity)
+            ApplyHardwareRates(entity, state, povDelta);
+    }
+
+    m_LastHardwarePovDelta = povDelta;
+    m_PreviousHardwareState = state;
+    m_HasPreviousHardwareState = TRUE;
+}
+
+void CFlyDlg::ApplyHardwareRates(CEntity *entity,
+                                 const HEMU_JOYSTICK_STATE &state,
+                                 const int povDelta)
+{
+    if (!entity)
+        return;
+
+    double translateFactor = 10.0;
+    double rollFactor = 2.0;
+    double pitchFactor = -0.3;
+    double yawFactor = 0.2;
+    if (m_HardwarePrecision == 1) {
+        translateFactor = 1.0;
+        rollFactor = 0.2;
+        pitchFactor = -0.03;
+        yawFactor = 0.02;
+    } else if (m_HardwarePrecision == 2) {
+        translateFactor = 0.5;
+        rollFactor = 0.1;
+        pitchFactor = -0.015;
+        yawFactor = 0.01;
+    } else if (m_HardwarePrecision == 3) {
+        translateFactor = 0.1;
+        rollFactor = 0.02;
+        pitchFactor = -0.003;
+        yawFactor = 0.002;
+    }
+
+    const long x = state.x;
+    const long y = -state.y;
+    const double rudder = state.rudder * 0.5;
+
+    m_dX = 0.0f;
+    m_dY = 0.0f;
+    m_dZ = 0.0f;
+    m_dYaw = 0.0f;
+    m_dPitch = 0.0f;
+    m_dRoll = 0.0f;
+
+    switch (entity->GetFlyMode()) {
+    case ENTITY_FLYMODE_FLY:
+        if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT) {
+            m_dX = (float)(0.25 * x);
+            m_dY = (float)(0.30 * y);
+            m_dYaw = (float)(rudder * yawFactor);
+        } else if (entity->GetClampMode() == ENTITY_CLAMP_CONFORMAL) {
+            m_dYaw = (float)(yawFactor * x);
+        } else {
+            m_dRoll = (float)(rollFactor * x);
+            m_dPitch = (float)(pitchFactor * y);
+        }
+        break;
+
+    case ENTITY_FLYMODE_MAGIC_CARPET: {
+        const double theta = DegToRad(entity->GetDofs().yaw);
+        m_dX = (float)(2 * translateFactor
+                       * ((y * cos(theta)) - (x * sin(theta))));
+        m_dY = (float)(2 * translateFactor
+                       * ((x * cos(theta)) + (y * sin(theta))));
+        m_dZ = (float)(translateFactor * povDelta * 10);
+        m_dYaw = (float)(rudder * yawFactor);
+        break;
+    }
+
+    case ENTITY_FLYMODE_YAW_Z:
+        m_dZ = (float)(-translateFactor * y);
+        m_dYaw = (float)(x * 2.0);
+        break;
+
+    case ENTITY_FLYMODE_ROLL_PITCH:
+    default:
+        m_dRoll = (float)(rollFactor * x);
+        m_dPitch = (float)(pitchFactor * y);
+        break;
+    }
+
+    RATES rates;
+    rates.dx = m_dX;
+    rates.dy = m_dY;
+    rates.dz = m_dZ;
+    rates.dyaw = m_dYaw;
+    rates.dpitch = m_dPitch;
+    rates.droll = m_dRoll;
+
+    const RATES oldRates = entity->GetAndLockRates();
+    if (memcmp(&rates, &oldRates, sizeof(RATES)) != 0)
+        entity->SetLockedRates(rates);
+    entity->Unlock();
+}
+
+void CFlyDlg::DisableHardwareJoystick(void)
+{
+    m_HasPreviousHardwareState = FALSE;
+    m_PovDirection = 0;
+    m_PovImmediate = FALSE;
+    m_LastHardwarePovDelta = 0;
+
+    HEMU_JOYSTICK_STATE neutralState;
+    ZeroMemory(&neutralState, sizeof(neutralState));
+    neutralState.pov = (DWORD)-1;
+
+    CEntity *entity = g_DataManager.GetEntity(m_HardwareEntityId);
+    if (entity)
+        ApplyHardwareRates(entity, neutralState, 0);
+    m_HardwareEntityId = -1;
+
+    if (GetSafeHwnd()) {
+        m_JoyWindow.SetPosX(0, FALSE);
+        m_JoyWindow.SetPosY(0, FALSE);
+        m_RollSlider.SetPos(0);
+        m_PitchSlider.SetPos(0);
+    }
+}
+
+void CFlyDlg::UpdatePrecisionControls(void)
+{
+    if (!GetSafeHwnd())
+        return;
+
+    m_CheckPrecision10.SetCheck(m_HardwarePrecision == 1);
+    m_CheckPrecision50.SetCheck(m_HardwarePrecision == 2);
+    m_CheckPrecision100.SetCheck(m_HardwarePrecision == 3);
 }
 
 void CFlyDlg::OnButtonFire()
@@ -1158,16 +1128,19 @@ void CFlyDlg::OnCheckPrecision10()
 {
     m_CheckPrecision50.SetCheck(FALSE);
     m_CheckPrecision100.SetCheck(FALSE);
+    m_HardwarePrecision = m_CheckPrecision10.GetCheck() ? 1 : 0;
 }
 
 void CFlyDlg::OnCheckPrecision50()
 {
     m_CheckPrecision10.SetCheck(FALSE);
     m_CheckPrecision100.SetCheck(FALSE);
+    m_HardwarePrecision = m_CheckPrecision50.GetCheck() ? 2 : 0;
 }
 
 void CFlyDlg::OnCheckPrecision100()
 {
     m_CheckPrecision10.SetCheck(FALSE);
     m_CheckPrecision50.SetCheck(FALSE);
+    m_HardwarePrecision = m_CheckPrecision100.GetCheck() ? 3 : 0;
 }

@@ -77,6 +77,7 @@ BOOL CHemuDoc::OnNewDocument()
         return FALSE;
 
     g_DataManager.Reinitialize();
+    theApp.EnsureDefaultOwnship();
 
     return TRUE;
 }

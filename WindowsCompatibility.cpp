@@ -21,4 +21,4 @@
 #include "WindowsCompatibility.h"
 
 int g_sleepRoundValue = 5000;
-__int64 g_highPerformanceClockScale = 0;
+__int64 g_highPerformanceClockFrequency = 0;

@@ -50,8 +50,8 @@ public:
     COLORREF GetBallColor(void);
     long GetPosX(void);
     long GetPosY(void);
-    void SetPosX(const long x);
-    void SetPosY(const long y);
+    void SetPosX(const long x, const BOOL notify = TRUE);
+    void SetPosY(const long y, const BOOL notify = TRUE);
     long GetMaxX(void);
     long GetMaxY(void);
     void SetMaxX(long x);

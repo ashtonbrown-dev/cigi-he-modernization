@@ -39,6 +39,7 @@
 
 void ProcessOutgoingCigiPacketQueue(void)
 {
+    const int maxFramesPerUiTick = 64;
     static char buffer[MAX_ETHERNET_PACKET_SIZE] = {0};
     static unsigned int heartbeat_counter = 0;
     static unsigned int fr = 0;
@@ -46,8 +47,11 @@ void ProcessOutgoingCigiPacketQueue(void)
     static unsigned int max_fr = 0;
     static unsigned int min_fr = (unsigned int) - 1;
     static int size = 0;
+    int processedFrames = 0;
 
-    while ((size = g_SentCIGIMsgQueue.Pop(buffer, sizeof(buffer))) > 0) {
+    while (processedFrames < maxFramesPerUiTick
+           && (size = g_SentCIGIMsgQueue.Pop(buffer, sizeof(buffer))) > 0) {
+        processedFrames++;
         // Pop the CIGI message and process it.
         CigiSetIncomingMsgBuffer(g_IGSession, (unsigned char *)buffer, size);
         CigiProcessIncomingMsgBuffer(g_IGSession);
@@ -1283,11 +1287,15 @@ long DoCigiAnimationControl(const int sessionid, void *data)
 
 void ProcessIncomingCigiPacketQueue(void)
 {
+    const int maxPacketsPerUiTick = 64;
     static char buffer[CIGI_MAX_PACKET_SIZE] = {0};
     static CIGI_DUMMY_PACKET *packet = NULL;
     int rcvsize;
+    int processedPackets = 0;
 
-    while ((rcvsize = g_RcvCIGIMsgQueue.Pop(buffer, sizeof(buffer))) > 0) {
+    while (processedPackets < maxPacketsPerUiTick
+           && (rcvsize = g_RcvCIGIMsgQueue.Pop(buffer, sizeof(buffer))) > 0) {
+        processedPackets++;
         // Pop the CIGI message and process it.
         CigiSetIncomingMsgBuffer(g_HostSession, (unsigned char *)buffer, rcvsize);
         CigiProcessIncomingMsgBuffer(g_HostSession);

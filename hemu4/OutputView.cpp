@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "OutputView.h"
+#include "ExternalTabConfig.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,8 +37,14 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(COutputView, CFormView)
 
+COutputTabPage::COutputTabPage()
+    : Window(NULL), ExternalPage(NULL), Owned(FALSE)
+{
+}
+
 COutputView::COutputView()
-    : CFormView(COutputView::IDD)
+    : CFormView(COutputView::IDD), m_MessageDlgTemplate(NULL),
+      m_WatchDlgTemplate(NULL)
 {
     //{{AFX_DATA_INIT(COutputView)
     //}}AFX_DATA_INIT
@@ -47,6 +54,18 @@ COutputView::COutputView()
 
 COutputView::~COutputView()
 {
+    for (int index = 0; index < m_TabPages.GetSize(); ++index) {
+        COutputTabPage &page = m_TabPages[index];
+        if (!page.Owned || page.Window == NULL)
+            continue;
+
+        if (page.Window->GetSafeHwnd())
+            page.Window->DestroyWindow();
+        delete page.Window;
+        page.Window = NULL;
+        page.ExternalPage = NULL;
+    }
+    m_TabPages.RemoveAll();
 }
 
 void COutputView::DoDataExchange(CDataExchange *pDX)
@@ -91,19 +110,7 @@ void COutputView::OnSize(UINT nType, int cx, int cy)
     if (m_Tab.GetSafeHwnd()) {
         ((CSplitterWnd *)GetParent())->RecalcLayout();
         m_Tab.MoveWindow(0, 0, cx, cy);
-
-        // Resize each of the tab pages.
-        int tabcount = m_Tab.GetItemCount();
-
-        ASSERT(tabcount == NUM_OUTPUTTAB_PAGES);
-
-        for (int i = 0; i < tabcount; i++) {
-            CRect tabrect, itemrect;
-            m_Tab.GetClientRect(&tabrect);
-            if (m_Tab.GetItemRect(0, &itemrect))
-                tabrect.bottom -= itemrect.Height();
-            m_TabDlg[i]->MoveWindow(&tabrect);  // don't care about parameters
-        }
+        ResizeTabPages();
     }
 }
 
@@ -129,31 +136,115 @@ void COutputView::OnInitialUpdate()
 
 void COutputView::InitTabs(void)
 {
-    // Add a tab for each of the child dialog boxes.
-    m_Tab.InsertItem(0, "Messages");
-    m_Tab.InsertItem(1, "Capture");
-
     // Lock the resources for the child dialog boxes.
-    m_DlgTempl[0] = LockDlgRes(MAKEINTRESOURCE(IDD_MESSAGE_VIEW));
-    m_DlgTempl[1] = LockDlgRes(MAKEINTRESOURCE(IDD_WATCH_VIEW));
+    m_MessageDlgTemplate = LockDlgRes(MAKEINTRESOURCE(IDD_MESSAGE_VIEW));
+    m_WatchDlgTemplate = LockDlgRes(MAKEINTRESOURCE(IDD_WATCH_VIEW));
 
-    // Create an array of pointers to the child dialog boxes.
-    m_TabDlg[0] = (CDialog *)&m_DlgMessages;
-    m_TabDlg[1] = (CDialog *)&m_DlgWatch;
+    // Keep the two built-in pages first and in their existing order.
+    if (m_DlgMessages.CreateIndirect(m_MessageDlgTemplate, &m_Tab))
+        AddTabPage(_T("Messages"), &m_DlgMessages, FALSE);
+    if (m_DlgWatch.CreateIndirect(m_WatchDlgTemplate, &m_Tab))
+        AddTabPage(_T("Capture"), &m_DlgWatch, FALSE);
 
-    // Create child dialog boxes.
-    int tabcount = m_Tab.GetItemCount();
-    ASSERT(tabcount == NUM_OUTPUTTAB_PAGES);
+    CExternalTabDefinitionArray definitions;
+    CStringArray diagnostics;
+    CString startupTabTitle;
+    LoadExternalTabDefinitions(definitions, diagnostics, startupTabTitle);
 
-    for (int i = 0; i < tabcount; i++)
-        m_TabDlg[i]->CreateIndirect(m_DlgTempl[i], &m_Tab);
+    for (int diagnosticIndex = 0;
+         diagnosticIndex < diagnostics.GetSize(); ++diagnosticIndex)
+        PrintExternalTabDiagnostic(diagnostics[diagnosticIndex]);
 
-    for (int i = 0; i < tabcount; i++)
-        m_TabDlg[i]->SetWindowPos(NULL, 1, 1, 0, 0, SWP_NOSIZE);
+    for (int definitionIndex = 0;
+         definitionIndex < definitions.GetSize(); ++definitionIndex) {
+        CExternalToolHostPage *externalPage =
+            new CExternalToolHostPage;
+        externalPage->Configure(definitions[definitionIndex]);
+        if (!externalPage->Create(&m_Tab)) {
+            CString diagnostic;
+            diagnostic.Format(
+                _T("External tabs: could not create the '%s' host page."),
+                (LPCTSTR)definitions[definitionIndex].Title);
+            PrintExternalTabDiagnostic(diagnostic);
+            delete externalPage;
+            continue;
+        }
 
-    // Simulate selection of the first item.
+        AddTabPage(definitions[definitionIndex].Title, externalPage, TRUE,
+                   externalPage);
+    }
+
+    ResizeTabPages();
+
+    int startupTabIndex = FindTabPage(startupTabTitle);
+    if (startupTabIndex < 0) {
+        CString diagnostic;
+        diagnostic.Format(
+            _T("External tabs: StartupTab '%s' was not found; using Messages."),
+            (LPCTSTR)startupTabTitle);
+        PrintExternalTabDiagnostic(diagnostic);
+        startupTabIndex = 0;
+    }
+
+    m_Tab.SetCurSel(startupTabIndex);
     LRESULT result;
     OnSelchangeTab(NULL, &result);
+}
+
+void COutputView::AddTabPage(LPCTSTR title, CWnd *window, BOOL owned,
+                             CExternalToolHostPage *externalPage)
+{
+    if (window == NULL || !window->GetSafeHwnd())
+        return;
+
+    COutputTabPage page;
+    page.Title = title;
+    page.Window = window;
+    page.ExternalPage = externalPage;
+    page.Owned = owned;
+
+    m_Tab.InsertItem(m_TabPages.GetSize(), title);
+    m_TabPages.Add(page);
+    window->SetWindowPos(NULL, 1, 1, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    window->ShowWindow(SW_HIDE);
+}
+
+int COutputView::FindTabPage(LPCTSTR title) const
+{
+    if (!title || !title[0])
+        return -1;
+
+    for (int index = 0; index < m_TabPages.GetSize(); ++index) {
+        if (m_TabPages[index].Title.CompareNoCase(title) == 0)
+            return index;
+    }
+
+    return -1;
+}
+
+void COutputView::ResizeTabPages(void)
+{
+    if (!m_Tab.GetSafeHwnd() || m_TabPages.GetSize() == 0)
+        return;
+
+    CRect tabRect;
+    CRect itemRect;
+    m_Tab.GetClientRect(&tabRect);
+    if (m_Tab.GetItemRect(0, &itemRect))
+        tabRect.bottom -= itemRect.Height();
+
+    for (int index = 0; index < m_TabPages.GetSize(); ++index) {
+        CWnd *window = m_TabPages[index].Window;
+        if (window != NULL && window->GetSafeHwnd())
+            window->MoveWindow(&tabRect);
+    }
+}
+
+void COutputView::PrintExternalTabDiagnostic(LPCTSTR diagnostic)
+{
+    if (m_DlgMessages.GetSafeHwnd()
+        && m_DlgMessages.m_Edit.GetSafeHwnd())
+        m_DlgMessages.PrintMessage(diagnostic);
 }
 
 void COutputView::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
@@ -161,8 +252,12 @@ void COutputView::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
     // Show the appropriate window.
     int index = m_Tab.GetCurSel();
 
-    if (m_TabDlg[index]->m_hWnd) {
-        m_TabDlg[index]->ShowWindow(SW_SHOW);
+    if (index >= 0 && index < m_TabPages.GetSize()) {
+        COutputTabPage &page = m_TabPages[index];
+        if (page.Window != NULL && page.Window->GetSafeHwnd())
+            page.Window->ShowWindow(SW_SHOW);
+        if (page.ExternalPage != NULL)
+            page.ExternalPage->Activate();
     }
 
     *pResult = 0;
@@ -173,9 +268,10 @@ void COutputView::OnSelchangingTab(NMHDR *pNMHDR, LRESULT *pResult)
     // Hide the current window.
     int index = m_Tab.GetCurSel();
 
-    if (m_TabDlg[index]->m_hWnd) {
-        m_TabDlg[index]->ShowWindow(SW_HIDE);
-    }
+    if (index >= 0 && index < m_TabPages.GetSize()
+        && m_TabPages[index].Window != NULL
+        && m_TabPages[index].Window->GetSafeHwnd())
+        m_TabPages[index].Window->ShowWindow(SW_HIDE);
 
     *pResult = 0;
 }

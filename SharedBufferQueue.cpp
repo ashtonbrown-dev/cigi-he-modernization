@@ -161,6 +161,7 @@ long int SharedBufferQueue::Create(const char *name, const long buffcount, const
 //              -1  The queue has been blocked by another process.
 //              -2  Create() has not been called, or the queue failed to
 //                  initialize.
+//              -3  The queue is full.
 //
 ///////////////////////////////////////////////////////////////////////////////
 long int SharedBufferQueue::Push(const char *buffer, const long length)
@@ -169,8 +170,13 @@ long int SharedBufferQueue::Push(const char *buffer, const long length)
         return -2;
 
     int waitval = WaitForSingleObject(m_mutex, TIMEOUT_MILLISEC);
-    if (waitval == WAIT_TIMEOUT)
+    if (waitval != WAIT_OBJECT_0)
         return -1;
+
+    if (*m_itemcount >= *m_size) {
+        ReleaseMutex(m_mutex);
+        return -3;
+    }
 
     memcpy(m_data[*m_top], buffer, length);
     m_bufflengths[*m_top] = length;
@@ -184,6 +190,50 @@ long int SharedBufferQueue::Push(const char *buffer, const long length)
 
     ReleaseMutex(m_mutex);
 
+    return *m_itemcount;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Name:   PushPair
+//
+//  Description:
+//          Atomically enqueues two related buffers. This prevents a CIGI
+//          message and its timing record from becoming separated when the
+//          queue reaches capacity.
+//
+///////////////////////////////////////////////////////////////////////////////
+long int SharedBufferQueue::PushPair(const char *firstBuffer,
+                                     const long firstLength,
+                                     const char *secondBuffer,
+                                     const long secondLength)
+{
+    if (*m_size == 0)
+        return -2;
+
+    if (WaitForSingleObject(m_mutex, TIMEOUT_MILLISEC) != WAIT_OBJECT_0)
+        return -1;
+
+    if (*m_size < 2 || *m_itemcount > *m_size - 2) {
+        ReleaseMutex(m_mutex);
+        return -3;
+    }
+
+    memcpy(m_data[*m_top], firstBuffer, firstLength);
+    m_bufflengths[*m_top] = firstLength;
+    (*m_top)++;
+    if (*m_top == *m_size)
+        *m_top = 0;
+
+    memcpy(m_data[*m_top], secondBuffer, secondLength);
+    m_bufflengths[*m_top] = secondLength;
+    (*m_top)++;
+    if (*m_top == *m_size)
+        *m_top = 0;
+
+    *m_itemcount += 2;
+
+    ReleaseMutex(m_mutex);
     return *m_itemcount;
 }
 

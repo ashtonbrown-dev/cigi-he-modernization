@@ -192,6 +192,9 @@
     <ClCompile Include="FlyDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="JoystickInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="GlobalEnv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -244,6 +247,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalTabConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalToolHostPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OutputView.cpp">
@@ -704,6 +713,9 @@
     <None Include="..\Change History.txt" />
     <None Include="Hemu4.reg" />
     <None Include="ReadMe.txt" />
+    <None Include="..\app\config\external_tabs.ini">
+      <Filter>Runtime Configuration</Filter>
+    </None>
     <None Include="..\app\config\default\Entities.def">
       <Filter>Runtime Configuration</Filter>
     </None>
@@ -894,6 +906,9 @@
     <ClInclude Include="FlyDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="JoystickInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="GlobalEnv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -952,6 +967,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectTreeView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalTabConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalToolHostPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OutputView.h">

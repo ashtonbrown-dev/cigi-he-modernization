@@ -31,8 +31,9 @@
 #include "NoMWComboBox.h" // CComboBox that passes WM_MOUSEWHEEL messages to parent.
 #include "NoMWComboBoxEx.h" // CComboBox that passes WM_MOUSEWHEEL messages to parent.
 #include "JoyWnd.h"
+#include "JoystickInput.h"
 
-//class CInstancesView;
+class CEntity;
 
 /////////////////////////////////////////////////////////////////////////////
 // CFlyDlg dialog
@@ -52,6 +53,8 @@ public:
     void UpdateMissileCombo(void);
     void UpdateTargetCombo(void);
     void ConfigureSpeedSlider(void);
+    void ProcessHardwareJoystickState(const HEMU_JOYSTICK_STATE &state);
+    void DisableHardwareJoystick(void);
 
     // Dialog Data
     //{{AFX_DATA(CFlyDlg)
@@ -102,8 +105,21 @@ protected:
     float m_dYaw;
     float m_dPitch;
     float m_dRoll;
+    int m_HardwarePrecision;
+    HEMU_JOYSTICK_STATE m_PreviousHardwareState;
+    BOOL m_HasPreviousHardwareState;
+    int m_PovDirection;
+    DWORD m_PovHoldStarted;
+    DWORD m_PovLastRepeat;
+    BOOL m_PovImmediate;
+    int m_HardwareEntityId;
+    int m_LastHardwarePovDelta;
 
     void SelectTargetItem(void);
+    void ApplyHardwareRates(CEntity *entity,
+                            const HEMU_JOYSTICK_STATE &state,
+                            const int povDelta);
+    void UpdatePrecisionControls(void);
 
     afx_msg LRESULT OnChangeJoyPos(WPARAM wParam, LPARAM lParam);
 
@@ -120,7 +136,6 @@ protected:
     afx_msg void OnReleasedcaptureSliderRoll(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnReleasedcaptureSliderPitch(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnSelchangeComboMode();
-    afx_msg void OnTimer(UINT nIDEvent);
     afx_msg void OnButtonFire();
     afx_msg void OnCloseupComboTarget();
     afx_msg void OnCloseupComboMissile();

@@ -112,6 +112,7 @@ BEGIN
     BUTTON      ID_ANIM_STOP
     SEPARATOR
     BUTTON      ID_TOOLS_FLY
+    BUTTON      ID_TOOLS_JOYSTICK_ENABLE
     SEPARATOR
     BUTTON      ID_EXERCISE_RESET_HOST
     BUTTON      ID_EXERCISE_RESET_IG
@@ -3859,6 +3860,7 @@ STRINGTABLE
 BEGIN
     ID_TREE_DETACH          "Detach the selected entity from its parent\nDetach"
     ID_TOOLS_FLY            "Fly selected entity\nFly Entity"
+    ID_TOOLS_JOYSTICK_ENABLE "Enable or disable physical joystick input\nJoystick Input"
     ID_VIEW_CLEAR_MESSAGES  "Clear Messages window\nClear Messages"
     ID_FILE_LOAD_CONFIG     "Load a configuration from a set of .def files\nLoad Configuration"
     ID_WATCH_CAPTURE        "Capture and view the contents of CIGI messages\nCapture"

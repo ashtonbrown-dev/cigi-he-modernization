@@ -26,14 +26,14 @@
 enum HemuClock { HEMU_CLOCK_FASTEST };
 
 extern int g_sleepRoundValue;
-extern __int64 g_highPerformanceClockScale;
+extern __int64 g_highPerformanceClockFrequency;
 
 inline BOOL InitializeHighResolutionClock(HemuClock, PLARGE_INTEGER value)
 {
     if (!QueryPerformanceFrequency(value))
         return FALSE;
 
-    g_highPerformanceClockScale = value->QuadPart / 10000000;
+    g_highPerformanceClockFrequency = value->QuadPart;
     return TRUE;
 }
 
@@ -45,9 +45,15 @@ inline BOOL UseTruncatedSleepDurations(HemuClock, PLARGE_INTEGER)
 
 inline BOOL GetHighResolutionClockTime(HemuClock, PLARGE_INTEGER value)
 {
-    if (g_highPerformanceClockScale) {
-        QueryPerformanceCounter(value);
-        value->QuadPart /= g_highPerformanceClockScale;
+    if (g_highPerformanceClockFrequency) {
+        LARGE_INTEGER counter;
+        QueryPerformanceCounter(&counter);
+        const LONGLONG wholeSeconds =
+            counter.QuadPart / g_highPerformanceClockFrequency;
+        const LONGLONG remainder =
+            counter.QuadPart % g_highPerformanceClockFrequency;
+        value->QuadPart = wholeSeconds * 10000000LL +
+            (remainder * 10000000LL) / g_highPerformanceClockFrequency;
         return TRUE;
     }
 

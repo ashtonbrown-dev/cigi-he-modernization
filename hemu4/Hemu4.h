@@ -34,6 +34,7 @@
 
 #include "resource.h"       // main symbols
 #include "MainFrm.h"
+#include "JoystickInput.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CHemuApp:
@@ -48,6 +49,8 @@ public:
     BOOL ShowSetupDlg(void);
     void InitializeCIGI(void);
     void InitializeTrees(void);
+    void EnsureDefaultOwnship(void);
+    CJoystickInput &GetJoystickInput(void);
 
     // Overrides
     // ClassWizard generated virtual function overrides
@@ -72,6 +75,8 @@ private:
     HANDLE m_ForceShutdownMutexHandle;
     HANDLE m_DriverProcessHandle;
     BOOL m_IpcInitialized;
+    BOOL m_InitializationComplete;
+    CJoystickInput m_JoystickInput;
 
     int LoadDriver(void);
     void ShutdownDriver(void);
@@ -84,6 +89,11 @@ private:
 inline CMainFrame &CHemuApp::GetMainFrame(void)
 {
     return *((CMainFrame *)m_pMainWnd);
+}
+
+inline CJoystickInput &CHemuApp::GetJoystickInput(void)
+{
+    return m_JoystickInput;
 }
 
 extern CHemuApp theApp;

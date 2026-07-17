@@ -263,6 +263,9 @@ protected:
     afx_msg void OnUpdateExerciseResetHost(CCmdUI *pCmdUI);
     afx_msg void OnUpdateExerciseResetIg(CCmdUI *pCmdUI);
     afx_msg void OnFly();
+    afx_msg void OnToggleJoystick();
+    afx_msg void OnUpdateToggleJoystick(CCmdUI *pCmdUI);
+    afx_msg LRESULT OnJoystickInput(WPARAM wParam, LPARAM lParam);
     afx_msg void OnClearMessages();
     afx_msg void OnLoadConfig();
     afx_msg void OnWatchCapture();

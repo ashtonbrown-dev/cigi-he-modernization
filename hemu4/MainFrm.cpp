@@ -76,6 +76,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_UPDATE_COMMAND_UI(ID_EXERCISE_RESET_HOST, OnUpdateExerciseResetHost)
     ON_UPDATE_COMMAND_UI(ID_EXERCISE_RESET_IG, OnUpdateExerciseResetIg)
     ON_COMMAND(ID_TOOLS_FLY, OnFly)
+    ON_COMMAND(ID_TOOLS_JOYSTICK_ENABLE, OnToggleJoystick)
+    ON_UPDATE_COMMAND_UI(ID_TOOLS_JOYSTICK_ENABLE, OnUpdateToggleJoystick)
+    ON_MESSAGE(WM_HEMU_JOYSTICK_INPUT, OnJoystickInput)
     ON_COMMAND(ID_VIEW_CLEAR_MESSAGES, OnClearMessages)
     ON_COMMAND(ID_FILE_LOAD_CONFIG, OnLoadConfig)
     ON_COMMAND(ID_WATCH_CAPTURE, OnWatchCapture)
@@ -228,6 +231,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                               | CBRS_ALIGN_TOP | CBRS_TOOLTIPS | CBRS_FLYBY
                               | CBRS_SIZE_FIXED);
     m_wndMainToolBar.LoadToolBar(IDR_MAINFRAME);
+
     m_wndDlgBar.Create(IDD_DIALOGBAR, this);
     m_wndReBar.Create(this);
     m_wndReBar.AddBar(&m_wndMainToolBar);
@@ -236,6 +240,25 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndStatusBar.Create(this);
     m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 
+    UINT frameRatePaneId = 0;
+    UINT frameRatePaneStyle = 0;
+    int frameRatePaneWidth = 0;
+    m_wndStatusBar.GetPaneInfo(1, frameRatePaneId, frameRatePaneStyle,
+                               frameRatePaneWidth);
+
+    CClientDC statusDC(&m_wndStatusBar);
+    CFont *statusFont = m_wndStatusBar.GetFont();
+    CFont *oldStatusFont = statusFont ? statusDC.SelectObject(statusFont) : NULL;
+    const int connectedTextWidth =
+        statusDC.GetTextExtent("Connected at 100.0 Hz").cx + 12;
+    if (oldStatusFont)
+        statusDC.SelectObject(oldStatusFont);
+
+    if (connectedTextWidth > frameRatePaneWidth) {
+        m_wndStatusBar.SetPaneInfo(1, frameRatePaneId, frameRatePaneStyle,
+                                   connectedTextWidth);
+    }
+
     // Load the default configuration.
     LoadEntityConfig("config\\default\\Entities.def");
     LoadViewConfig("config\\default\\Views.def");
@@ -243,10 +266,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     LoadEnvConfig("config\\default\\Environment.def");
     LoadSystemConfig("config\\default\\System.def");
 
-    // The 2nd pane should have no text by default.  Since we need to place
-    // the longest string in the string table for MFC to automatically size
-    // the pane, we can clear the text here.  Note that the default text for
-    // the 1st pane is also the longest, so it's already in the string table.
+    // The 2nd pane should have no text by default. The frame-rate pane was
+    // explicitly sized above for its longest expected connection status.
     m_wndStatusBar.SetPaneText(2, "");
 
     return 0;
@@ -641,12 +662,12 @@ void CMainFrame::DoMessage(HEMU_MESSAGE *msg)
         if (g_FrameRate == 10000000)
             m_wndStatusBar.SetPaneText(1, "Connecting...");
         else {
-            statustxt.Format("Connected at %dHz", g_AvgFrameRate);
+            // Keep the smoothed value for history/capture calculations, but
+            // display the current full-window sample without another lag.
+            ::CalcNewAvgFrameRate();
+            statustxt.Format("Connected at %d.0 Hz", g_FrameRate);
             m_wndStatusBar.SetPaneText(1, (LPCTSTR)statustxt);
         }
-
-        // Keep an average of the frame rates.
-        ::CalcNewAvgFrameRate();
 
         if (fabs((double)(g_AvgFrameRate - prev_avgfr)) > 5.0f) {
             // Set the median of the heartbeat window.
@@ -666,7 +687,7 @@ void CMainFrame::DoMessage(HEMU_MESSAGE *msg)
 
     case MSG_NO_CONNECT: {
         g_FrameRate = 0;
-        g_AvgFrameRate = 0;
+        ::CalcNewAvgFrameRate();
         m_wndStatusBar.SetPaneText(1, "Not connected");
         m_wndStatusBar.SetPaneText(2, "");
         break;
@@ -991,6 +1012,30 @@ void CMainFrame::OnFly()
     CDebugTrace trace("CMainFrame::OnFly()");
 
     ToggleShowDlg(IDD_DIALOG_FLY, m_FlyDlg);
+}
+
+void CMainFrame::OnToggleJoystick()
+{
+    CJoystickInput &joystick = theApp.GetJoystickInput();
+    const BOOL enable = joystick.IsEnabled() ? FALSE : TRUE;
+    joystick.SetEnabled(enable);
+
+    if (!enable)
+        m_FlyDlg.DisableHardwareJoystick();
+}
+
+void CMainFrame::OnUpdateToggleJoystick(CCmdUI *pCmdUI)
+{
+    pCmdUI->SetCheck(theApp.GetJoystickInput().IsEnabled());
+}
+
+LRESULT CMainFrame::OnJoystickInput(WPARAM wParam, LPARAM lParam)
+{
+    HEMU_JOYSTICK_STATE state;
+    if (theApp.GetJoystickInput().ConsumeLatestState(&state))
+        m_FlyDlg.ProcessHardwareJoystickState(state);
+
+    return 0;
 }
 
 void CMainFrame::OnClearMessages()

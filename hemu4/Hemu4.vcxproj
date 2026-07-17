@@ -730,6 +730,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="JoystickInput.cpp" />
     <ClCompile Include="GlobalEnv.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -910,6 +911,8 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="ExternalTabConfig.cpp" />
+    <ClCompile Include="ExternalToolHostPage.cpp" />
     <ClCompile Include="OutputView.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1543,6 +1546,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
     <ClCompile Include="UltimateGrid\Source\UGXPThemes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\app\config\external_tabs.ini" />
     <None Include="..\app\config\default\Entities.def" />
     <None Include="..\app\config\default\Environment.def" />
     <None Include="..\app\config\default\System.def" />
@@ -1649,6 +1653,7 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
     <ClInclude Include="FilterOutgoingDlg.h" />
     <ClInclude Include="FilterPacketsDlg.h" />
     <ClInclude Include="FlyDlg.h" />
+    <ClInclude Include="JoystickInput.h" />
     <ClInclude Include="GlobalEnv.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="Hat.h" />
@@ -1669,6 +1674,8 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
     <ClInclude Include="NoMWComboBoxEx.h" />
     <ClInclude Include="ObjectStateView.h" />
     <ClInclude Include="ObjectTreeView.h" />
+    <ClInclude Include="ExternalTabConfig.h" />
+    <ClInclude Include="ExternalToolHostPage.h" />
     <ClInclude Include="OutputView.h" />
     <ClInclude Include="PacketDlgAccelerationControl.h" />
     <ClInclude Include="PacketDlgAnimationControl.h" />

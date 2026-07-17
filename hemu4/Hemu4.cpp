@@ -38,12 +38,14 @@
 #include "cigi4.h"
 #include "cigi4types.h"
 #include "CigiProtocolAdapter.h"
+#include "Entity.h"
 #include "globals.h"
 #include "Hemu4.h"
 #include "HemuDoc.h"
 #include "hemumsg.h"
 #include "HemuView.h"
 #include "MainFrm.h"
+#include "ObjectStateView.h"
 #include "ObjectTreeView.h"
 #include "PacketHandlers.h"
 #include "Script.h"
@@ -62,6 +64,7 @@ static const char *kDriverShutdownEventName = "HemuRTStartShutdownEvent";
 static const DWORD kDriverShutdownWaitMs = 3000;
 static const DWORD kDriverTerminateWaitMs = 1000;
 static const int kDriverShutdownMessageAttempts = 50;
+static const double kDefaultOwnshipSpeedKnots = 100.0;
 
 BEGIN_MESSAGE_MAP(CHemuApp, CWinApp)
     //{{AFX_MSG_MAP(CHemuApp)
@@ -141,8 +144,33 @@ void CHemuApp::OnFileOpen()
 CHemuApp::CHemuApp()
     : m_ForceShutdownMutexHandle(NULL),
       m_DriverProcessHandle(NULL),
-      m_IpcInitialized(FALSE)
+      m_IpcInitialized(FALSE),
+      m_InitializationComplete(FALSE)
 {
+}
+
+void CHemuApp::EnsureDefaultOwnship(void)
+{
+    if (!m_InitializationComplete || !m_pMainWnd ||
+        !m_pMainWnd->GetSafeHwnd() || g_DataManager.GetEntity(0)) {
+        return;
+    }
+
+    TEMPL_ENTITY defaultType;
+    TEMPL_ENTITY *templ = g_DataManager.GetEntityTempl(0);
+
+    if (!templ) {
+        defaultType.Type = 0;
+        defaultType.Name = "None";
+        defaultType.Class = ENTITY_CLASS_FIXEDWING;
+        templ = &defaultType;
+    }
+
+    CEntity *ownship = GetMainFrame().AddNewEntity(0, templ);
+    if (ownship) {
+        ownship->SetSpeed(KnotsToMPS(kDefaultOwnshipSpeedKnots), TRUE);
+        GetMainFrame().GetObjectStateView().RefreshActiveView();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -246,15 +274,6 @@ BOOL CHemuApp::InitInstance()
 
     ALLOC_CONSOLE(1024, 1024);
 
-    // Initialize DirectInput for joystick use.
-    if (DirectInput8Create(m_hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&g_pIDirectInput, NULL) == DI_OK) {
-        // Enumerate only the attached joysticks.
-        g_pIDirectInput->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, NULL, DIEDFL_ATTACHEDONLY);
-    } else {
-        g_pIDirectInput = NULL;
-        g_pJoystick = NULL;
-    }
-
     // Set up CCU.
     InitializeCCU(TERRAIN_DEFAULT_RADIUS, TERRAIN_DEFAULT_FLATTENING);
 
@@ -290,6 +309,12 @@ BOOL CHemuApp::InitInstance()
 
     // Set the CIGI version and byte order.
     SetupCigiOptionsFromRegistry();
+
+    m_InitializationComplete = TRUE;
+    if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
+        EnsureDefaultOwnship();
+
+    m_JoystickInput.Start(m_hInstance, m_pMainWnd->GetSafeHwnd());
 
     return TRUE;
 }
@@ -732,6 +757,7 @@ void CHemuApp::OnAppAbout()
 
 int CHemuApp::ExitInstance()
 {
+    m_JoystickInput.Stop();
     ShutdownDriver();
 
     FREE_CONSOLE();

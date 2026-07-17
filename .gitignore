@@ -37,6 +37,7 @@ ipch/
 !app/scenarios/*.sf4
 app/captures/*.cap
 app/config/setup_profiles.user.ini
+app/config/external_tabs.user.ini
 /dist/
 /PACKAGE-NOTES.md
 /CIGI_PROTOCOL_ARCHITECTURE.md

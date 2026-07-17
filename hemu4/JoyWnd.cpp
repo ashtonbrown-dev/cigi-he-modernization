@@ -107,7 +107,7 @@ void CJoyWnd::OnMouseMove(UINT nFlags, CPoint point)
     CWnd::OnMouseMove(nFlags, point);
 }
 
-void CJoyWnd::SetPosX(const long x)
+void CJoyWnd::SetPosX(const long x, const BOOL notify)
 {
     if (x == m_PosX)
         return;
@@ -116,11 +116,12 @@ void CJoyWnd::SetPosX(const long x)
     m_BallPos.x = CalcWindowX(x);
     DrawBall();
 
-    // Post a message.
-    GetParent()->PostMessage(WM_CHANGEJOYPOS, (WPARAM)m_PosX, (LPARAM)m_PosY);
+    if (notify)
+        GetParent()->PostMessage(WM_CHANGEJOYPOS, (WPARAM)m_PosX,
+                                 (LPARAM)m_PosY);
 }
 
-void CJoyWnd::SetPosY(const long y)
+void CJoyWnd::SetPosY(const long y, const BOOL notify)
 {
     if (y == m_PosY)
         return;
@@ -129,8 +130,9 @@ void CJoyWnd::SetPosY(const long y)
     m_BallPos.y = CalcWindowY(y);
     DrawBall();
 
-    // Post a message.
-    GetParent()->PostMessage(WM_CHANGEJOYPOS, (WPARAM)m_PosX, (LPARAM)m_PosY);
+    if (notify)
+        GetParent()->PostMessage(WM_CHANGEJOYPOS, (WPARAM)m_PosX,
+                                 (LPARAM)m_PosY);
 }
 
 void CJoyWnd::OnPaint()

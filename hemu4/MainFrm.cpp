@@ -43,6 +43,7 @@
 #include "SetupDlg.h"
 #include "DirDialog.h"
 #include "TerrainDB.h"
+#include "ExternalToolHostPage.h"
 #include ".\mainfrm.h"
 
 #ifdef _DEBUG
@@ -52,6 +53,159 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #define TIMER_ID_REFRESH    1
+#define TIMER_ID_KEYBOARD_FLIGHT 2
+#define KEYBOARD_FLIGHT_TIMER_MS 20
+
+namespace
+{
+const int KeyboardFlightStatusPane = 3;
+const UINT_PTR KeyboardFlightToolId = 1;
+LPCTSTR const KeyboardFlightToolTipText =
+    _T("Keyboard flight: Ctrl+K toggles; W/S pitch, A/D roll, ")
+    _T("Q/E yaw, R/F speed. Double-click to toggle.");
+const COLORREF KeyboardFlightEnabledBackground = RGB(190, 235, 198);
+const COLORREF KeyboardFlightEnabledText = RGB(0, 72, 24);
+const COLORREF KeyboardFlightDisabledBackground = RGB(245, 220, 220);
+const COLORREF KeyboardFlightDisabledText = RGB(105, 45, 45);
+
+enum KeyboardFlightKey
+{
+    KeyboardFlightW = 0x0001,
+    KeyboardFlightS = 0x0002,
+    KeyboardFlightA = 0x0004,
+    KeyboardFlightD = 0x0008,
+    KeyboardFlightQ = 0x0010,
+    KeyboardFlightE = 0x0020,
+    KeyboardFlightR = 0x0040,
+    KeyboardFlightF = 0x0080
+};
+
+const DWORD KeyboardFlightAxisKeys =
+    KeyboardFlightW | KeyboardFlightS
+    | KeyboardFlightA | KeyboardFlightD
+    | KeyboardFlightQ | KeyboardFlightE;
+const DWORD KeyboardFlightThrottleKeys =
+    KeyboardFlightR | KeyboardFlightF;
+
+DWORD GetKeyboardFlightKey(const UINT virtualKey)
+{
+    switch (virtualKey) {
+    case 'W': return KeyboardFlightW;
+    case 'S': return KeyboardFlightS;
+    case 'A': return KeyboardFlightA;
+    case 'D': return KeyboardFlightD;
+    case 'Q': return KeyboardFlightQ;
+    case 'E': return KeyboardFlightE;
+    case 'R': return KeyboardFlightR;
+    case 'F': return KeyboardFlightF;
+    default: return 0;
+    }
+}
+}
+
+CHemuStatusBar::CHemuStatusBar()
+{
+    m_KeyboardFlightEnabled = FALSE;
+}
+
+BEGIN_MESSAGE_MAP(CHemuStatusBar, CStatusBar)
+    ON_WM_SIZE()
+END_MESSAGE_MAP()
+
+void CHemuStatusBar::InitializeKeyboardFlightToolTip(void)
+{
+    if (!GetSafeHwnd() || m_KeyboardFlightToolTip.GetSafeHwnd())
+        return;
+
+    if (!m_KeyboardFlightToolTip.Create(
+            this, TTS_ALWAYSTIP | TTS_NOPREFIX))
+        return;
+
+    CRect paneRect;
+    GetItemRect(KeyboardFlightStatusPane, &paneRect);
+
+    TOOLINFO toolInfo;
+    ZeroMemory(&toolInfo, sizeof(toolInfo));
+    toolInfo.cbSize = sizeof(toolInfo);
+    toolInfo.uFlags = TTF_SUBCLASS;
+    toolInfo.hwnd = GetSafeHwnd();
+    toolInfo.uId = KeyboardFlightToolId;
+    toolInfo.rect = paneRect;
+    toolInfo.lpszText = const_cast<LPTSTR>(KeyboardFlightToolTipText);
+    m_KeyboardFlightToolTip.SendMessage(
+        TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&toolInfo));
+    m_KeyboardFlightToolTip.Activate(TRUE);
+}
+
+void CHemuStatusBar::OnSize(UINT nType, int cx, int cy)
+{
+    CStatusBar::OnSize(nType, cx, cy);
+    UpdateKeyboardFlightToolRect();
+}
+
+void CHemuStatusBar::UpdateKeyboardFlightToolRect(void)
+{
+    if (!GetSafeHwnd() || !m_KeyboardFlightToolTip.GetSafeHwnd())
+        return;
+
+    CRect paneRect;
+    GetItemRect(KeyboardFlightStatusPane, &paneRect);
+
+    TOOLINFO toolInfo;
+    ZeroMemory(&toolInfo, sizeof(toolInfo));
+    toolInfo.cbSize = sizeof(toolInfo);
+    toolInfo.hwnd = GetSafeHwnd();
+    toolInfo.uId = KeyboardFlightToolId;
+    toolInfo.rect = paneRect;
+    m_KeyboardFlightToolTip.SendMessage(
+        TTM_NEWTOOLRECT, 0, reinterpret_cast<LPARAM>(&toolInfo));
+}
+
+void CHemuStatusBar::SetKeyboardFlightEnabled(const BOOL enabled)
+{
+    m_KeyboardFlightEnabled = enabled;
+
+    if (GetSafeHwnd()) {
+        CRect paneRect;
+        GetItemRect(KeyboardFlightStatusPane, &paneRect);
+        InvalidateRect(&paneRect, FALSE);
+        UpdateWindow();
+    }
+}
+
+void CHemuStatusBar::DrawItem(LPDRAWITEMSTRUCT drawItem)
+{
+    if (!drawItem)
+        return;
+
+    CDC *dc = CDC::FromHandle(drawItem->hDC);
+    if (!dc)
+        return;
+
+    CRect paneRect(drawItem->rcItem);
+    dc->FillSolidRect(
+        &paneRect,
+        m_KeyboardFlightEnabled
+            ? KeyboardFlightEnabledBackground
+            : KeyboardFlightDisabledBackground);
+
+    const int savedDc = dc->SaveDC();
+    dc->SetBkMode(TRANSPARENT);
+    dc->SetTextColor(
+        m_KeyboardFlightEnabled
+            ? KeyboardFlightEnabledText
+            : KeyboardFlightDisabledText);
+
+    CFont *font = GetFont();
+    if (font)
+        dc->SelectObject(font);
+
+    dc->DrawText(
+        "KBD FLY", &paneRect,
+        DT_CENTER | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
+
+    dc->RestoreDC(savedDc);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -61,6 +215,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     //{{AFX_MSG_MAP(CMainFrame)
     ON_WM_CREATE()
+    ON_MESSAGE(WM_APPCOMMAND, OnAppCommand)
     ON_COMMAND(ID_VIEW_CONFIGURATION, OnViewConfiguration)
     ON_WM_CLOSE()
     ON_COMMAND(ID_TREE_ADD, OnAddNode)
@@ -79,6 +234,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_COMMAND(ID_TOOLS_JOYSTICK_ENABLE, OnToggleJoystick)
     ON_UPDATE_COMMAND_UI(ID_TOOLS_JOYSTICK_ENABLE, OnUpdateToggleJoystick)
     ON_MESSAGE(WM_HEMU_JOYSTICK_INPUT, OnJoystickInput)
+    ON_MESSAGE(WM_HEMU_EXTERNAL_TOOL_EMBEDDED, OnExternalToolEmbedded)
+    ON_COMMAND(ID_TOOLS_KEYBOARD_FLIGHT, OnToggleKeyboardFlight)
+    ON_UPDATE_COMMAND_UI(
+        ID_TOOLS_KEYBOARD_FLIGHT, OnUpdateToggleKeyboardFlight)
+    ON_WM_ACTIVATEAPP()
+    ON_NOTIFY(NM_DBLCLK, AFX_IDW_STATUS_BAR, OnStatusBarDoubleClick)
     ON_COMMAND(ID_VIEW_CLEAR_MESSAGES, OnClearMessages)
     ON_COMMAND(ID_FILE_LOAD_CONFIG, OnLoadConfig)
     ON_COMMAND(ID_WATCH_CAPTURE, OnWatchCapture)
@@ -159,6 +320,7 @@ static UINT indicators[] = {
     ID_SEPARATOR,           // status line indicator
     IDS_INDICATOR_FR_STATUS,
     IDS_INDICATOR_IGMODE,
+    IDS_INDICATOR_KBDFLY,
     ID_INDICATOR_CAPS,
     ID_INDICATOR_NUM,
     ID_INDICATOR_SCRL,
@@ -214,6 +376,10 @@ CMainFrame::CMainFrame() :
     m_bHoldAnimPlay = FALSE;
     m_bHoldAnimPause = FALSE;
     m_bHoldAnimStop = FALSE;
+    m_TransientStatusUntil = 0;
+    m_KeyboardFlightEnabled = FALSE;
+    m_KeyboardFlightKeys = 0;
+    m_LastKeyboardThrottleTick = GetTickCount();
 }
 
 CMainFrame::~CMainFrame()
@@ -237,7 +403,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndReBar.AddBar(&m_wndMainToolBar);
     m_wndReBar.AddBar(&m_wndDlgBar);
 
-    m_wndStatusBar.Create(this);
+    m_wndStatusBar.CreateEx(this, SBARS_TOOLTIPS);
     m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 
     UINT frameRatePaneId = 0;
@@ -251,6 +417,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     CFont *oldStatusFont = statusFont ? statusDC.SelectObject(statusFont) : NULL;
     const int connectedTextWidth =
         statusDC.GetTextExtent("Connected at 100.0 Hz").cx + 12;
+    const int keyboardTextWidth =
+        statusDC.GetTextExtent("KBD FLY").cx + 10;
     if (oldStatusFont)
         statusDC.SelectObject(oldStatusFont);
 
@@ -258,6 +426,21 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_wndStatusBar.SetPaneInfo(1, frameRatePaneId, frameRatePaneStyle,
                                    connectedTextWidth);
     }
+
+    UINT keyboardPaneId = 0;
+    UINT keyboardPaneStyle = 0;
+    int keyboardPaneWidth = 0;
+    m_wndStatusBar.GetPaneInfo(
+        KeyboardFlightStatusPane,
+        keyboardPaneId,
+        keyboardPaneStyle,
+        keyboardPaneWidth);
+    m_wndStatusBar.SetPaneInfo(
+        KeyboardFlightStatusPane,
+        keyboardPaneId,
+        keyboardPaneStyle | SBPS_OWNERDRAW,
+        keyboardTextWidth);
+    m_wndStatusBar.InitializeKeyboardFlightToolTip();
 
     // Load the default configuration.
     LoadEntityConfig("config\\default\\Entities.def");
@@ -269,6 +452,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     // The 2nd pane should have no text by default. The frame-rate pane was
     // explicitly sized above for its longest expected connection status.
     m_wndStatusBar.SetPaneText(2, "");
+    UpdateKeyboardFlightStatus();
 
     return 0;
 }
@@ -339,6 +523,99 @@ void CMainFrame::KillTimer(void)
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT &cs)
 {
     return CFrameWnd::PreCreateWindow(cs);
+}
+
+BOOL CMainFrame::HandleKeyboardFlightMessage(MSG *pMsg)
+{
+    if (!pMsg)
+        return FALSE;
+
+    const BOOL keyDown =
+        pMsg->message == WM_KEYDOWN || pMsg->message == WM_SYSKEYDOWN;
+    const BOOL keyUp =
+        pMsg->message == WM_KEYUP || pMsg->message == WM_SYSKEYUP;
+    const BOOL controlDown = (::GetKeyState(VK_CONTROL) & 0x8000) != 0;
+    const BOOL altDown = (::GetKeyState(VK_MENU) & 0x8000) != 0;
+
+    if (keyDown && pMsg->wParam == 'K' && controlDown && !altDown) {
+        if (!(pMsg->lParam & 0x40000000))
+            OnToggleKeyboardFlight();
+        return TRUE;
+    }
+
+    if (!m_KeyboardFlightEnabled)
+        return FALSE;
+
+    if (keyDown && (pMsg->wParam == VK_F5 || pMsg->wParam == VK_F6)) {
+        DisarmKeyboardFlight(
+            "Keyboard flight disabled for application command");
+        return FALSE;
+    }
+
+    const BOOL mouseInteraction =
+        pMsg->message == WM_LBUTTONDOWN
+        || pMsg->message == WM_RBUTTONDOWN
+        || pMsg->message == WM_MBUTTONDOWN;
+    if (mouseInteraction
+        && IsKeyboardFlightInteractionWindow(pMsg->hwnd)) {
+        DisarmKeyboardFlight(
+            "Keyboard flight disabled for UI interaction");
+        return FALSE;
+    }
+
+    if (pMsg->message == WM_CHAR) {
+        DisarmKeyboardFlight(
+            "Keyboard flight disabled for keyboard entry");
+        return FALSE;
+    }
+
+    if (!keyDown && !keyUp)
+        return FALSE;
+
+    const DWORD key = GetKeyboardFlightKey((UINT)pMsg->wParam);
+    if (!key) {
+        if (keyDown && (controlDown || altDown)) {
+            DisarmKeyboardFlight(
+                "Keyboard flight disabled for application command");
+        }
+        return FALSE;
+    }
+
+    const BOOL keyWasActive = (m_KeyboardFlightKeys & key) != 0;
+    if (keyDown) {
+        if (controlDown || altDown
+            || IsKeyboardFlightInteractionWindow(::GetFocus())) {
+            DisarmKeyboardFlight(
+                "Keyboard flight disabled for UI interaction");
+            return FALSE;
+        }
+    } else if (!keyWasActive) {
+        return FALSE;
+    }
+
+    const DWORD oldKeys = m_KeyboardFlightKeys;
+    if (keyDown)
+        m_KeyboardFlightKeys |= key;
+    else
+        m_KeyboardFlightKeys &= ~key;
+
+    if ((oldKeys ^ m_KeyboardFlightKeys) & KeyboardFlightAxisKeys)
+        ApplyKeyboardFlightControls();
+
+    if ((oldKeys ^ m_KeyboardFlightKeys) & KeyboardFlightThrottleKeys) {
+        const int oldDirection =
+            ((oldKeys & KeyboardFlightR) ? 1 : 0)
+            - ((oldKeys & KeyboardFlightF) ? 1 : 0);
+        const int newDirection =
+            ((m_KeyboardFlightKeys & KeyboardFlightR) ? 1 : 0)
+            - ((m_KeyboardFlightKeys & KeyboardFlightF) ? 1 : 0);
+        if (newDirection != oldDirection)
+            m_LastKeyboardThrottleTick = GetTickCount();
+        if (!newDirection)
+            m_FlyDlg.AdjustKeyboardThrottle(0, 0.0);
+    }
+
+    return TRUE;
 }
 
 HTREEITEM CMainFrame::AddItemToEntityTree(LPCTSTR name, const int image,
@@ -470,6 +747,36 @@ CEntity *CMainFrame::AddNewEntity(const int id, TEMPL_ENTITY *templ)
     return entity;
 }
 
+CEntity *CMainFrame::AddNewEntity(const int id, const int type)
+{
+    CDebugTrace trace("CMainFrame::AddNewEntity(int, int)");
+
+    if (g_DataManager.GetEntity(id)) {
+        CString message;
+        message.Format("Entity ID %d is already in use.", id);
+        AfxMessageBox(message, MB_ICONEXCLAMATION);
+        return NULL;
+    }
+
+    TEMPL_ENTITY *templ = GetEntityTempl(type);
+    if (templ)
+        return AddNewEntity(id, templ);
+
+    // If we are creating an entity of Type 0 but haven't configured this
+    // type, create a default template.
+    if (type == 0) {
+        TEMPL_ENTITY default_type;
+        default_type.Type = 0;
+        default_type.Name = "None";
+        default_type.Class = ENTITY_CLASS_FIXEDWING;
+
+        return AddNewEntity(id, &default_type);
+    }
+
+    AfxMessageBox("Invalid entity type specified.", MB_ICONEXCLAMATION);
+    return NULL;
+}
+
 void CMainFrame::AddEntityToGUI(CEntity *entity)
 {
     CDebugTrace trace("CMainFrame::AddEntityToGUI(CEntity *)");
@@ -513,30 +820,11 @@ void CMainFrame::OnAddNode()
 {
     CDebugTrace trace("CMainFrame::OnAddNode()");
 
-    CAddEntityDlg dlg;
+    CAddEntityDlg dlg(this);
     if (dlg.DoModal() == IDCANCEL)
         return;
 
-    CEntity *entity = NULL;
-    TEMPL_ENTITY *templ = GetEntityTempl(dlg.GetType());
-    if (templ) {
-        AddNewEntity(dlg.GetID(), templ);
-    } else {
-        // If we are creating an entity of Type 0 but haven't
-        // configured this type, create a default template.
-        if (dlg.GetType() == 0) {
-            TEMPL_ENTITY default_type;
-            default_type.Type = 0;
-            default_type.Name = "None";
-            default_type.Class = ENTITY_CLASS_FIXEDWING;
-
-            AddNewEntity(dlg.GetID(), &default_type);
-        } else {
-            AfxMessageBox("Invalid entity type specified.", MB_ICONEXCLAMATION);
-        }
-    }
-
-    return;
+    AddNewEntity(dlg.GetID(), dlg.GetType());
 }
 
 void CMainFrame::OnUpdateTreeAdd(CCmdUI *pCmdUI)
@@ -606,6 +894,33 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 {
     CString t_str;
 
+    if (nIDEvent == TIMER_ID_KEYBOARD_FLIGHT) {
+        if (m_KeyboardFlightEnabled) {
+            if (IsKeyboardFlightInteractionWindow(::GetFocus())) {
+                DisarmKeyboardFlight(
+                    "Keyboard flight disabled for UI interaction");
+            } else {
+                if (m_KeyboardFlightKeys & KeyboardFlightAxisKeys)
+                    ApplyKeyboardFlightControls();
+
+                const DWORD now = GetTickCount();
+                const double elapsedSeconds = min(
+                    0.1, (now - m_LastKeyboardThrottleTick) / 1000.0);
+                const int throttleDirection =
+                    ((m_KeyboardFlightKeys & KeyboardFlightR) ? 1 : 0)
+                    - ((m_KeyboardFlightKeys & KeyboardFlightF) ? 1 : 0);
+                if (throttleDirection) {
+                    m_FlyDlg.AdjustKeyboardThrottle(
+                        throttleDirection, elapsedSeconds);
+                }
+                m_LastKeyboardThrottleTick = now;
+            }
+        }
+
+        CFrameWnd::OnTimer(nIDEvent);
+        return;
+    }
+
     if (!::GetFreezeFlag()) {
         GetObjectStateView().RefreshActiveView();
         GetEntityStateView().GetCollDetPropPage().ClearCollisionData();
@@ -619,6 +934,12 @@ void CMainFrame::OnTimer(UINT nIDEvent)
     m_bHoldAnimPlay = FALSE;
     m_bHoldAnimPause = FALSE;
     m_bHoldAnimStop = FALSE;
+
+    if (m_TransientStatusUntil
+        && (LONG)(GetTickCount() - m_TransientStatusUntil) >= 0) {
+        m_TransientStatusUntil = 0;
+        SetMessageText(AFX_IDS_IDLEMESSAGE);
+    }
 
     CFrameWnd::OnTimer(nIDEvent);
 }
@@ -961,6 +1282,29 @@ void CMainFrame::OnExerciseRun()
     PostDriverMsg(msg);
 }
 
+void CMainFrame::OnExerciseRunPause()
+{
+    if (::GetFreezeFlag())
+        OnExerciseRun();
+    else
+        OnExercisePause();
+}
+
+LRESULT CMainFrame::OnAppCommand(WPARAM wParam, LPARAM lParam)
+{
+    if (GET_APPCOMMAND_LPARAM(lParam)
+        == APPCOMMAND_MEDIA_PLAY_PAUSE) {
+        if (m_KeyboardFlightEnabled) {
+            DisarmKeyboardFlight(
+                "Keyboard flight disabled for application command");
+        }
+        OnExerciseRunPause();
+        return TRUE;
+    }
+
+    return CFrameWnd::DefWindowProc(WM_APPCOMMAND, wParam, lParam);
+}
+
 void CMainFrame::OnUpdateExerciseRun(CCmdUI *pCmdUI)
 {
     pCmdUI->Enable((BOOL)::GetFreezeFlag());
@@ -1036,6 +1380,152 @@ LRESULT CMainFrame::OnJoystickInput(WPARAM wParam, LPARAM lParam)
         m_FlyDlg.ProcessHardwareJoystickState(state);
 
     return 0;
+}
+
+LRESULT CMainFrame::OnExternalToolEmbedded(
+    WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+    const HWND foregroundWindow = ::GetForegroundWindow();
+    const HWND frameWindow = GetSafeHwnd();
+    if (foregroundWindow
+        && foregroundWindow != frameWindow
+        && !::IsChild(frameWindow, foregroundWindow)
+        && ::GetAncestor(foregroundWindow, GA_ROOT) != frameWindow) {
+        return 0;
+    }
+
+    SetForegroundWindow();
+    SetActiveWindow();
+    SetFocus();
+    return 0;
+}
+
+void CMainFrame::OnToggleKeyboardFlight()
+{
+    if (m_KeyboardFlightEnabled) {
+        DisarmKeyboardFlight("Keyboard flight OFF", 2000);
+        return;
+    }
+
+    if (!g_DataManager.GetSelectedEntity()) {
+        ShowTransientStatus(
+            "Keyboard flight requires a selected entity", 3000);
+        return;
+    }
+
+    if (!SetTimer(
+        TIMER_ID_KEYBOARD_FLIGHT, KEYBOARD_FLIGHT_TIMER_MS, NULL)) {
+        AfxMessageBox(
+            "Unable to start keyboard flight input.",
+            MB_OK | MB_ICONEXCLAMATION);
+        return;
+    }
+
+    m_KeyboardFlightEnabled = TRUE;
+    m_KeyboardFlightKeys = 0;
+    m_LastKeyboardThrottleTick = GetTickCount();
+    UpdateKeyboardFlightStatus();
+    m_wndStatusBar.SetFocus();
+    ShowTransientStatus(
+        "Keyboard flight ON: W/S pitch, A/D roll, Q/E yaw, R/F speed",
+        5000);
+}
+
+void CMainFrame::OnUpdateToggleKeyboardFlight(CCmdUI *pCmdUI)
+{
+    pCmdUI->SetCheck(m_KeyboardFlightEnabled);
+    pCmdUI->Enable(
+        m_KeyboardFlightEnabled
+        || g_DataManager.GetSelectedEntity() != NULL);
+}
+
+void CMainFrame::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+{
+    if (!bActive && m_KeyboardFlightEnabled)
+        DisarmKeyboardFlight(
+            "Keyboard flight disabled: HEMU lost focus");
+
+    CFrameWnd::OnActivateApp(bActive, dwThreadID);
+}
+
+void CMainFrame::OnStatusBarDoubleClick(
+    NMHDR *pNMHDR, LRESULT *pResult)
+{
+    const NMMOUSE *mouseInfo = reinterpret_cast<const NMMOUSE *>(pNMHDR);
+    if (mouseInfo) {
+        CRect keyboardPaneRect;
+        m_wndStatusBar.GetItemRect(
+            KeyboardFlightStatusPane, &keyboardPaneRect);
+        if (keyboardPaneRect.PtInRect(mouseInfo->pt))
+            OnToggleKeyboardFlight();
+    }
+
+    if (pResult)
+        *pResult = 0;
+}
+
+void CMainFrame::ReleaseKeyboardFlightControls(void)
+{
+    if (m_KeyboardFlightKeys & KeyboardFlightAxisKeys)
+        m_FlyDlg.ProcessKeyboardFlightState(0, 0, 0);
+    if (m_KeyboardFlightKeys & KeyboardFlightThrottleKeys)
+        m_FlyDlg.AdjustKeyboardThrottle(0, 0.0);
+
+    m_KeyboardFlightKeys = 0;
+    m_LastKeyboardThrottleTick = GetTickCount();
+}
+
+void CMainFrame::ApplyKeyboardFlightControls(void)
+{
+    const int rollDirection =
+        ((m_KeyboardFlightKeys & KeyboardFlightD) ? 1 : 0)
+        - ((m_KeyboardFlightKeys & KeyboardFlightA) ? 1 : 0);
+    const int pitchDirection =
+        ((m_KeyboardFlightKeys & KeyboardFlightW) ? 1 : 0)
+        - ((m_KeyboardFlightKeys & KeyboardFlightS) ? 1 : 0);
+    const int yawDirection =
+        ((m_KeyboardFlightKeys & KeyboardFlightE) ? 1 : 0)
+        - ((m_KeyboardFlightKeys & KeyboardFlightQ) ? 1 : 0);
+
+    m_FlyDlg.ProcessKeyboardFlightState(
+        rollDirection, pitchDirection, yawDirection);
+}
+
+void CMainFrame::UpdateKeyboardFlightStatus(void)
+{
+    if (m_wndStatusBar.GetSafeHwnd())
+        m_wndStatusBar.SetKeyboardFlightEnabled(m_KeyboardFlightEnabled);
+}
+
+void CMainFrame::DisarmKeyboardFlight(
+    LPCTSTR statusText, const DWORD durationMs)
+{
+    if (!m_KeyboardFlightEnabled)
+        return;
+
+    ReleaseKeyboardFlightControls();
+    m_FlyDlg.DisableKeyboardFlight();
+    CWnd::KillTimer(TIMER_ID_KEYBOARD_FLIGHT);
+    m_KeyboardFlightEnabled = FALSE;
+    UpdateKeyboardFlightStatus();
+
+    if (statusText && statusText[0])
+        ShowTransientStatus(statusText, durationMs);
+}
+
+BOOL CMainFrame::IsKeyboardFlightInteractionWindow(
+    const HWND window) const
+{
+    if (!window || window == GetSafeHwnd())
+        return FALSE;
+
+    const HWND statusBar = m_wndStatusBar.GetSafeHwnd();
+    if (window == statusBar
+        || (statusBar && ::IsChild(statusBar, window))) {
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 void CMainFrame::OnClearMessages()
@@ -1940,6 +2430,13 @@ void CMainFrame::SkipThisFrame(void)
 void CMainFrame::SetIGModeStatusText(LPCTSTR text)
 {
     m_wndStatusBar.SetPaneText(2, text);
+}
+
+void CMainFrame::ShowTransientStatus(
+    LPCTSTR text, const DWORD durationMs)
+{
+    SetMessageText(text);
+    m_TransientStatusUntil = GetTickCount() + durationMs;
 }
 
 void CMainFrame::PopulateDatabaseCombo(void)

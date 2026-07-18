@@ -7,6 +7,8 @@
 
 #include "ExternalTabConfig.h"
 
+#define WM_HEMU_EXTERNAL_TOOL_EMBEDDED (WM_APP + 21)
+
 class CExternalToolHostPage : public CWnd
 {
 public:

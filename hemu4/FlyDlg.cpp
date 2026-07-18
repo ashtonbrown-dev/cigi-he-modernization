@@ -44,6 +44,23 @@
 #include "hemu4.h"
 #include "hemumsg.h"
 
+#ifndef TBM_SETBKCOLOR
+#define TBM_SETBKCOLOR (WM_USER + 19)
+#endif
+
+namespace
+{
+const double FixedWingThrottlePickupToleranceKnots = 5.0;
+const double OtherThrottlePickupTolerance = 5.0;
+const double RotorcraftThrottlePickupTolerance = 2.0;
+const double KeyboardRollRateDegreesPerSecond = 50.0;
+const double KeyboardPitchRateDegreesPerSecond = 20.0;
+const double KeyboardYawRateDegreesPerSecond = 15.0;
+const double KeyboardSpeedRatePerSecond = 50.0;
+const double KeyboardCollectiveRatePerSecond = 25.0;
+const COLORREF AcquiredThrottleBackground = RGB(202, 238, 202);
+}
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -73,6 +90,16 @@ CFlyDlg::CFlyDlg(CWnd *pParent /*=NULL*/)
     m_PovImmediate = FALSE;
     m_HardwareEntityId = -1;
     m_LastHardwarePovDelta = 0;
+    m_HardwareThrottleAvailable = FALSE;
+    m_HardwareThrottleAcquired = FALSE;
+    m_HasLastHardwareThrottleValue = FALSE;
+    m_LastHardwareThrottleValue = 0.0;
+    m_KeyboardAxesActive = FALSE;
+    m_KeyboardEntityId = -1;
+    m_KeyboardThrottleActive = FALSE;
+    m_HasKeyboardThrottleValue = FALSE;
+    m_KeyboardThrottleEntityId = -1;
+    m_KeyboardThrottleValue = 0.0;
 
     //{{AFX_DATA_INIT(CFlyDlg)
     //}}AFX_DATA_INIT
@@ -164,6 +191,14 @@ void CFlyDlg::RefreshView(void)
         entity = g_DataManager.GetEntity(entity->GetParent());
     }
 
+    if (m_HardwareThrottleAcquired
+        && entity->GetID() == m_HardwareEntityId
+        && m_HasLastHardwareThrottleValue
+        && fabs(GetEntityThrottleValue(entity)
+                - m_LastHardwareThrottleValue) > 0.1) {
+        DisengageHardwareThrottle();
+    }
+
     if (prev_entity_class != entity->GetClass())
         ConfigureSpeedSlider();
 
@@ -204,6 +239,7 @@ void CFlyDlg::RefreshView(void)
         temp.Format("%d", roundedEntitySpd);
     }
     m_Speed.SetWindowText((LPCTSTR)temp);
+    UpdateHardwareThrottleVisual();
 
     DOF dof = entity->GetDofs();
 
@@ -567,6 +603,8 @@ void CFlyDlg::DoMouseWheelThrottle(UINT nFlags, short zDelta, CPoint pt)
         break;
     }
     }
+
+    DisengageHardwareThrottle();
 }
 
 BOOL CFlyDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
@@ -643,6 +681,8 @@ void CFlyDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
             break;
         }
         }
+
+        DisengageHardwareThrottle();
     }
 
     CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -677,6 +717,8 @@ void CFlyDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 			entity->SetSpeed(1200 - pos);
 			break;
     }
+
+    DisengageHardwareThrottle();
 
     *pResult = 0;
 }
@@ -726,7 +768,11 @@ void CFlyDlg::ProcessHardwareJoystickState(
             ApplyHardwareRates(previousEntity, neutralState, 0);
         }
         m_HardwareEntityId = selectedEntityId;
+        m_HardwareThrottleAcquired = FALSE;
+        m_HasLastHardwareThrottleValue = FALSE;
+        UpdateHardwareThrottleVisual();
     }
+    m_HardwareThrottleAvailable = state.hasThrottle;
 
     int povDirection = 0;
     if (state.pov == 0)
@@ -768,11 +814,36 @@ void CFlyDlg::ProcessHardwareJoystickState(
     }
 
     if (entity) {
+        if (state.hasThrottle && !m_KeyboardThrottleActive) {
+            const double hardwareThrottle =
+                GetHardwareThrottleValue(entity, state);
+            const double entityThrottle = GetEntityThrottleValue(entity);
+
+            if (!m_HardwareThrottleAcquired
+                && fabs(hardwareThrottle - entityThrottle)
+                   <= GetHardwareThrottleTolerance(entity)) {
+                AcquireHardwareThrottle(entity);
+            } else if (entityChanged && !m_HardwareThrottleAcquired) {
+                ShowHardwareThrottleWaitingStatus(entity);
+            }
+
+            if (m_HardwareThrottleAcquired) {
+                if (fabs(hardwareThrottle - entityThrottle) > 0.01)
+                    SetEntityThrottleValue(entity, hardwareThrottle);
+                m_LastHardwareThrottleValue = hardwareThrottle;
+                m_HasLastHardwareThrottleValue = TRUE;
+            }
+        } else if (m_HardwareThrottleAcquired) {
+            DisengageHardwareThrottle();
+        }
+
         // Hardware rates persist in the entity. Reapplying an unchanged,
         // centered device here would overwrite the on-screen joystick at the
         // hardware polling rate. Apply only when the physical input changes.
-        if (entityChanged || hardwareAxesChanged || povRateChanged)
+        if (!m_KeyboardAxesActive
+            && (entityChanged || hardwareAxesChanged || povRateChanged)) {
             ApplyHardwareRates(entity, state, povDelta);
+        }
 
         const BOOL repeatPov = m_PovDirection
             && heldMilliseconds >= 220
@@ -789,10 +860,18 @@ void CFlyDlg::ProcessHardwareJoystickState(
                     if (GetSafeHwnd())
                         m_SpeedSlider.SetPos(100 - collective);
                 } else {
-                    double speed = entity->GetSpeed() + povDelta;
-                    speed = max(-300.0, min(1200.0, speed));
-                    entity->SetSpeed(speed);
+                    if (entity->GetClass() == ENTITY_CLASS_FIXEDWING) {
+                        double speed =
+                            MPSToKnots(entity->GetSpeed()) + povDelta;
+                        speed = max(0.0, min(1200.0, speed));
+                        entity->SetSpeed(KnotsToMPS(speed));
+                    } else {
+                        double speed = entity->GetSpeed() + povDelta;
+                        speed = max(0.0, min(1200.0, speed));
+                        entity->SetSpeed(speed);
+                    }
                 }
+                DisengageHardwareThrottle();
             }
 
             m_PovImmediate = FALSE;
@@ -803,7 +882,6 @@ void CFlyDlg::ProcessHardwareJoystickState(
     const BOOL button0Pressed = (state.buttons[0] & 0x80) != 0;
     const BOOL button1Pressed = (state.buttons[1] & 0x80) != 0;
     const BOOL button2Pressed = (state.buttons[2] & 0x80) != 0;
-    const BOOL button3Pressed = (state.buttons[3] & 0x80) != 0;
     const BOOL button4Pressed = (state.buttons[4] & 0x80) != 0;
 
     if (button0Pressed && (!m_HasPreviousHardwareState
@@ -826,23 +904,11 @@ void CFlyDlg::ProcessHardwareJoystickState(
         OnButtonFreezeResume();
     }
 
-    if (button3Pressed && (!m_HasPreviousHardwareState
-        || !(m_PreviousHardwareState.buttons[3] & 0x80))) {
-        if (entity) {
-            const int newMode = (entity->GetFlyMode() + 1) % 4;
-            entity->SetFlyMode(newMode);
-            if (GetSafeHwnd())
-                m_FlyModeCombo.SetCurSel(newMode);
-            theApp.GetMainFrame().GetEntityStateView().RefreshFlyMode(newMode);
-            ApplyHardwareRates(entity, state, povDelta);
-        }
-    }
-
     if (button4Pressed && (!m_HasPreviousHardwareState
         || !(m_PreviousHardwareState.buttons[4] & 0x80))) {
         m_HardwarePrecision = (m_HardwarePrecision + 1) % 4;
         UpdatePrecisionControls();
-        if (entity)
+        if (entity && !m_KeyboardAxesActive)
             ApplyHardwareRates(entity, state, povDelta);
     }
 
@@ -941,12 +1007,126 @@ void CFlyDlg::ApplyHardwareRates(CEntity *entity,
     entity->Unlock();
 }
 
+void CFlyDlg::ProcessKeyboardFlightState(
+    const int rollDirection,
+    const int pitchDirection,
+    const int yawDirection)
+{
+    CEntity *entity = g_DataManager.GetSelectedEntity();
+    const int selectedEntityId = entity ? entity->GetID() : -1;
+    const BOOL axesActive =
+        rollDirection || pitchDirection || yawDirection;
+
+    if (selectedEntityId != m_KeyboardEntityId) {
+        CEntity *previousEntity =
+            g_DataManager.GetEntity(m_KeyboardEntityId);
+        if (previousEntity)
+            ApplyKeyboardRates(previousEntity, 0, 0, 0);
+        m_KeyboardEntityId = selectedEntityId;
+    }
+
+    m_KeyboardAxesActive = axesActive && entity;
+    if (entity)
+        ApplyKeyboardRates(
+            entity, rollDirection, pitchDirection, yawDirection);
+
+    if (!m_KeyboardAxesActive)
+        m_KeyboardEntityId = -1;
+}
+
+void CFlyDlg::ApplyKeyboardRates(
+    CEntity *entity,
+    const int rollDirection,
+    const int pitchDirection,
+    const int yawDirection)
+{
+    if (!entity)
+        return;
+
+    RATES rates;
+    ZeroMemory(&rates, sizeof(rates));
+
+    if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT
+        && entity->GetFlyMode() == ENTITY_FLYMODE_FLY) {
+        rates.dx = (float)(25.0 * rollDirection);
+        rates.dy = (float)(30.0 * pitchDirection);
+        rates.dyaw =
+            (float)(KeyboardYawRateDegreesPerSecond * yawDirection);
+    } else {
+        rates.droll =
+            (float)(KeyboardRollRateDegreesPerSecond * rollDirection);
+        rates.dpitch =
+            (float)(-KeyboardPitchRateDegreesPerSecond * pitchDirection);
+        rates.dyaw =
+            (float)(KeyboardYawRateDegreesPerSecond * yawDirection);
+    }
+
+    const RATES oldRates = entity->GetAndLockRates();
+    if (memcmp(&rates, &oldRates, sizeof(RATES)) != 0)
+        entity->SetLockedRates(rates);
+    entity->Unlock();
+}
+
+void CFlyDlg::AdjustKeyboardThrottle(
+    const int direction, const double elapsedSeconds)
+{
+    if (!direction) {
+        m_KeyboardThrottleActive = FALSE;
+        m_HasKeyboardThrottleValue = FALSE;
+        m_KeyboardThrottleEntityId = -1;
+        return;
+    }
+
+    CEntity *entity = g_DataManager.GetSelectedEntity();
+    if (!entity)
+        return;
+
+    const int selectedEntityId = entity->GetID();
+    if (!m_HasKeyboardThrottleValue
+        || selectedEntityId != m_KeyboardThrottleEntityId) {
+        m_KeyboardThrottleValue = GetEntityThrottleValue(entity);
+        m_HasKeyboardThrottleValue = TRUE;
+        m_KeyboardThrottleEntityId = selectedEntityId;
+    }
+
+    const double rate =
+        entity->GetClass() == ENTITY_CLASS_ROTORCRAFT
+            ? KeyboardCollectiveRatePerSecond
+            : KeyboardSpeedRatePerSecond;
+    const double minimum = 0.0;
+    const double maximum =
+        entity->GetClass() == ENTITY_CLASS_ROTORCRAFT ? 100.0 : 1200.0;
+
+    m_KeyboardThrottleValue = max(minimum, min(maximum,
+        m_KeyboardThrottleValue
+            + direction * rate * max(0.0, elapsedSeconds)));
+    m_KeyboardThrottleActive = TRUE;
+    SetEntityThrottleValue(entity, m_KeyboardThrottleValue);
+    DisengageHardwareThrottle(FALSE);
+}
+
+void CFlyDlg::DisableKeyboardFlight(void)
+{
+    CEntity *entity = g_DataManager.GetEntity(m_KeyboardEntityId);
+    if (entity)
+        ApplyKeyboardRates(entity, 0, 0, 0);
+
+    m_KeyboardAxesActive = FALSE;
+    m_KeyboardEntityId = -1;
+    m_KeyboardThrottleActive = FALSE;
+    m_HasKeyboardThrottleValue = FALSE;
+    m_KeyboardThrottleEntityId = -1;
+}
+
 void CFlyDlg::DisableHardwareJoystick(void)
 {
     m_HasPreviousHardwareState = FALSE;
     m_PovDirection = 0;
     m_PovImmediate = FALSE;
     m_LastHardwarePovDelta = 0;
+    m_HardwareThrottleAvailable = FALSE;
+    m_HardwareThrottleAcquired = FALSE;
+    m_HasLastHardwareThrottleValue = FALSE;
 
     HEMU_JOYSTICK_STATE neutralState;
     ZeroMemory(&neutralState, sizeof(neutralState));
@@ -962,7 +1142,132 @@ void CFlyDlg::DisableHardwareJoystick(void)
         m_JoyWindow.SetPosY(0, FALSE);
         m_RollSlider.SetPos(0);
         m_PitchSlider.SetPos(0);
+        UpdateHardwareThrottleVisual();
     }
+}
+
+double CFlyDlg::GetEntityThrottleValue(CEntity *entity) const
+{
+    if (!entity)
+        return 0.0;
+
+    if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT)
+        return entity->GetCollective();
+    if (entity->GetClass() == ENTITY_CLASS_FIXEDWING)
+        return MPSToKnots(entity->GetSpeed());
+    return entity->GetSpeed();
+}
+
+double CFlyDlg::GetHardwareThrottleValue(
+    CEntity *entity, const HEMU_JOYSTICK_STATE &state) const
+{
+    const double rawThrottle =
+        max(-300.0, min(1200.0, (double)state.throttle));
+    const double normalizedThrottle =
+        (rawThrottle + 300.0) / 1500.0;
+    if (entity && entity->GetClass() == ENTITY_CLASS_ROTORCRAFT) {
+        return max(0.0, min(100.0,
+            normalizedThrottle * 100.0));
+    }
+
+    return max(0.0, min(1200.0, normalizedThrottle * 1200.0));
+}
+
+double CFlyDlg::GetHardwareThrottleTolerance(CEntity *entity) const
+{
+    if (entity && entity->GetClass() == ENTITY_CLASS_ROTORCRAFT)
+        return RotorcraftThrottlePickupTolerance;
+    if (entity && entity->GetClass() == ENTITY_CLASS_FIXEDWING)
+        return FixedWingThrottlePickupToleranceKnots;
+    return OtherThrottlePickupTolerance;
+}
+
+void CFlyDlg::SetEntityThrottleValue(
+    CEntity *entity, const double value)
+{
+    if (!entity)
+        return;
+
+    if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT) {
+        const double safeValue = max(0.0, min(100.0, value));
+        entity->SetCollective((long)floor(safeValue + 0.5));
+        if (GetSafeHwnd())
+            m_SpeedSlider.SetPos(100 - (int)floor(safeValue + 0.5));
+    } else if (entity->GetClass() == ENTITY_CLASS_FIXEDWING) {
+        const double safeValue = max(0.0, min(1200.0, value));
+        entity->SetSpeed(KnotsToMPS(safeValue));
+        if (GetSafeHwnd())
+            m_SpeedSlider.SetPos(1200 - (int)floor(safeValue + 0.5));
+    } else {
+        const double safeValue = max(0.0, min(1200.0, value));
+        entity->SetSpeed(safeValue);
+        if (GetSafeHwnd())
+            m_SpeedSlider.SetPos(1200 - (int)floor(safeValue + 0.5));
+    }
+}
+
+void CFlyDlg::DisengageHardwareThrottle(const BOOL showWaitingStatus)
+{
+    if (!m_HardwareThrottleAcquired)
+        return;
+
+    m_HardwareThrottleAcquired = FALSE;
+    m_HasLastHardwareThrottleValue = FALSE;
+    UpdateHardwareThrottleVisual();
+
+    CEntity *entity = g_DataManager.GetSelectedEntity();
+    if (showWaitingStatus && entity && m_HardwareThrottleAvailable)
+        ShowHardwareThrottleWaitingStatus(entity);
+}
+
+void CFlyDlg::UpdateHardwareThrottleVisual(void)
+{
+    if (!GetSafeHwnd())
+        return;
+
+    CEntity *entity = g_DataManager.GetSelectedEntity();
+    const BOOL acquired = m_HardwareThrottleAcquired
+        && entity && entity->GetID() == m_HardwareEntityId;
+    const COLORREF background = acquired
+        ? AcquiredThrottleBackground : GetSysColor(COLOR_BTNFACE);
+    m_SpeedSlider.SendMessage(TBM_SETBKCOLOR, 0, background);
+    m_SpeedSlider.Invalidate();
+}
+
+void CFlyDlg::ShowHardwareThrottleWaitingStatus(CEntity *entity)
+{
+    if (!entity)
+        return;
+
+    CString text;
+    if (entity->GetClass() == ENTITY_CLASS_ROTORCRAFT) {
+        text.Format(
+            "Throttle waiting: move to %d%% to control Entity %d",
+            (int)floor(GetEntityThrottleValue(entity) + 0.5),
+            entity->GetID());
+    } else {
+        text.Format(
+            "Throttle waiting: move to %d %s to control Entity %d",
+            (int)floor(GetEntityThrottleValue(entity) + 0.5),
+            entity->GetClass() == ENTITY_CLASS_FIXEDWING ? "knots" : "m/s",
+            entity->GetID());
+    }
+    theApp.GetMainFrame().ShowTransientStatus(text, 3500);
+}
+
+void CFlyDlg::AcquireHardwareThrottle(CEntity *entity)
+{
+    if (!entity)
+        return;
+
+    m_HardwareThrottleAcquired = TRUE;
+    UpdateHardwareThrottleVisual();
+
+    CString text;
+    text.Format(
+        "Throttle matched: joystick now controls Entity %d",
+        entity->GetID());
+    theApp.GetMainFrame().ShowTransientStatus(text, 3000);
 }
 
 void CFlyDlg::UpdatePrecisionControls(void)

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<Title>Embedded External Tools</Title>
+<link rel="stylesheet" type="text/css" href="../style.css">
+</HEAD>
+<BODY>
+<h2>Embedded External Tools</h2>
+<blockquote>
+  <p>HEMU can launch a separate Windows application and host its main window
+  inside a tab beside the Messages and Capture tabs. The tool remains a
+  separate process: HEMU does not link its source code or libraries.</p>
+
+  <h3>Configuration Files</h3>
+  <p>External tabs are configured relative to the directory containing
+  <b>Hemu4.exe</b>:</p>
+  <ul>
+    <li><b>config\external_tabs.ini</b> contains safe, distributable defaults.</li>
+    <li><b>config\external_tabs.user.ini</b> contains machine-specific or
+    private tools. When present, this file replaces the default file.</li>
+  </ul>
+  <p>The <b>StartupTab</b> value selects the initial tab. Each
+  <b>ExternalTabN</b> section supports Enabled, Title, Executable,
+  WorkingDirectory, Arguments, LaunchOnSelect, and CloseWithHemu. Relative
+  executable and working-directory paths are resolved from the HEMU
+  application directory.</p>
+
+  <pre>[ExternalTabs]
+Count=1
+StartupTab=ADI
+
+[ExternalTab0]
+Enabled=1
+Title=ADI
+Executable=..\..\..\tools\cigi-adi\dist\cigi-adi\cigi-adi.exe
+WorkingDirectory=..\..\..\tools\cigi-adi\dist\cigi-adi
+Arguments=--embedded --cigi --listen 0.0.0.0:8014 --reply 127.0.0.1:8015
+LaunchOnSelect=1
+CloseWithHemu=1</pre>
+
+  <h3>Window-Embedding Contract</h3>
+  <p>HEMU starts the process hidden, finds an unowned top-level window created
+  by that process, changes it into a child window, sizes it to the tab, and
+  reveals it without requesting activation. Hidden top-level windows are valid
+  candidates, so a cooperative tool does not need to flash a desktop window
+  before attachment.</p>
+  <p>A tool intended for hosting should provide an option that creates its
+  native window hidden and initially unfocused. It should not call
+  <b>SetForegroundWindow</b> or otherwise activate itself during startup.
+  HEMU passes <b>--embedded</b> to CIGI ADI for this purpose. Standalone ADI
+  behavior is unchanged when the option is omitted.</p>
+  <p>After attachment, HEMU restores its own keyboard focus only if HEMU or the
+  newly launched tool still owned the foreground. It does not take focus back
+  if the user selected another application while the tool was starting.</p>
+
+  <h3>Keyboard Focus</h3>
+  <p>An embedded tool still belongs to a different process and UI thread.
+  Clicking inside its tab can therefore give keyboard focus to that tool.
+  Click a HEMU control before using HEMU keyboard commands such as
+  <b>Ctrl+K</b>. The hidden and unfocused startup contract prevents the tool
+  from taking focus merely because HEMU launched it.</p>
+
+  <h3>Process Lifetime</h3>
+  <p>When <b>CloseWithHemu=1</b>, HEMU contains the external process in a
+  kill-on-close Windows Job Object and closes it with HEMU. When set to zero,
+  HEMU detaches and restores the external window when the host page closes.</p>
+</blockquote>
+</BODY>
+</HTML>

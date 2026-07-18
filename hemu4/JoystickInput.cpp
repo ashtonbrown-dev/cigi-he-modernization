@@ -76,6 +76,7 @@ CJoystickInput::CJoystickInput()
       m_SettingsChangedEvent(NULL),
       m_DirectInput(NULL),
       m_Joystick(NULL),
+      m_ThrottleAxisOffset((DWORD)-1),
       m_Enabled(TRUE),
       m_UpdatePosted(0),
       m_PollRateHz(DefaultPollRateHz),
@@ -220,9 +221,17 @@ BOOL CALLBACK CJoystickInput::EnumAxesCallback(
     range.diph.dwHow = DIPH_BYID;
     range.diph.dwObj = object->dwType;
 
-    if (object->guidType == GUID_Slider) {
+    if (object->guidType == GUID_Slider
+        || object->guidType == GUID_ZAxis) {
         range.lMin = -1200;
         range.lMax = 300;
+
+        // Prefer a dedicated slider, but accept the Z axis as a fallback for
+        // joysticks that expose their throttle there.
+        if (object->guidType == GUID_Slider
+            || input->m_ThrottleAxisOffset == (DWORD)-1) {
+            input->m_ThrottleAxisOffset = object->dwOfs;
+        }
     } else {
         range.lMin = -100;
         range.lMax = 100;
@@ -340,6 +349,7 @@ BOOL CJoystickInput::FindJoystick(void)
     property.dwData = 1000;
     m_Joystick->SetProperty(DIPROP_DEADZONE, &property.diph);
 
+    m_ThrottleAxisOffset = (DWORD)-1;
     m_Joystick->EnumObjects(EnumAxesCallback, this, DIDFT_AXIS);
     m_Joystick->Acquire();
     return TRUE;
@@ -353,6 +363,7 @@ void CJoystickInput::ReleaseJoystick(void)
     m_Joystick->Unacquire();
     m_Joystick->Release();
     m_Joystick = NULL;
+    m_ThrottleAxisOffset = (DWORD)-1;
 }
 
 void CJoystickInput::ReleaseDirectInput(void)
@@ -371,6 +382,13 @@ void CJoystickInput::PublishState(const DIJOYSTATE2 &state)
     published.x = state.lX;
     published.y = state.lY;
     published.rudder = state.lRz;
+    published.hasThrottle = m_ThrottleAxisOffset != (DWORD)-1;
+    if (m_ThrottleAxisOffset == DIJOFS_Z)
+        published.throttle = -state.lZ;
+    else if (m_ThrottleAxisOffset == DIJOFS_SLIDER(1))
+        published.throttle = -state.rglSlider[1];
+    else if (published.hasThrottle)
+        published.throttle = -state.rglSlider[0];
     published.pov = state.rgdwPOV[0];
     CopyMemory(published.buttons, state.rgbButtons,
                sizeof(published.buttons));

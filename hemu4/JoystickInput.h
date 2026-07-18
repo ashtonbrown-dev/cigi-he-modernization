@@ -15,6 +15,8 @@ struct HEMU_JOYSTICK_STATE
     LONG x;
     LONG y;
     LONG rudder;
+    LONG throttle;
+    BOOL hasThrottle;
     DWORD pov;
     BYTE buttons[32];
 };
@@ -59,6 +61,7 @@ private:
     HANDLE m_SettingsChangedEvent;
     IDirectInput8 *m_DirectInput;
     IDirectInputDevice8 *m_Joystick;
+    DWORD m_ThrottleAxisOffset;
     volatile LONG m_Enabled;
     volatile LONG m_UpdatePosted;
     int m_PollRateHz;

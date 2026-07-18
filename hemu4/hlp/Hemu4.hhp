@@ -11,6 +11,8 @@ Title=Introducing the CIGI Host Emulator
 
 [FILES]
 index.htm
+GUI\Embedded External Tools.htm
+GUI\Using a Joystick Peripheral.htm
 Script Reference\WEATHER_WIND.htm
 Script Reference\ARTPART_ENABLE.htm
 Script Reference\ARTPART_ENABLE_XYZ.htm

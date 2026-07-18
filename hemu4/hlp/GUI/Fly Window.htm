@@ -84,6 +84,43 @@
   control ranging from 0 to 100%. A value of 50% causes the entity to maintain a
   constant altitude. Decreasing the value decreases the altitude; increasing the
   value increases the altitude.</p>
+  <h3>Keyboard Flight</h3>
+  <p>Select an entity and press <b>Ctrl+K</b> to enable or disable keyboard
+  flight. The <b>KBD FLY</b> pane in the status bar is green while keyboard
+  flight is enabled and has a faint red background while it is disabled.
+  Double-clicking the status pane also toggles keyboard flight.</p>
+  <table border="1" cellpadding="3" cellspacing="0">
+    <tr><th>Key</th><th>Flight control</th></tr>
+    <tr><td>W</td><td>Pitch nose-down</td></tr>
+    <tr><td>S</td><td>Pitch nose-up</td></tr>
+    <tr><td>A</td><td>Roll left</td></tr>
+    <tr><td>D</td><td>Roll right</td></tr>
+    <tr><td>Q</td><td>Yaw left</td></tr>
+    <tr><td>E</td><td>Yaw right</td></tr>
+    <tr><td>R</td><td>Increase airspeed or collective</td></tr>
+    <tr><td>F</td><td>Decrease airspeed or collective</td></tr>
+  </table>
+  <p>Keyboard flight is deliberately disabled when HEMU loses application
+  focus or when the user begins interacting with another control, including an
+  entity tree, edit field, drop-down list, check box, button, or slider. Press
+  <b>Ctrl+K</b> again after completing the UI operation to resume keyboard
+  flight. Hover over the <b>KBD FLY</b> status pane for a shortcut reminder.</p>
+  <h3>Physical Joystick Throttle</h3>
+  <p>A physical throttle uses soft takeover to avoid an abrupt airspeed or
+  collective jump. Move the hardware throttle close to the entity's current
+  value. The status bar reports when the values match, and the Fly window's
+  airspeed or collective slider turns green while the hardware throttle owns
+  the value. A mouse, keyboard, or other manual speed change releases hardware
+  throttle control until the values match again. The full physical throttle
+  travel controls 0 to 1200 knots, or 0 to 100 percent collective for a
+  rotorcraft. Physical joystick, POV hat, and keyboard throttle input cannot
+  command a negative speed.</p>
+  <p>Joystick buttons fire the selected weapon, select the next target,
+  freeze or resume the exercise, and cycle input precision. They do not change
+  the entity's flight mode. Select <b>Fly</b>, <b>Magic Carpet</b>,
+  <b>Roll/Pitch</b>, or <b>Yaw/Z</b> from this window's mode list. See
+  <a href="Using%20a%20Joystick%20Peripheral.htm">Using a Joystick
+  Peripheral</a> for the complete button mapping.</p>
   <p>In the lower right-hand corner of the Fly window are text areas showing the
   entity's current position and attitude.</p>
   <h3>Related Topics:</h3>

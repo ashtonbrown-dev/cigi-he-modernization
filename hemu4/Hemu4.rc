@@ -223,6 +223,8 @@ BEGIN
             MENUITEM "Wave Control...",             ID_PACKET_WAVE
             MENUITEM "Weather Control...",          ID_PACKET_WEATHER
         END
+        MENUITEM SEPARATOR
+        MENUITEM "&Keyboard Flight\tCtrl+K",         ID_TOOLS_KEYBOARD_FLIGHT
     END
     POPUP "&View"
     BEGIN
@@ -283,7 +285,10 @@ IDR_MAINFRAME ACCELERATORS
 BEGIN
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "K",            ID_TOOLS_KEYBOARD_FLIGHT, VIRTKEY, CONTROL
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    VK_F5,          ID_EXERCISE_RUN,        VIRTKEY
+    VK_F6,          ID_EXERCISE_PAUSE,      VIRTKEY
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
     "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
@@ -292,8 +297,8 @@ BEGIN
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
-    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
-    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, CONTROL
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, CONTROL, SHIFT
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT
     VK_F1,          ID_HELP,                VIRTKEY 
 END
@@ -669,7 +674,7 @@ BEGIN
 END
 
 IDD_DIALOG_NEW_ENTITY DIALOGEX 0, 0, 242, 121
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "New Entity"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -3715,6 +3720,7 @@ BEGIN
     IDS_INDICATOR_FRAMERATE_OLD "Driver not loaded"
     IDS_INDICATOR_IGMODE    "IG Mode: Standby/Reset"
     IDS_INDICATOR_FR_STATUS "Driver not loaded"
+    IDS_INDICATOR_KBDFLY    "KBD FLY"
 END
 
 STRINGTABLE
@@ -3838,7 +3844,7 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_EXERCISE_PAUSE       "Freeze the current exercise\nFreeze Exercise"
+    ID_EXERCISE_PAUSE       "Freeze the current exercise (F6)\nFreeze Exercise (F6)"
     ID_VIEW_TEST            "Show the Test Window\nTest"
     ID_EXERCISE_RESET_IG    "Reinitialize the IG\nReset IG"
     ID_EXERCISE_RESET_ALL   "Reinitialize the Host Emulator and the IG\nReset All"
@@ -3853,7 +3859,7 @@ BEGIN
     ID_DEBUG_FILTER         "Filter packets by type\nFilter"
     ID_DEBUG_CAPTURE        "Capture CIGI packets from the IG\nCapture"
     ID_EXERCISE_RESET_SCENARIO "Reset the current scenario\nReset Scenario"
-    ID_EXERCISE_RUN         "Begin or resume the exercise\nRun Exercise"
+    ID_EXERCISE_RUN         "Begin or resume the exercise (F5)\nRun Exercise (F5)"
 END
 
 STRINGTABLE
@@ -3861,6 +3867,7 @@ BEGIN
     ID_TREE_DETACH          "Detach the selected entity from its parent\nDetach"
     ID_TOOLS_FLY            "Fly selected entity\nFly Entity"
     ID_TOOLS_JOYSTICK_ENABLE "Enable or disable physical joystick input\nJoystick Input"
+    ID_TOOLS_KEYBOARD_FLIGHT "Enable keyboard flight (W/S pitch, A/D roll, Q/E yaw, R/F speed)\nKeyboard Flight"
     ID_VIEW_CLEAR_MESSAGES  "Clear Messages window\nClear Messages"
     ID_FILE_LOAD_CONFIG     "Load a configuration from a set of .def files\nLoad Configuration"
     ID_WATCH_CAPTURE        "Capture and view the contents of CIGI messages\nCapture"

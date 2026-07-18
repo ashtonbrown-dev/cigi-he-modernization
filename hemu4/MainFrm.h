@@ -96,6 +96,25 @@ class CWeatherStateView;
 class HEMU_MESSAGE;
 class TEMPL_ENTITY;
 
+class CHemuStatusBar : public CStatusBar
+{
+public:
+    CHemuStatusBar();
+    void InitializeKeyboardFlightToolTip(void);
+    void SetKeyboardFlightEnabled(const BOOL enabled);
+    virtual void DrawItem(LPDRAWITEMSTRUCT drawItem);
+
+protected:
+    afx_msg void OnSize(UINT nType, int cx, int cy);
+    DECLARE_MESSAGE_MAP()
+
+private:
+    void UpdateKeyboardFlightToolRect(void);
+
+    BOOL m_KeyboardFlightEnabled;
+    CToolTipCtrl m_KeyboardFlightToolTip;
+};
+
 class CMainFrame : public CFrameWnd
 {
 public:
@@ -112,6 +131,7 @@ public:
     virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
     //}}AFX_VIRTUAL
 
+    BOOL HandleKeyboardFlightMessage(MSG *pMsg);
     CObjectTreeView &GetObjectTreeView(void);
     CObjectStateView &GetObjectStateView(void);
     CEntityTreeView &GetEntityTreeView(void);
@@ -135,6 +155,7 @@ public:
     CRecPlaybackDlg &GetRecPlaybackDlg(void);
     CScriptDlg &GetScriptDlg(void);
     CEntity *AddNewEntity(const int id, TEMPL_ENTITY *templ);
+    CEntity *AddNewEntity(const int id, const int type);
     void AddEntityToGUI(CEntity *entity);
     void RemoveEntity(CEntity *entity);
     void RemoveEntityFromGUI(const int id, const HTREEITEM hEntity,
@@ -159,6 +180,7 @@ public:
     void WatchThisFrame(void);
     void SkipThisFrame(void);
     void SetIGModeStatusText(LPCTSTR text);
+    void ShowTransientStatus(LPCTSTR text, const DWORD durationMs = 3000);
     void PopulateDatabaseCombo(void);
     void ClearDatabaseCombo(void);
     void UpdateDatabaseCombo(void);
@@ -171,7 +193,11 @@ protected:
     BOOL m_bHoldAnimPause;
     BOOL m_bHoldAnimStop;
     UINT m_nTimer;
-    CStatusBar  m_wndStatusBar;
+    CHemuStatusBar m_wndStatusBar;
+    DWORD m_TransientStatusUntil;
+    BOOL m_KeyboardFlightEnabled;
+    DWORD m_KeyboardFlightKeys;
+    DWORD m_LastKeyboardThrottleTick;
     CToolBar    m_wndMainToolBar;
     CReBar      m_wndReBar;
     CDBDialogBar m_wndDlgBar;
@@ -246,6 +272,12 @@ protected:
 
     void ShowDlg(UINT resourceId, CDialog &dlgRef, int nCmdShow = SW_SHOW);
     void ToggleShowDlg(UINT resourceId, CDialog &dlgRef);
+    void ReleaseKeyboardFlightControls(void);
+    void ApplyKeyboardFlightControls(void);
+    void UpdateKeyboardFlightStatus(void);
+    void DisarmKeyboardFlight(
+        LPCTSTR statusText = NULL, const DWORD durationMs = 2500);
+    BOOL IsKeyboardFlightInteractionWindow(const HWND window) const;
 
     //{{AFX_MSG(CMainFrame)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -257,6 +289,8 @@ protected:
     afx_msg void OnExercisePause();
     afx_msg void OnUpdateExercisePause(CCmdUI *pCmdUI);
     afx_msg void OnExerciseRun();
+    afx_msg void OnExerciseRunPause();
+    afx_msg LRESULT OnAppCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnUpdateExerciseRun(CCmdUI *pCmdUI);
     afx_msg void OnExerciseResetScenario();
     afx_msg void OnUpdateExerciseResetScenario(CCmdUI *pCmdUI);
@@ -266,6 +300,11 @@ protected:
     afx_msg void OnToggleJoystick();
     afx_msg void OnUpdateToggleJoystick(CCmdUI *pCmdUI);
     afx_msg LRESULT OnJoystickInput(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnExternalToolEmbedded(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnToggleKeyboardFlight();
+    afx_msg void OnUpdateToggleKeyboardFlight(CCmdUI *pCmdUI);
+    afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
+    afx_msg void OnStatusBarDoubleClick(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnClearMessages();
     afx_msg void OnLoadConfig();
     afx_msg void OnWatchCapture();

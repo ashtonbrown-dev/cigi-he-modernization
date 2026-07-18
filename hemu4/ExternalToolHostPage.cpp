@@ -320,6 +320,21 @@ void CExternalToolHostPage::PollForWindow()
 
 BOOL CExternalToolHostPage::EmbedWindow(HWND window)
 {
+    CWnd *mainWindow = AfxGetMainWnd();
+    const HWND mainWindowHandle =
+        mainWindow ? mainWindow->GetSafeHwnd() : NULL;
+    const HWND foregroundWindow = ::GetForegroundWindow();
+    DWORD foregroundProcessId = 0;
+    if (foregroundWindow)
+        GetWindowThreadProcessId(
+            foregroundWindow, &foregroundProcessId);
+    const BOOL restoreHemuFocus =
+        mainWindowHandle
+        && (foregroundWindow == mainWindowHandle
+            || (foregroundWindow
+                && ::IsChild(mainWindowHandle, foregroundWindow))
+            || foregroundProcessId == m_ProcessInfo.dwProcessId);
+
     ::ShowWindow(window, SW_HIDE);
 
     SetLastError(ERROR_SUCCESS);
@@ -347,6 +362,15 @@ BOOL CExternalToolHostPage::EmbedWindow(HWND window)
     m_Embedded = TRUE;
     m_Status.ShowWindow(SW_HIDE);
     ResizeHostedWindow();
+
+    // Embedding occurs asynchronously after normal application startup. A
+    // cooperative tool starts hidden, but a tool or window framework may still
+    // briefly become foreground while creating its native window. Restore HEMU
+    // only when HEMU or this tool owned the foreground; never steal focus from
+    // another application the user selected while the tool was launching.
+    if (restoreHemuFocus)
+        mainWindow->PostMessage(WM_HEMU_EXTERNAL_TOOL_EMBEDDED);
+
     return TRUE;
 }
 

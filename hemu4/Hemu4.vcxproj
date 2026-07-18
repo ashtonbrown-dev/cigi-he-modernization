@@ -1555,9 +1555,13 @@ xcopy /i /y "$(ProjectDir)hlp\$(TargetName).chm" "$(ProjectDir)..\app\"
     <None Include="..\app\scenarios\MyOwnship.sf4" />
     <CustomBuild Include="hlp\Hemu4.hhp">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hhc.exe %(fullpath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hhc.exe "%(fullpath)"
+if "%errorlevel%"=="1" exit /b 0
+exit /b 1</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\hlp\%(filename).chm</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hhc.exe %(fullpath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hhc.exe "%(fullpath)"
+if "%errorlevel%"=="1" exit /b 0
+exit /b 1</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\hlp\%(filename).chm</Outputs>
     </CustomBuild>
     <None Include="hlp\Table of Contents.hhc" />

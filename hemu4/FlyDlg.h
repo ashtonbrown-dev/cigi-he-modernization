@@ -55,6 +55,14 @@ public:
     void ConfigureSpeedSlider(void);
     void ProcessHardwareJoystickState(const HEMU_JOYSTICK_STATE &state);
     void DisableHardwareJoystick(void);
+    void DisengageHardwareThrottle(const BOOL showWaitingStatus = TRUE);
+    void ProcessKeyboardFlightState(
+        const int rollDirection,
+        const int pitchDirection,
+        const int yawDirection);
+    void AdjustKeyboardThrottle(
+        const int direction, const double elapsedSeconds);
+    void DisableKeyboardFlight(void);
 
     // Dialog Data
     //{{AFX_DATA(CFlyDlg)
@@ -114,11 +122,34 @@ protected:
     BOOL m_PovImmediate;
     int m_HardwareEntityId;
     int m_LastHardwarePovDelta;
+    BOOL m_HardwareThrottleAvailable;
+    BOOL m_HardwareThrottleAcquired;
+    BOOL m_HasLastHardwareThrottleValue;
+    double m_LastHardwareThrottleValue;
+    BOOL m_KeyboardAxesActive;
+    int m_KeyboardEntityId;
+    BOOL m_KeyboardThrottleActive;
+    BOOL m_HasKeyboardThrottleValue;
+    int m_KeyboardThrottleEntityId;
+    double m_KeyboardThrottleValue;
 
     void SelectTargetItem(void);
     void ApplyHardwareRates(CEntity *entity,
                             const HEMU_JOYSTICK_STATE &state,
                             const int povDelta);
+    void ApplyKeyboardRates(
+        CEntity *entity,
+        const int rollDirection,
+        const int pitchDirection,
+        const int yawDirection);
+    double GetEntityThrottleValue(CEntity *entity) const;
+    double GetHardwareThrottleValue(
+        CEntity *entity, const HEMU_JOYSTICK_STATE &state) const;
+    double GetHardwareThrottleTolerance(CEntity *entity) const;
+    void SetEntityThrottleValue(CEntity *entity, const double value);
+    void UpdateHardwareThrottleVisual(void);
+    void ShowHardwareThrottleWaitingStatus(CEntity *entity);
+    void AcquireHardwareThrottle(CEntity *entity);
     void UpdatePrecisionControls(void);
 
     afx_msg LRESULT OnChangeJoyPos(WPARAM wParam, LPARAM lParam);

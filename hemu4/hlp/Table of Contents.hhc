@@ -100,12 +100,20 @@
 				</OBJECT>
 		<UL>
 			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Embedded External Tools">
+				<param name="Local" value="GUI\Embedded External Tools.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Filter Options Dialog">
 				<param name="Local" value="GUI\Filter Options Dialog.htm">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Fly Window">
 				<param name="Local" value="GUI\Fly Window.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using a Joystick Peripheral">
+				<param name="Local" value="GUI\Using a Joystick Peripheral.htm">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Heartbeat Monitor Window">

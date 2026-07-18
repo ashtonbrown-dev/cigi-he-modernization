@@ -58,9 +58,17 @@ protected:
     // Implementation
 protected:
     int m_Type;
+    BOOL m_LayoutInitialized;
+    CSize m_MinTrackSize;
+    int m_TypeListRightMargin;
+    int m_TypeListBottomMargin;
+    int m_ButtonRightMargin;
 
     void PopulateTypeList(void);
     int FindListInsertPoint(const int type);
+    void SetNextAvailableID(void);
+    BOOL ReadSelectedEntity(void);
+    BOOL AddSelectedEntity(void);
 
     // Generated message map functions
     //{{AFX_MSG(CAddEntityDlg)
@@ -68,6 +76,9 @@ protected:
     virtual void OnOK();
     virtual void OnCancel();
     afx_msg void OnItemchangedListTypes(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnDblclkListTypes(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnSize(UINT nType, int cx, int cy);
+    afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR *lpMMI);
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

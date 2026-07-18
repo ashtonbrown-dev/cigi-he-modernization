@@ -57,6 +57,11 @@ CAddEntityDlg::CAddEntityDlg(CWnd *pParent /*=NULL*/)
     //}}AFX_DATA_INIT
 
     m_Type = 0;
+    m_LayoutInitialized = FALSE;
+    m_MinTrackSize = CSize(0, 0);
+    m_TypeListRightMargin = 0;
+    m_TypeListBottomMargin = 0;
+    m_ButtonRightMargin = 0;
 }
 
 void CAddEntityDlg::DoDataExchange(CDataExchange *pDX)
@@ -73,6 +78,9 @@ void CAddEntityDlg::DoDataExchange(CDataExchange *pDX)
 BEGIN_MESSAGE_MAP(CAddEntityDlg, CDialog)
     //{{AFX_MSG_MAP(CAddEntityDlg)
     ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_TYPES, OnItemchangedListTypes)
+    ON_NOTIFY(NM_DBLCLK, IDC_LIST_TYPES, OnDblclkListTypes)
+    ON_WM_SIZE()
+    ON_WM_GETMINMAXINFO()
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -84,13 +92,29 @@ BOOL CAddEntityDlg::OnInitDialog()
     CDialog::OnInitDialog();
 
     // Add the next available ID to the edit.
-    m_ID = ::GetNextEntityID();
-    ::UnmarkEntityID(m_ID); // don't mark as used until we click OK
-    UpdateData(FALSE);
+    SetNextAvailableID();
 
     // Configure and populate the type list.
     m_TypesList.SetImageList(&g_ImgListTypes, LVSIL_SMALL);
     PopulateTypeList();
+
+    CRect windowRect;
+    GetWindowRect(&windowRect);
+    m_MinTrackSize = windowRect.Size();
+
+    CRect clientRect;
+    CRect controlRect;
+    GetClientRect(&clientRect);
+
+    m_TypesList.GetWindowRect(&controlRect);
+    ScreenToClient(&controlRect);
+    m_TypeListRightMargin = clientRect.right - controlRect.right;
+    m_TypeListBottomMargin = clientRect.bottom - controlRect.bottom;
+
+    m_ButtonOK.GetWindowRect(&controlRect);
+    ScreenToClient(&controlRect);
+    m_ButtonRightMargin = clientRect.right - controlRect.right;
+    m_LayoutInitialized = TRUE;
 
     // Return TRUE unless you set the focus to a control.
     // EXCEPTION: OCX Property Pages should return FALSE.
@@ -139,17 +163,8 @@ int CAddEntityDlg::FindListInsertPoint(const int type)
 
 void CAddEntityDlg::OnOK()
 {
-    POSITION pos = m_TypesList.GetFirstSelectedItemPosition();
-
-    if (pos) {
-        UpdateData(TRUE);
-        ::MarkEntityID(m_ID);
-
-        int idx = m_TypesList.GetNextSelectedItem(pos);
-        m_Type = m_TypesList.GetItemData(idx);
-
+    if (ReadSelectedEntity())
         CDialog::OnOK();
-    }
 }
 
 void CAddEntityDlg::OnCancel()
@@ -157,11 +172,88 @@ void CAddEntityDlg::OnCancel()
     CDialog::OnCancel();
 }
 
+void CAddEntityDlg::SetNextAvailableID(void)
+{
+    m_ID = ::GetNextEntityID();
+    ::UnmarkEntityID(m_ID); // don't mark as used until an entity is created
+    UpdateData(FALSE);
+}
+
+BOOL CAddEntityDlg::ReadSelectedEntity(void)
+{
+    POSITION pos = m_TypesList.GetFirstSelectedItemPosition();
+
+    if (!pos || !UpdateData(TRUE))
+        return FALSE;
+
+    int idx = m_TypesList.GetNextSelectedItem(pos);
+    m_Type = m_TypesList.GetItemData(idx);
+    return TRUE;
+}
+
+BOOL CAddEntityDlg::AddSelectedEntity(void)
+{
+    if (!ReadSelectedEntity())
+        return FALSE;
+
+    if (!theApp.GetMainFrame().AddNewEntity(m_ID, m_Type))
+        return FALSE;
+
+    SetNextAvailableID();
+    return TRUE;
+}
+
 void CAddEntityDlg::OnItemchangedListTypes(NMHDR *pNMHDR, LRESULT *pResult)
 {
-    NM_LISTVIEW *pNMListView = (NM_LISTVIEW *)pNMHDR;
-
-    m_ButtonOK.EnableWindow(TRUE);
+    m_ButtonOK.EnableWindow(
+        m_TypesList.GetFirstSelectedItemPosition() != NULL);
 
     *pResult = 0;
+}
+
+void CAddEntityDlg::OnDblclkListTypes(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    NMITEMACTIVATE *item = (NMITEMACTIVATE *)pNMHDR;
+    if (item && item->iItem >= 0)
+        AddSelectedEntity();
+
+    *pResult = 0;
+}
+
+void CAddEntityDlg::OnSize(UINT nType, int cx, int cy)
+{
+    CDialog::OnSize(nType, cx, cy);
+
+    if (!m_LayoutInitialized || !m_TypesList.GetSafeHwnd())
+        return;
+
+    CRect rect;
+    m_TypesList.GetWindowRect(&rect);
+    ScreenToClient(&rect);
+    rect.right = max(rect.left + 1, cx - m_TypeListRightMargin);
+    rect.bottom = max(rect.top + 1, cy - m_TypeListBottomMargin);
+    m_TypesList.SetWindowPos(NULL, rect.left, rect.top, rect.Width(),
+                             rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+
+    CWnd *buttons[] = { &m_ButtonOK, GetDlgItem(IDCANCEL) };
+    for (int i = 0; i < 2; i++) {
+        if (!buttons[i] || !buttons[i]->GetSafeHwnd())
+            continue;
+
+        buttons[i]->GetWindowRect(&rect);
+        ScreenToClient(&rect);
+        buttons[i]->SetWindowPos(
+            NULL, cx - m_ButtonRightMargin - rect.Width(), rect.top,
+            0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
+    }
+}
+
+void CAddEntityDlg::OnGetMinMaxInfo(MINMAXINFO FAR *lpMMI)
+{
+    CDialog::OnGetMinMaxInfo(lpMMI);
+
+    if (m_MinTrackSize.cx > 0 && m_MinTrackSize.cy > 0) {
+        lpMMI->ptMinTrackSize.x = m_MinTrackSize.cx;
+        lpMMI->ptMinTrackSize.y = m_MinTrackSize.cy;
+    }
 }

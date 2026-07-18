@@ -202,6 +202,15 @@ static void LaunchDummyIGForDebugging()
 /////////////////////////////////////////////////////////////////////////////
 // CHemuApp initialization
 
+BOOL CHemuApp::PreTranslateMessage(MSG *pMsg)
+{
+    CMainFrame *mainFrame = DYNAMIC_DOWNCAST(CMainFrame, m_pMainWnd);
+    if (mainFrame && mainFrame->HandleKeyboardFlightMessage(pMsg))
+        return TRUE;
+
+    return CWinApp::PreTranslateMessage(pMsg);
+}
+
 BOOL CHemuApp::InitInstance()
 {
     AfxEnableControlContainer();
@@ -315,6 +324,14 @@ BOOL CHemuApp::InitInstance()
         EnsureDefaultOwnship();
 
     m_JoystickInput.Start(m_hInstance, m_pMainWnd->GetSafeHwnd());
+
+    // Startup tabs can launch an embedded external application while the
+    // frame is being created. Give keyboard focus back to HEMU after all
+    // startup work so application shortcuts are immediately available.
+    CMainFrame &mainFrame = GetMainFrame();
+    mainFrame.SetForegroundWindow();
+    mainFrame.SetActiveWindow();
+    mainFrame.SetFocus();
 
     return TRUE;
 }
